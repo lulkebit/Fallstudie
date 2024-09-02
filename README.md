@@ -11,7 +11,6 @@ Das Projekt verwendet `live-server` für die lokale Entwicklung und `tailwindcss
 -   [Projektstruktur](#projektstruktur)
 -   [Beitragen](#beitragen)
 -   [Autoren](#autoren)
--   [Lizenz](#lizenz)
 
 ## Installation
 
