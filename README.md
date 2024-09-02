@@ -100,7 +100,7 @@ Wenn du zu diesem Projekt beitragen möchtest, folge bitte diesen Schritten:
 1. Forke das Repository.
 2. Führe deine Änderungen durch und committe sie:
     ```sh
-    git commit -am 'FAL-??? (Jira Vorgangsnummer) Beschreibe hier kurz deine änderung'
+    git commit -am 'FAL-???: (Jira Vorgangsnummer) Beschreibe hier kurz deine änderung'
     ```
 3. Pushe deine Änderungen direkt zur `main`-Branch:
     ```sh
