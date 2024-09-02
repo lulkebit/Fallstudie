@@ -11,7 +11,6 @@ Das Projekt verwendet `live-server` für die lokale Entwicklung und `tailwindcss
 -   [Projektstruktur](#projektstruktur)
 -   [Beitragen](#beitragen)
 -   [Autoren](#autoren)
--   [Lizenz](#lizenz)
 
 ## Installation
 
@@ -101,7 +100,7 @@ Wenn du zu diesem Projekt beitragen möchtest, folge bitte diesen Schritten:
 1. Forke das Repository.
 2. Führe deine Änderungen durch und committe sie:
     ```sh
-    git commit -am 'Beschreibe hier kurz deine änderung'
+    git commit -am 'FAL-??? (Jira Vorgangsnummer) Beschreibe hier kurz deine änderung'
     ```
 3. Pushe deine Änderungen direkt zur `main`-Branch:
     ```sh
