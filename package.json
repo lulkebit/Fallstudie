@@ -4,14 +4,12 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "build:css": "tailwindcss build src/css/tailwind.css -o src/css/style.css",
         "start": "live-server src"
     },
     "author": "Luke, Sönke, Jean-Luc, Arman",
     "license": "ISC",
     "dependencies": {
-        "chart.js": "^4.4.4",
-        "tailwindcss": "^3.4.10"
+        "chart.js": "^4.4.4"
     },
     "devDependencies": {
         "live-server": "^1.2.2"

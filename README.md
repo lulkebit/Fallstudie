@@ -7,7 +7,6 @@ Das Projekt verwendet `live-server` für die lokale Entwicklung und `tailwindcss
 
 -   [Installation](#installation)
 -   [Entwicklungsserver starten](#entwicklungsserver-starten)
--   [Tailwind CSS konfigurieren](#tailwind-css-konfigurieren)
 -   [Projektstruktur](#projektstruktur)
 -   [Beitragen](#beitragen)
 -   [Autoren](#autoren)
@@ -38,29 +37,6 @@ npm start
 
 Dies startet `live-server` und überwacht die Dateien im `src`-Verzeichnis. Änderungen an den Dateien werden automatisch im Browser aktualisiert.
 
-## Tailwind CSS konfigurieren
-
-Tailwind CSS ist bereits in diesem Projekt konfiguriert. Die Konfiguration befindet sich in der Datei `tailwind.config.js`. Die wichtigsten Einstellungen sind:
-
-```js
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-    content: ['./src/**/*.{html,js,php}'],
-    theme: {
-        extend: {},
-    },
-    plugins: [],
-};
-```
-
-Um die CSS-Datei zu erstellen, führe den folgenden Befehl aus:
-
-```sh
-npm run build:css
-```
-
-Dies generiert die Datei `style.css` basierend auf den Anweisungen in `tailwind.css`.
-
 ## Projektstruktur
 
 Hier ist eine Übersicht der Projektstruktur:
@@ -71,8 +47,7 @@ package.json
 README.md
 src/
     css/
-        style.css
-        tailwind.css
+        global.css
     index.html
     js/
         index.js
@@ -83,8 +58,7 @@ tailwind.config.js
 
 -   `src/`: Enthält alle Quellcodedateien.
     -   `css/`: Enthält die CSS-Dateien.
-        -   `style.css`: Generierte Datei, die die Tailwind CSS-Stile enthält.
-        -   `tailwind.css`: Quelle für Tailwind CSS.
+        -   `global.css`: Haupt-CSS-Datei.
     -   `index.html`: Haupt-HTML-Datei.
     -   `js/`: Enthält JavaScript-Dateien.
         -   `index.js`: Haupt-JavaScript-Datei.
