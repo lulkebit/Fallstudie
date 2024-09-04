@@ -32,6 +32,7 @@ Stelle sicher, dass Node.js und npm auf deinem Rechner installiert sind. Du kann
 Um den Entwicklungsserver zu starten, verwende den folgenden Befehl:
 
 ```sh
+cd app
 npm start
 ```
 
