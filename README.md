@@ -23,7 +23,12 @@ Stelle sicher, dass Node.js und npm auf deinem Rechner installiert sind. Du kann
     ```
 
 2. Installiere die Abhängigkeiten:
+
     ```sh
+    cd app
+    npm install
+
+    cd ../server
     npm install
     ```
 
