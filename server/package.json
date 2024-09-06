@@ -9,6 +9,7 @@
     "author": "Luke, Sönke, Jean-Luc, Arman",
     "license": "ISC",
     "dependencies": {
+        "bcrypt": "^5.1.1",
         "express.js": "^1.0.0"
     }
 }
