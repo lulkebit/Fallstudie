@@ -34,14 +34,23 @@ Stelle sicher, dass Node.js und npm auf deinem Rechner installiert sind. Du kann
 
 ## Entwicklungsserver starten
 
-Um den Entwicklungsserver zu starten, verwende den folgenden Befehl:
+Um den Entwicklungsserver zu starten, verwende die folgenden Befehle:
 
-```sh
-cd app
-npm start
-```
+1. Starte den Server:
 
-Dies startet `live-server` und überwacht die Dateien im `src`-Verzeichnis. Änderungen an den Dateien werden automatisch im Browser aktualisiert.
+    ```sh
+    cd server
+    npm start
+    ```
+
+2. Starte die App:
+
+    ```sh
+    cd app
+    npm start
+    ```
+
+Dies startet den Server auf `http://localhost:8000` und die App auf `http://localhost:3000`. Änderungen an den Dateien werden automatisch im Browser aktualisiert.
 
 ## Projektstruktur
 
