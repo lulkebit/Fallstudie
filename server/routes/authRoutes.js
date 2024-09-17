@@ -23,5 +23,8 @@ router.post('/register', registerUser);
 // Definiere eine POST-Route für die Benutzeranmeldung, die die Funktion loginUser aufruft
 router.post('/login', loginUser);
 
+// Definiert eine GET-Route für '/profile', die die Funktion getProfile aufruft, um das Profil des angemeldeten Benutzers abzurufen.
+router.get('/profile', getProfile);
+
 // Exportiere den Router, damit er in der Hauptanwendung verwendet werden kann
 module.exports = router;

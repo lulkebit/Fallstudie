@@ -126,5 +126,32 @@ const loginUser = async (req, res) => {
     }
 };
 
+/**
+ * Funktion um Profil eines Benutzers aus einem JWT (JSON Web Token) abzurufen.
+ * @param {Object} req - Anfrage-Objekt, das die Benutzerdaten enthält (z.B. email, password)
+ * @param {Object} res - Antwort-Objekt zum Senden der Ergebnisse an den Client
+ */
+const getProfile = (req, res) => {
+    // Extrahiert das Token aus den Cookies der Anfrage
+    const { token } = req.cookies;
+
+    // Überprüft, ob ein Token vorhanden ist
+    if (token) {
+        // Verifiziert das Token mit jwt.verify
+        jwt.verify(token, process.env.JWT_SECRET, {}, (err, user) => {
+            // Wenn ein Fehler bei der Verifizierung auftritt (z.B. ungültiges Token)
+            if (err) {
+                // Sendet eine Antwort mit einem Fehlerobjekt zurück
+                return res.json({ error: 'Invalid token' });
+            }
+            // Wenn das Token gültig ist, sendet es die Benutzerdaten als JSON zurück
+            res.json(user);
+        });
+    } else {
+        // Wenn kein Token gefunden wird, sendet es eine einfache Nachricht zurück
+        res.json('No token found');
+    }
+};
+
 // Exportiere die Funktionen für die Benutzerregistrierung und -anmeldung
-module.exports = { registerUser, loginUser };
+module.exports = { registerUser, loginUser, getProfile };
