@@ -9,11 +9,13 @@ import {
 import axios from 'axios';
 import './index.css';
 import { UserContextProvider } from './context/userContext';
-import App from './App';
+import Landingpage from './pages/landingpage';
+import Dashboard from './pages/dashboard';
 
 const routes = [
-    { path: '/dashboard', element: App },
-    { path: '/', element: Navigate, to: '/dashboard' },
+    { path: '/home', element: Landingpage },
+    { path: '/dashboard', element: Dashboard },
+    { path: '/', element: Navigate, to: '/home' },
 ];
 
 axios.defaults.baseURL = 'http://localhost:8000';
