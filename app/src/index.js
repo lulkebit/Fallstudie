@@ -11,10 +11,12 @@ import './index.css';
 import { UserContextProvider } from './context/userContext';
 import Landingpage from './pages/landingpage';
 import Dashboard from './pages/dashboard';
+import Login from './pages/auth/login';
 
 const routes = [
     { path: '/home', element: Landingpage },
     { path: '/dashboard', element: Dashboard },
+    { path: '/login', element: Login },
     { path: '/', element: Navigate, to: '/home' },
 ];
 
