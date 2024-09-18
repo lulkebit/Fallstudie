@@ -1,13 +1,44 @@
-import React from 'react';
+import { useState, useContext } from 'react';
+import { UserContext } from '../../context/userContext';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Login = () => {
+    const [data, setData] = useState({
+        email: '',
+        password: '',
+    });
+    const { setUser } = useContext(UserContext);
+    const navigate = useNavigate();
+
+    const loginUser = async (event) => {
+        event.preventDefault();
+        const { email, password } = data;
+        try {
+            const { data } = await axios.post('/login', {
+                email,
+                password,
+            });
+
+            if (data.error) {
+                return alert(data.error);
+            } else {
+                setUser(data.user);
+                setData({});
+                navigate('/dashboard');
+            }
+        } catch (error) {
+            console.error('Login failed:', error);
+        }
+    };
+
     return (
         <div className='flex justify-center items-center h-screen bg-gray-100'>
             <div className='w-full max-w-md p-8 space-y-6 bg-gradient-to-r from-blue-300 to-red-300 bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-lg shadow-md'>
                 <h2 className='text-center text-3xl font-bold text-white'>
                     TrackMyGoal
                 </h2>
-                <form className='mt-8 space-y-6'>
+                <form className='mt-8 space-y-6' onSubmit={loginUser}>
                     <div className='rounded-md shadow-sm -space-y-px'>
                         <div>
                             <label htmlFor='email-address' className='sr-only'>
