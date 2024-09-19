@@ -55,32 +55,7 @@ Dies startet den Server auf `http://localhost:8000` und die App auf `http://loca
 ## Projektstruktur
 
 Hier ist eine Übersicht der Projektstruktur:
-
-```
-.gitignore
-package.json
-README.md
-src/
-    css/
-        global.css
-    index.html
-    js/
-        index.js
-    php/
-        index.php
-tailwind.config.js
-```
-
--   `src/`: Enthält alle Quellcodedateien.
-    -   `css/`: Enthält die CSS-Dateien.
-        -   `global.css`: Haupt-CSS-Datei.
-    -   `index.html`: Haupt-HTML-Datei.
-    -   `js/`: Enthält JavaScript-Dateien.
-        -   `index.js`: Haupt-JavaScript-Datei.
-    -   `php/`: Enthält PHP-Dateien.
-        -   `index.php`: Beispiel-PHP-Datei.
--   `tailwind.config.js`: Konfigurationsdatei für Tailwind CSS.
--   `package.json`: Enthält Projektinformationen und Skripte.
+_folgt_
 
 ## Beitragen
 
