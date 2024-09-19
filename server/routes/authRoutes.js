@@ -5,7 +5,11 @@
 const express = require('express');
 const router = express.Router();
 const cors = require('cors');
-const { registerUser, loginUser } = require('../controllers/authController');
+const {
+    registerUser,
+    loginUser,
+    getProfile,
+} = require('../controllers/authController');
 
 // Konfiguriere CORS für diesen Router
 // - credentials: true ermöglicht das Senden von Cookies in Cross-Origin-Anfragen

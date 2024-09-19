@@ -14,7 +14,7 @@ const jwt = require('jsonwebtoken');
 const registerUser = async (req, res) => {
     try {
         // Destrukturiere die relevanten Felder aus dem Anfragenkörper
-        const { username, email, password, firstname, lastname } = req.body;
+        const { firstname, lastname, email, username, password } = req.body;
 
         // Überprüfe, ob die E-Mail bereits existiert
         const emailExist = await User.findOne({ email });
@@ -72,6 +72,7 @@ const registerUser = async (req, res) => {
  * @param {Object} res - Antwort-Objekt zum Senden der Ergebnisse an den Client
  */
 const loginUser = async (req, res) => {
+    // TODO login mit Username
     try {
         // Destrukturiere E-Mail und Passwort aus dem Anfragenkörper
         const { email, password } = req.body;
@@ -97,7 +98,7 @@ const loginUser = async (req, res) => {
                     firstname: user.firstname,
                     lastname: user.lastname,
                 },
-                process.env.JWT_SECRET, // Verwende das geheime JWT-Schlüssel
+                'idsfu&ASUDIhiedUioGYUYFHIUGTygbhbhY3427HS', // Verwende das geheime JWT-Schlüssel
                 {},
                 (err, token) => {
                     if (err) {
@@ -138,15 +139,20 @@ const getProfile = (req, res) => {
     // Überprüft, ob ein Token vorhanden ist
     if (token) {
         // Verifiziert das Token mit jwt.verify
-        jwt.verify(token, process.env.JWT_SECRET, {}, (err, user) => {
-            // Wenn ein Fehler bei der Verifizierung auftritt (z.B. ungültiges Token)
-            if (err) {
-                // Sendet eine Antwort mit einem Fehlerobjekt zurück
-                return res.json({ error: 'Invalid token' });
+        jwt.verify(
+            token,
+            'idsfu&ASUDIhiedUioGYUYFHIUGTygbhbhY3427HS',
+            {},
+            (err, user) => {
+                // Wenn ein Fehler bei der Verifizierung auftritt (z.B. ungültiges Token)
+                if (err) {
+                    // Sendet eine Antwort mit einem Fehlerobjekt zurück
+                    return res.json({ error: 'Invalid token' });
+                }
+                // Wenn das Token gültig ist, sendet es die Benutzerdaten als JSON zurück
+                res.json(user);
             }
-            // Wenn das Token gültig ist, sendet es die Benutzerdaten als JSON zurück
-            res.json(user);
-        });
+        );
     } else {
         // Wenn kein Token gefunden wird, sendet es eine einfache Nachricht zurück
         res.json('No token found');

@@ -51,6 +51,13 @@ const Login = () => {
                                 required
                                 className='appearance-none rounded-none relative block w-full px-3 py-2 border border-transparent bg-white bg-opacity-20 text-white placeholder-white rounded-t-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm'
                                 placeholder='Email address'
+                                value={data.email}
+                                onChange={(event) => {
+                                    setData({
+                                        ...data,
+                                        email: event.target.value,
+                                    });
+                                }}
                             />
                         </div>
                         <div>
@@ -64,6 +71,13 @@ const Login = () => {
                                 required
                                 className='appearance-none rounded-none relative block w-full px-3 py-2 border border-transparent bg-white bg-opacity-20 text-white placeholder-white rounded-b-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm'
                                 placeholder='Password'
+                                value={data.password}
+                                onChange={(event) => {
+                                    setData({
+                                        ...data,
+                                        password: event.target.value,
+                                    });
+                                }}
                             />
                         </div>
                     </div>
@@ -72,7 +86,7 @@ const Login = () => {
                             type='submit'
                             className='group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white from-red-300 to-blue-300 bg-opacity-80 backdrop-filter backdrop-blur-lg shadow-lg'
                         >
-                            Login
+                            Einloggen
                         </button>
                     </div>
                 </form>
