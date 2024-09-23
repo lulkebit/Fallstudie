@@ -1,10 +1,12 @@
 import React from 'react';
+import Navbar from '../components/navbar';
+import Table from '../components/Table';
 
 const Dashboard = () => {
     return (
         <div>
-            <h1>Dashboard</h1>
-            <p>Welcome to the dashboard page.</p>
+            <Navbar />
+            <Table />
         </div>
     );
 };
