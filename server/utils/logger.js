@@ -6,7 +6,8 @@ const colors = {
 };
 
 const log = (type, message, ...args) => {
-    const timestamp = new Date().toLocaleString('de-DE', {
+    const now = new Date();
+    const timestamp = `${now.toLocaleString('de-DE', {
         year: 'numeric',
         month: '2-digit',
         day: '2-digit',
@@ -14,7 +15,7 @@ const log = (type, message, ...args) => {
         minute: '2-digit',
         second: '2-digit',
         hour12: false,
-    });
+    })}.${now.getMilliseconds().toString().padStart(3, '0')}`;
     const color = colors[type] || colors.RESET;
     console.log(
         `[${timestamp}] [${color}${type}${colors.RESET}] ${message}`,
