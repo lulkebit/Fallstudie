@@ -1,19 +1,9 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { UserContext } from '../context/userContext';
+import axios from 'axios';
 
 const Table = () => {
-    const [cards, setCards] = useState([
-        {
-            id: '1',
-            title: 'Mehr laufen',
-            description: '20Tsd. Schritte pro Tag',
-        },
-        {
-            id: '2',
-            title: 'Ziel B',
-            description: 'Beschreibung für Ziel B',
-        },
-    ]);
+    const [cards, setCards] = useState([]);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [currentCard, setCurrentCard] = useState(null);
     const [newTitle, setNewTitle] = useState('');
@@ -21,6 +11,19 @@ const Table = () => {
     const [draggedItem, setDraggedItem] = useState(null);
     const [dragOverItem, setDragOverItem] = useState(null);
     const { user } = useContext(UserContext);
+
+    useEffect(() => {
+        if (user) {
+            axios
+                .get('/cards', { params: { userId: user.id } })
+                .then(({ data }) => {
+                    setCards(data);
+                })
+                .catch((error) => {
+                    console.error('Fehler beim Abrufen der Karten:', error);
+                });
+        }
+    }, [user]);
 
     const handleAddCard = () => {
         setCurrentCard(null);
@@ -38,26 +41,35 @@ const Table = () => {
 
     const handleSaveCard = () => {
         if (currentCard) {
-            setCards(
-                cards.map((card) =>
-                    card.id === currentCard.id
-                        ? {
-                              ...card,
-                              title: newTitle,
-                              description: newDescription,
-                          }
-                        : card
-                )
-            );
-        } else {
-            const newCard = {
-                id: String(cards.length + 1),
+            // Bearbeiten einer bestehenden Karte
+            const updatedCard = {
+                ...currentCard,
                 title: newTitle,
                 description: newDescription,
             };
-            setCards([...cards, newCard]);
+            axios
+                .put(`/cards/${currentCard.id}`, {
+                    userId: user.id,
+                    card: updatedCard,
+                })
+                .then(({ data }) => {
+                    setCards(data);
+                });
+        } else {
+            // Hinzufügen einer neuen Karte
+            const newCard = {
+                id: cards.length + 1,
+                title: newTitle,
+                description: newDescription,
+            };
+            axios
+                .post('/cards', { userId: user._id, card: newCard })
+                .then(({ data }) => {
+                    setCards(data);
+                });
         }
         setIsDialogOpen(false);
+        setCurrentCard(null);
     };
 
     const handleDeleteCard = (id) => {
@@ -66,7 +78,11 @@ const Table = () => {
                 'Sind Sie sicher, dass Sie dieses Ziel löschen möchten?'
             )
         ) {
-            setCards(cards.filter((card) => card.id !== id));
+            axios
+                .delete(`/cards/${id}`, { data: { userId: user.id } })
+                .then(({ data }) => {
+                    setCards(data);
+                });
         }
     };
 
