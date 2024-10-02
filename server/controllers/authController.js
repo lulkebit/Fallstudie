@@ -5,6 +5,7 @@
 const User = require('../models/user');
 const { hashPassword, comparePassword } = require('../helpers/auth');
 const jwt = require('jsonwebtoken');
+const logger = require('../utils/logger');
 
 /**
  * Funktion zur Registrierung eines neuen Benutzers
@@ -159,5 +160,94 @@ const getProfile = (req, res) => {
     }
 };
 
+const addCard = async (req, res) => {
+    const { userId, card } = req.body;
+    try {
+        logger.info('Hinzufügen einer neuen Karte für Benutzer:', userId);
+        const user = await User.findById(userId);
+        if (!user) {
+            logger.warn('Benutzer nicht gefunden:', userId);
+            return res.status(404).json({ error: 'Benutzer nicht gefunden' });
+        }
+        user.cards.push(card);
+        await user.save();
+        logger.info('Karte hinzugefügt:', card);
+        res.status(200).json(user.cards);
+    } catch (error) {
+        logger.error('Fehler beim Hinzufügen der Karte:', error);
+        res.status(500).json({ error: 'Fehler beim Hinzufügen der Karte' });
+    }
+};
+
+const getCards = async (req, res) => {
+    const { userId } = req.query;
+    try {
+        logger.info('Abrufen der Karten für Benutzer:', userId);
+        const user = await User.findById(userId);
+        if (!user) {
+            logger.warn('Benutzer nicht gefunden:', userId);
+            return res.status(404).json({ error: 'Benutzer nicht gefunden' });
+        }
+        logger.info('Karten gefunden:', user.cards);
+        res.status(200).json(user.cards);
+    } catch (error) {
+        logger.error('Fehler beim Abrufen der Karten:', error);
+        res.status(500).json({ error: 'Fehler beim Abrufen der Karten' });
+    }
+};
+
+const deleteCard = async (req, res) => {
+    const { userId } = req.body;
+    const { id } = req.params;
+    try {
+        logger.info('Löschen der Karte mit ID:', id, 'für Benutzer:', userId);
+        const user = await User.findById(userId);
+        if (!user) {
+            logger.warn('Benutzer nicht gefunden:', userId);
+            return res.status(404).json({ error: 'Benutzer nicht gefunden' });
+        }
+        user.cards = user.cards.filter((card) => card.id !== parseInt(id));
+        await user.save();
+        logger.info('Karte gelöscht:', id);
+        res.status(200).json(user.cards);
+    } catch (error) {
+        logger.error('Fehler beim Löschen der Karte:', error);
+        res.status(500).json({ error: 'Fehler beim Löschen der Karte' });
+    }
+};
+
+const updateCard = async (req, res) => {
+    const { userId, card } = req.body;
+    const { id } = req.params;
+    try {
+        logger.info(`Aktualisiere Karte mit ID ${id} für Benutzer ${userId}`);
+        const user = await User.findById(userId);
+        if (!user) {
+            logger.warn(`Benutzer mit ID ${userId} nicht gefunden`);
+            return res.status(404).json({ error: 'Benutzer nicht gefunden' });
+        }
+        const cardIndex = user.cards.findIndex((c) => c.id === parseInt(id));
+        if (cardIndex === -1) {
+            logger.warn(`Karte mit ID ${id} nicht gefunden`);
+            return res.status(404).json({ error: 'Karte nicht gefunden' });
+        }
+        user.cards[cardIndex] = card;
+        await user.save();
+        logger.info(`Karte mit ID ${id} erfolgreich aktualisiert`);
+        res.status(200).json(user.cards);
+    } catch (error) {
+        logger.error('Fehler beim Aktualisieren der Karte:', error);
+        res.status(500).json({ error: 'Fehler beim Aktualisieren der Karte' });
+    }
+};
+
 // Exportiere die Funktionen für die Benutzerregistrierung und -anmeldung
-module.exports = { registerUser, loginUser, getProfile };
+module.exports = {
+    registerUser,
+    loginUser,
+    getProfile,
+    addCard,
+    getCards,
+    deleteCard,
+    updateCard,
+};

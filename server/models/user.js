@@ -22,6 +22,13 @@ const userSchema = new Schema({
     firstname: String,
     // Speichert den Nachnamen des Benutzers
     lastname: String,
+    cards: [
+        {
+            id: Number,
+            title: String,
+            description: String,
+        },
+    ],
 });
 
 // Erstellt ein Mongoose-Modell namens 'User' basierend auf dem definierten Schema
