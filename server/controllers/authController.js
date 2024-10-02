@@ -1,96 +1,78 @@
-// Importiert benötigte Module und Hilfsfunktionen:
-// - User-Modell für Datenbankoperationen
-// - Funktionen zum Hashen und Vergleichen von Passwörtern
-// - JWT (JSON Web Token) zur Authentifizierung und Token-Erstellung
 const User = require('../models/user');
 const { hashPassword, comparePassword } = require('../helpers/auth');
 const jwt = require('jsonwebtoken');
 const logger = require('../utils/logger');
 
-/**
- * Funktion zur Registrierung eines neuen Benutzers
- * @param {Object} req - Anfrage-Objekt, das die Benutzerdaten enthält (z.B. username, email, password, firstname, lastname)
- * @param {Object} res - Antwort-Objekt zum Senden der Ergebnisse an den Client
- */
 const registerUser = async (req, res) => {
     try {
-        // Destrukturiere die relevanten Felder aus dem Anfragenkörper
+        logger.info('Attempting to register a new user');
         const { firstname, lastname, email, username, password } = req.body;
 
-        // Überprüfe, ob die E-Mail bereits existiert
         const emailExist = await User.findOne({ email });
         if (emailExist) {
+            logger.warn(`Registration failed: Email ${email} already in use`);
             return res.json({
                 error: 'Email wird bereits verwendet',
             });
         }
 
-        // Überprüfe, ob der Benutzername bereits existiert
         const usernameExist = await User.findOne({ username });
         if (usernameExist) {
+            logger.warn(
+                `Registration failed: Username ${username} already in use`
+            );
             return res.json({
                 error: 'Username wird bereits verwendet',
             });
         }
 
-        // Überprüfe, ob das Passwort gültig ist (mindestens 6 Zeichen)
         if (!password || password.length < 6) {
+            logger.warn('Registration failed: Password too short');
             return res.json({
                 error: 'Passwort muss mindestens 6 Zeichen lang sein',
             });
         }
 
-        // Überprüfe, ob sowohl Vorname als auch Nachname angegeben wurden
         if (!firstname || !lastname) {
+            logger.warn('Registration failed: Missing first or last name');
             return res.json({
                 error: 'Bitte geben Sie Ihren Vor- und Nachnamen ein',
             });
         }
 
-        // Hash das Passwort, bevor es in der Datenbank gespeichert wird
         const hashedPassword = await hashPassword(password);
 
-        // Erstelle einen neuen Benutzer mit den bereitgestellten und validierten Daten
         const user = await User.create({
             username,
             email,
-            password: hashedPassword, // Speichere das gehashte Passwort
+            password: hashedPassword,
             firstname,
             lastname,
         });
 
-        // Sende den erstellten Benutzer als JSON-Antwort zurück
+        logger.info(`User registered successfully: ${username}`);
         return res.json(user);
     } catch (error) {
-        // Fehlerbehandlung im Fall eines Fehlers
+        logger.error('Error during user registration:', error);
         res.status(500).json({ message: error.message });
     }
 };
 
-/**
- * Funktion zur Anmeldung eines Benutzers
- * @param {Object} req - Anfrage-Objekt, das die Benutzerdaten enthält (z.B. email, password)
- * @param {Object} res - Antwort-Objekt zum Senden der Ergebnisse an den Client
- */
 const loginUser = async (req, res) => {
-    // TODO login mit Username
     try {
-        // Destrukturiere E-Mail und Passwort aus dem Anfragenkörper
+        logger.info('Attempting user login');
         const { email, password } = req.body;
 
-        // Suche nach einem Benutzer mit der angegebenen E-Mail-Adresse
         const user = await User.findOne({ email });
         if (!user) {
-            // Wenn kein Benutzer gefunden wird, gib eine Fehlermeldung zurück
+            logger.warn(`Login failed: No user found with email ${email}`);
             return res.json({
                 error: 'Ungültige Anmeldedaten',
             });
         }
 
-        // Vergleiche das eingegebene Passwort mit dem in der Datenbank gehashten Passwort
         const match = await comparePassword(password, user.password);
         if (match) {
-            // Wenn das Passwort korrekt ist, erstelle ein JWT-Token
             jwt.sign(
                 {
                     username: user.username,
@@ -99,63 +81,61 @@ const loginUser = async (req, res) => {
                     firstname: user.firstname,
                     lastname: user.lastname,
                 },
-                'idsfu&ASUDIhiedUioGYUYFHIUGTygbhbhY3427HS', // Verwende das geheime JWT-Schlüssel
+                'idsfu&ASUDIhiedUioGYUYFHIUGTygbhbhY3427HS',
                 {},
                 (err, token) => {
                     if (err) {
-                        // Fehlerbehandlung, falls Token-Erstellung fehlschlägt
+                        logger.error('Token creation failed:', err);
                         return res
                             .status(500)
                             .json({ error: 'Token-Erstellung fehlgeschlagen' });
                     }
 
-                    // Wenn erfolgreich, sende das Token als Cookie und Benutzerinfo zurück
+                    logger.info(
+                        `User logged in successfully: ${user.username}`
+                    );
                     res.cookie('token', token, {
-                        httpOnly: true, // Das Cookie ist nur für den Server zugänglich
-                        secure: true, // Cookie wird nur über HTTPS gesendet
+                        httpOnly: true,
+                        secure: true,
                     }).json(user);
                 }
             );
         } else {
-            // Wenn das Passwort falsch ist, gib eine Fehlermeldung zurück
+            logger.warn(
+                `Login failed: Incorrect password for user ${user.username}`
+            );
             return res.json({
                 error: 'Ungültige Anmeldedaten',
             });
         }
     } catch (error) {
-        // Fehlerbehandlung im Fall eines Fehlers
+        logger.error('Error during user login:', error);
         res.status(500).json({ message: error.message });
     }
 };
 
-/**
- * Funktion um Profil eines Benutzers aus einem JWT (JSON Web Token) abzurufen.
- * @param {Object} req - Anfrage-Objekt, das die Benutzerdaten enthält (z.B. email, password)
- * @param {Object} res - Antwort-Objekt zum Senden der Ergebnisse an den Client
- */
 const getProfile = (req, res) => {
-    // Extrahiert das Token aus den Cookies der Anfrage
+    logger.info('Attempting to retrieve user profile');
     const { token } = req.cookies;
 
-    // Überprüft, ob ein Token vorhanden ist
     if (token) {
-        // Verifiziert das Token mit jwt.verify
         jwt.verify(
             token,
             'idsfu&ASUDIhiedUioGYUYFHIUGTygbhbhY3427HS',
             {},
             (err, user) => {
-                // Wenn ein Fehler bei der Verifizierung auftritt (z.B. ungültiges Token)
                 if (err) {
-                    // Sendet eine Antwort mit einem Fehlerobjekt zurück
+                    logger.warn('Invalid token provided for profile retrieval');
                     return res.json({ error: 'Invalid token' });
                 }
-                // Wenn das Token gültig ist, sendet es die Benutzerdaten als JSON zurück
+                logger.info(
+                    `Profile retrieved successfully for user: ${user.username}`
+                );
                 res.json(user);
             }
         );
     } else {
-        // Wenn kein Token gefunden wird, sendet es eine einfache Nachricht zurück
+        logger.warn('No token found for profile retrieval');
         res.json('No token found');
     }
 };
@@ -251,7 +231,6 @@ const updateGoal = async (req, res) => {
     }
 };
 
-// Exportiere die Funktionen für die Benutzerregistrierung und -anmeldung
 module.exports = {
     registerUser,
     loginUser,
