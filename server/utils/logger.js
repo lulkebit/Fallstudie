@@ -1,3 +1,10 @@
+const colors = {
+    INFO: '\x1b[32m', // Grün
+    WARN: '\x1b[33m', // Gelb
+    ERROR: '\x1b[31m', // Rot
+    RESET: '\x1b[0m', // Zurücksetzen
+};
+
 const log = (type, message, ...args) => {
     const timestamp = new Date().toLocaleString('de-DE', {
         year: 'numeric',
@@ -8,7 +15,11 @@ const log = (type, message, ...args) => {
         second: '2-digit',
         hour12: false,
     });
-    console.log(`[${timestamp}] [${type}] ${message}`, ...args);
+    const color = colors[type] || colors.RESET;
+    console.log(
+        `[${timestamp}] [${color}${type}${colors.RESET}] ${message}`,
+        ...args
+    );
 };
 
 const info = (message, ...args) => log('INFO', message, ...args);
