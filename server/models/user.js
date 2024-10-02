@@ -22,7 +22,7 @@ const userSchema = new Schema({
     firstname: String,
     // Speichert den Nachnamen des Benutzers
     lastname: String,
-    cards: [
+    goals: [
         {
             id: Number,
             title: String,

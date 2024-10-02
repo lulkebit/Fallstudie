@@ -3,9 +3,9 @@ import { UserContext } from '../context/userContext';
 import axios from 'axios';
 
 const Table = () => {
-    const [cards, setCards] = useState([]);
+    const [goals, setGoals] = useState([]);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [currentCard, setCurrentCard] = useState(null);
+    const [currentGoal, setCurrentGoal] = useState(null);
     const [newTitle, setNewTitle] = useState('');
     const [newDescription, setNewDescription] = useState('');
     const [draggedItem, setDraggedItem] = useState(null);
@@ -15,9 +15,9 @@ const Table = () => {
     useEffect(() => {
         if (user) {
             axios
-                .get('/cards', { params: { userId: user.id } })
+                .get('/goals', { params: { userId: user.id } })
                 .then(({ data }) => {
-                    setCards(data);
+                    setGoals(data);
                 })
                 .catch((error) => {
                     console.error('Fehler beim Abrufen der Karten:', error);
@@ -25,69 +25,69 @@ const Table = () => {
         }
     }, [user]);
 
-    const handleAddCard = () => {
-        setCurrentCard(null);
+    const handleAddGoal = () => {
+        setCurrentGoal(null);
         setNewTitle('');
         setNewDescription('');
         setIsDialogOpen(true);
     };
 
-    const handleEditCard = (card) => {
-        setCurrentCard(card);
-        setNewTitle(card.title);
-        setNewDescription(card.description);
+    const handleEditGoal = (goal) => {
+        setCurrentGoal(goal);
+        setNewTitle(goal.title);
+        setNewDescription(goal.description);
         setIsDialogOpen(true);
     };
 
-    const handleSaveCard = () => {
-        if (currentCard) {
+    const handleSaveGoal = () => {
+        if (currentGoal) {
             // Bearbeiten einer bestehenden Karte
-            const updatedCard = {
-                ...currentCard,
+            const updatedGoal = {
+                ...currentGoal,
                 title: newTitle,
                 description: newDescription,
             };
             axios
-                .put(`/cards/${currentCard.id}`, {
+                .put(`/goals/${currentGoal.id}`, {
                     userId: user.id,
-                    card: updatedCard,
+                    goal: updatedGoal,
                 })
                 .then(({ data }) => {
-                    setCards(data);
+                    setGoals(data);
                 });
         } else {
             // Hinzufügen einer neuen Karte
-            const newCard = {
-                id: cards.length + 1,
+            const newGoal = {
+                id: goals.length + 1,
                 title: newTitle,
                 description: newDescription,
             };
             axios
-                .post('/cards', { userId: user._id, card: newCard })
+                .post('/goals', { userId: user.id, goal: newGoal })
                 .then(({ data }) => {
-                    setCards(data);
+                    setGoals(data);
                 });
         }
         setIsDialogOpen(false);
-        setCurrentCard(null);
+        setCurrentGoal(null);
     };
 
-    const handleDeleteCard = (id) => {
+    const handleDeleteGoal = (id) => {
         if (
             window.confirm(
                 'Sind Sie sicher, dass Sie dieses Ziel löschen möchten?'
             )
         ) {
             axios
-                .delete(`/cards/${id}`, { data: { userId: user.id } })
+                .delete(`/goals/${id}`, { data: { userId: user.id } })
                 .then(({ data }) => {
-                    setCards(data);
+                    setGoals(data);
                 });
         }
     };
 
     const handleDragStart = (e, index) => {
-        setDraggedItem(cards[index]);
+        setDraggedItem(goals[index]);
         e.dataTransfer.effectAllowed = 'move';
         e.target.style.opacity = '0.5';
         e.dataTransfer.setData('text/html', e.target);
@@ -104,16 +104,16 @@ const Table = () => {
 
     const handleDrop = (e, index) => {
         e.preventDefault();
-        const draggedOverItem = cards[index];
+        const draggedOverItem = goals[index];
 
         if (draggedItem === draggedOverItem) {
             return;
         }
 
-        const items = cards.filter((card) => card !== draggedItem);
+        const items = goals.filter((goal) => goal !== draggedItem);
         items.splice(index, 0, draggedItem);
 
-        setCards(items);
+        setGoals(items);
         setDragOverItem(null);
     };
 
@@ -130,16 +130,16 @@ const Table = () => {
                     Meine Ziele
                 </h1>
                 <button
-                    onClick={handleAddCard}
+                    onClick={handleAddGoal}
                     className='bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105'
                 >
                     + Neues Ziel
                 </button>
             </div>
             <div className='space-y-4'>
-                {cards.map((card, index) => (
+                {goals.map((goal, index) => (
                     <div
-                        key={card.id}
+                        key={goal.id}
                         className={`bg-white rounded-lg shadow-md p-6 transition duration-300 ease-in-out hover:shadow-lg 
                                     ${
                                         dragOverItem === index
@@ -147,7 +147,7 @@ const Table = () => {
                                             : ''
                                     }
                                     ${
-                                        draggedItem === card
+                                        draggedItem === goal
                                             ? 'opacity-50'
                                             : 'opacity-100'
                                     }
@@ -176,19 +176,19 @@ const Table = () => {
                                 </svg>
                             </div>
                             <h2 className='text-xl font-semibold text-gray-800 flex-grow'>
-                                {card.title}
+                                {goal.title}
                             </h2>
                         </div>
-                        <p className='text-gray-600 mb-4'>{card.description}</p>
+                        <p className='text-gray-600 mb-4'>{goal.description}</p>
                         <div className='flex justify-end items-center space-x-2'>
                             <button
-                                onClick={() => handleEditCard(card)}
+                                onClick={() => handleEditGoal(goal)}
                                 className='bg-blue-100 text-blue-600 hover:bg-blue-200 font-medium py-1 px-3 rounded transition duration-300 ease-in-out'
                             >
                                 Bearbeiten
                             </button>
                             <button
-                                onClick={() => handleDeleteCard(card.id)}
+                                onClick={() => handleDeleteGoal(goal.id)}
                                 className='bg-red-100 text-red-600 hover:bg-red-200 font-medium py-1 px-3 rounded transition duration-300 ease-in-out'
                             >
                                 Löschen
@@ -202,7 +202,7 @@ const Table = () => {
                 <div className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center'>
                     <div className='bg-white p-8 rounded-lg shadow-xl w-full max-w-md'>
                         <h2 className='text-2xl font-bold mb-6 text-gray-800'>
-                            {currentCard
+                            {currentGoal
                                 ? 'Ziel bearbeiten'
                                 : 'Neues Ziel erstellen'}
                         </h2>
@@ -248,7 +248,7 @@ const Table = () => {
                                 Abbrechen
                             </button>
                             <button
-                                onClick={handleSaveCard}
+                                onClick={handleSaveGoal}
                                 className='bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out'
                             >
                                 Speichern

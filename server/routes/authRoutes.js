@@ -9,10 +9,10 @@ const {
     registerUser,
     loginUser,
     getProfile,
-    addCard,
-    getCards,
-    deleteCard,
-    updateCard,
+    addGoal,
+    getGoals,
+    deleteGoal,
+    updateGoal,
 } = require('../controllers/authController');
 
 // Konfiguriere CORS für diesen Router
@@ -34,10 +34,10 @@ router.post('/login', loginUser);
 // Definiert eine GET-Route für '/profile', die die Funktion getProfile aufruft, um das Profil des angemeldeten Benutzers abzurufen.
 router.get('/profile', getProfile);
 
-router.post('/cards', addCard);
-router.get('/cards', getCards);
-router.delete('/cards/:id', deleteCard);
-router.put('/cards/:id', updateCard);
+router.post('/goals', addGoal);
+router.get('/goals', getGoals);
+router.delete('/goals/:id', deleteGoal);
+router.put('/goals/:id', updateGoal);
 
 // Exportiere den Router, damit er in der Hauptanwendung verwendet werden kann
 module.exports = router;
