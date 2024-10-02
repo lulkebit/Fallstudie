@@ -169,9 +169,19 @@ const addGoal = async (req, res) => {
             logger.warn('Benutzer nicht gefunden:', userId);
             return res.status(404).json({ error: 'Benutzer nicht gefunden' });
         }
-        user.goals.push(goal);
+
+        const highestId = user.goals.reduce(
+            (maxId, goal) => Math.max(maxId, goal.id),
+            0
+        );
+        const newGoal = {
+            ...goal,
+            id: highestId + 1,
+        };
+
+        user.goals.push(newGoal);
         await user.save();
-        logger.info('Ziel hinzugefügt:', goal);
+        logger.info('Ziel hinzugefügt:', newGoal);
         res.status(200).json(user.goals);
     } catch (error) {
         logger.error('Fehler beim Hinzufügen des Ziel:', error);

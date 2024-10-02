@@ -58,7 +58,6 @@ const Table = () => {
         } else {
             // Hinzufügen einer neuen Karte
             const newGoal = {
-                id: goals.length + 1,
                 title: newTitle,
                 description: newDescription,
             };
