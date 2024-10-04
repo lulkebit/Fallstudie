@@ -26,13 +26,13 @@ const Navbar = () => {
                                         href='#'
                                         className='text-white hover:bg-blue-400 hover:text-white px-3 py-2 rounded-md text-sm font-medium'
                                     >
-                                        Tab 2
+                                        Freunde
                                     </a>
                                     <a
                                         href='#'
                                         className='text-white hover:bg-blue-400 hover:text-white px-3 py-2 rounded-md text-sm font-medium'
                                     >
-                                        Tab 3
+                                        Benachrichtigungen
                                     </a>
                                     <a
                                         href='#'
