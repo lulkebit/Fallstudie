@@ -14,6 +14,7 @@ import Dashboard from './pages/dashboard';
 import Login from './pages/auth/login';
 import Register from './pages/auth/register';
 import Profile from './pages/profile';
+import { ToastProvider } from './context/toastContext';
 
 const routes = [
     { path: '/home', element: Landingpage },
@@ -30,16 +31,18 @@ axios.defaults.withCredentials = true;
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <UserContextProvider>
-        <Router>
-            <Routes>
-                {routes.map((route, index) => (
-                    <Route
-                        key={index}
-                        path={route.path}
-                        element={<route.element to={route.to} />}
-                    />
-                ))}
-            </Routes>
-        </Router>
+        <ToastProvider>
+            <Router>
+                <Routes>
+                    {routes.map((route, index) => (
+                        <Route
+                            key={index}
+                            path={route.path}
+                            element={<route.element to={route.to} />}
+                        />
+                    ))}
+                </Routes>
+            </Router>
+        </ToastProvider>
     </UserContextProvider>
 );
