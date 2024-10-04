@@ -48,6 +48,7 @@ const registerUser = async (req, res) => {
             password: hashedPassword,
             firstname,
             lastname,
+            avatar: null,
         });
 
         logger.info(`User registered successfully: ${username}`);
@@ -114,7 +115,7 @@ const loginUser = async (req, res) => {
     }
 };
 
-const getProfile = (req, res) => {
+const getProfile = async (req, res) => {
     logger.info('Attempting to retrieve user profile');
     const { token } = req.cookies;
 
@@ -123,15 +124,33 @@ const getProfile = (req, res) => {
             token,
             'idsfu&ASUDIhiedUioGYUYFHIUGTygbhbhY3427HS',
             {},
-            (err, user) => {
+            async (err, decoded) => {
                 if (err) {
                     logger.warn('Invalid token provided for profile retrieval');
                     return res.json({ error: 'Invalid token' });
                 }
-                logger.info(
-                    `Profile retrieved successfully for user: ${user.username}`
-                );
-                res.json(user);
+
+                try {
+                    const user = await User.findById(decoded.id).select(
+                        '-password -goals'
+                    ); // Exclude password
+                    if (!user) {
+                        logger.warn('User not found for profile retrieval');
+                        return res
+                            .status(404)
+                            .json({ error: 'User not found' });
+                    }
+
+                    logger.info(
+                        `Profile retrieved successfully for user: ${user.username}`
+                    );
+                    res.json(user);
+                } catch (error) {
+                    logger.error('Error retrieving user profile:', error);
+                    res.status(500).json({
+                        error: 'Error retrieving user profile',
+                    });
+                }
             }
         );
     } else {
@@ -141,9 +160,12 @@ const getProfile = (req, res) => {
 };
 
 const updateProfile = async (req, res) => {
-    const { userId, username, email, firstname, lastname } = req.body;
-
     try {
+        const { userId, username, email, firstname, lastname } = req.body;
+        const avatar = req.file
+            ? req.file.buffer.toString('base64')
+            : undefined;
+
         logger.info(`Attempting to update profile for user ID: ${userId}`);
 
         const user = await User.findById(userId);
@@ -155,21 +177,44 @@ const updateProfile = async (req, res) => {
         }
 
         // Log the changes
-        logger.info(`Updating profile for user ${user.username}:`);
-        if (user.username !== username)
-            logger.info(`Username: ${user.username} -> ${username}`);
-        if (user.email !== email)
-            logger.info(`Email: ${user.email} -> ${email}`);
-        if (user.firstname !== firstname)
-            logger.info(`Firstname: ${user.firstname} -> ${firstname}`);
-        if (user.lastname !== lastname)
-            logger.info(`Lastname: ${user.lastname} -> ${lastname}`);
+        if (user.username !== username) {
+            logger.info(
+                `User ID: ${userId} - Username changed from '${user.username}' to '${username}'`
+            );
+        }
+        if (user.email !== email) {
+            logger.info(
+                `User ID: ${userId} - Email changed from '${user.email}' to '${email}'`
+            );
+        }
+        if (user.firstname !== firstname) {
+            logger.info(
+                `User ID: ${userId} - Firstname changed from '${user.firstname}' to '${firstname}'`
+            );
+        }
+        if (user.lastname !== lastname) {
+            logger.info(
+                `User ID: ${userId} - Lastname changed from '${user.lastname}' to '${lastname}'`
+            );
+        }
+        if (avatar !== undefined) {
+            logger.info(
+                `User ID: ${userId} - Avatar changed from '...${user.avatar.slice(
+                    -10
+                )}' to '...${avatar.slice(-10)}'`
+            );
+        }
 
         // Update the user profile
         user.username = username;
         user.email = email;
         user.firstname = firstname;
         user.lastname = lastname;
+
+        // Ensure avatar is not undefined or null before updating
+        if (avatar !== undefined && avatar !== null) {
+            user.avatar = avatar;
+        }
 
         await user.save();
 

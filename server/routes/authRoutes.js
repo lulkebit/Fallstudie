@@ -1,10 +1,9 @@
-// Importiert benötigte Module:
-// - express für das Erstellen von Routern
-// - cors für Cross-Origin Resource Sharing
-// - registerUser und loginUser Controller-Funktionen zur Verarbeitung von Anfragen
 const express = require('express');
 const router = express.Router();
 const cors = require('cors');
+const multer = require('multer');
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 const {
     registerUser,
     loginUser,
@@ -39,7 +38,7 @@ router.post('/goals', addGoal);
 router.get('/goals', getGoals);
 router.delete('/goals/:id', deleteGoal);
 router.put('/goals/:id', updateGoal);
-router.put('/profile', updateProfile);
+router.put('/profile', upload.single('avatar'), updateProfile);
 
 // Exportiere den Router, damit er in der Hauptanwendung verwendet werden kann
 module.exports = router;

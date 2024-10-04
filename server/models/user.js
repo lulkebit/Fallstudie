@@ -29,6 +29,9 @@ const userSchema = new Schema({
             description: String,
         },
     ],
+    avatar: {
+        type: String, // Store the URL or base64 string of the avatar
+    },
 });
 
 // Erstellt ein Mongoose-Modell namens 'User' basierend auf dem definierten Schema

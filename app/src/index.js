@@ -13,12 +13,14 @@ import Landingpage from './pages/landingpage';
 import Dashboard from './pages/dashboard';
 import Login from './pages/auth/login';
 import Register from './pages/auth/register';
+import Profile from './pages/profile';
 
 const routes = [
     { path: '/home', element: Landingpage },
     { path: '/dashboard', element: Dashboard },
     { path: '/login', element: Login },
     { path: '/register', element: Register },
+    { path: '/profile', element: Profile },
     { path: '/', element: Navigate, to: '/home' },
 ];
 
