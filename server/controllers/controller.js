@@ -116,8 +116,7 @@ const loginUser = async (req, res) => {
 };
 
 const changePassword = async (req, res) => {
-    const { oldPassword, newPassword } = req.body;
-    const userId = req.user._id;
+    const { userId, oldPassword, newPassword } = req.body;
 
     try {
         logger.info(`User ${userId} is attempting to change password`);
