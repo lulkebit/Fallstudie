@@ -13,6 +13,7 @@ const {
     getGoals,
     deleteGoal,
     updateGoal,
+    updateProfile,
 } = require('../controllers/authController');
 
 // Konfiguriere CORS für diesen Router
@@ -38,6 +39,7 @@ router.post('/goals', addGoal);
 router.get('/goals', getGoals);
 router.delete('/goals/:id', deleteGoal);
 router.put('/goals/:id', updateGoal);
+router.put('/profile', updateProfile);
 
 // Exportiere den Router, damit er in der Hauptanwendung verwendet werden kann
 module.exports = router;

@@ -140,6 +140,51 @@ const getProfile = (req, res) => {
     }
 };
 
+const updateProfile = async (req, res) => {
+    const { userId, username, email, firstname, lastname } = req.body;
+
+    try {
+        logger.info(`Attempting to update profile for user ID: ${userId}`);
+
+        const user = await User.findById(userId);
+        if (!user) {
+            logger.warn(
+                `Profile update failed: User not found with ID ${userId}`
+            );
+            return res.status(404).json({ error: 'Benutzer nicht gefunden' });
+        }
+
+        // Log the changes
+        logger.info(`Updating profile for user ${user.username}:`);
+        if (user.username !== username)
+            logger.info(`Username: ${user.username} -> ${username}`);
+        if (user.email !== email)
+            logger.info(`Email: ${user.email} -> ${email}`);
+        if (user.firstname !== firstname)
+            logger.info(`Firstname: ${user.firstname} -> ${firstname}`);
+        if (user.lastname !== lastname)
+            logger.info(`Lastname: ${user.lastname} -> ${lastname}`);
+
+        // Update the user profile
+        user.username = username;
+        user.email = email;
+        user.firstname = firstname;
+        user.lastname = lastname;
+
+        await user.save();
+
+        // Update the cookie with the new user data
+        res.cookie('user', JSON.stringify(user), { httpOnly: true });
+
+        res.json(user);
+    } catch (error) {
+        logger.error('Fehler beim Aktualisieren des Profils:', error);
+        res.status(500).json({
+            error: 'Fehler beim Aktualisieren des Profils',
+        });
+    }
+};
+
 const addGoal = async (req, res) => {
     const { userId, goal } = req.body;
     try {
@@ -239,4 +284,5 @@ module.exports = {
     getGoals,
     deleteGoal,
     updateGoal,
+    updateProfile,
 };
