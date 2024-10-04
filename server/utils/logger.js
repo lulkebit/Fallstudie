@@ -3,10 +3,10 @@ const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 
 const colors = {
-    INFO: '\x1b[32m', // Grün
-    WARN: '\x1b[33m', // Gelb
-    ERROR: '\x1b[31m', // Rot
-    RESET: '\x1b[0m', // Zurücksetzen
+    INFO: '\x1b[32m',
+    WARN: '\x1b[33m',
+    ERROR: '\x1b[31m',
+    RESET: '\x1b[0m',
 };
 
 const logDirectory = path.join(__dirname, 'logs');
@@ -36,7 +36,7 @@ const log = (type, message, ...args) => {
         hour12: false,
     })}.${now.getMilliseconds().toString().padStart(3, '0')}`;
     const color = colors[type] || colors.RESET;
-    const logMessage = `[${timestamp}] [${type}] ${message}`;
+    const logMessage = `[${timestamp}] [${type}] ${message} ${args.join(' ')}`;
     console.log(
         `[${timestamp}] [${color}${type}${colors.RESET}] ${message}`,
         ...args
