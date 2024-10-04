@@ -15,6 +15,7 @@ import Login from './pages/auth/login';
 import Register from './pages/auth/register';
 import Profile from './pages/profile';
 import { ToastProvider } from './context/toastContext';
+import { DialogProvider } from './context/dialogContext';
 
 const routes = [
     { path: '/home', element: Landingpage },
@@ -32,17 +33,19 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <UserContextProvider>
         <ToastProvider>
-            <Router>
-                <Routes>
-                    {routes.map((route, index) => (
-                        <Route
-                            key={index}
-                            path={route.path}
-                            element={<route.element to={route.to} />}
-                        />
-                    ))}
-                </Routes>
-            </Router>
+            <DialogProvider>
+                <Router>
+                    <Routes>
+                        {routes.map((route, index) => (
+                            <Route
+                                key={index}
+                                path={route.path}
+                                element={<route.element to={route.to} />}
+                            />
+                        ))}
+                    </Routes>
+                </Router>
+            </DialogProvider>
         </ToastProvider>
     </UserContextProvider>
 );
