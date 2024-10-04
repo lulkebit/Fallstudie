@@ -3,6 +3,7 @@ const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 
 const colors = {
+    DEBUG: '\x1b[36m',
     INFO: '\x1b[32m',
     WARN: '\x1b[33m',
     ERROR: '\x1b[31m',
@@ -44,6 +45,7 @@ const log = (type, message, ...args) => {
     logToFile(logMessage);
 };
 
+const debug = (message, ...args) => log('DEBUG', message, ...args);
 const info = (message, ...args) => log('INFO', message, ...args);
 const warn = (message, ...args) => log('WARN', message, ...args);
 const error = (message, err, ...args) => {
@@ -60,4 +62,5 @@ module.exports = {
     info,
     warn,
     error,
+    debug,
 };
