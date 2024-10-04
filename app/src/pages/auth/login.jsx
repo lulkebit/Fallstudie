@@ -2,6 +2,7 @@ import { useState, useContext } from 'react';
 import { UserContext } from '../../context/userContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useToast } from '../../context/toastContext';
 
 const Login = () => {
     const [data, setData] = useState({
@@ -10,6 +11,7 @@ const Login = () => {
     });
     const { setUser } = useContext(UserContext);
     const navigate = useNavigate();
+    const { addToast } = useToast();
 
     const loginUser = async (event) => {
         event.preventDefault();
@@ -21,17 +23,17 @@ const Login = () => {
             });
 
             if (data.error) {
-                return alert(data.error);
+                addToast(data.error, 'error');
             } else {
                 setUser(data.user);
                 setData({});
                 navigate('/dashboard');
+                addToast('Login erfolgreich!', 'success');
             }
         } catch (error) {
-            console.error('Login failed:', error);
+            addToast('Login failed. Please try again.', 'error');
         }
     };
-
     return (
         <div className='flex justify-center items-center h-screen bg-gray-100'>
             <div className='w-full max-w-md p-8 space-y-6 bg-gradient-to-r from-blue-300 to-red-300 bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-lg shadow-md'>
