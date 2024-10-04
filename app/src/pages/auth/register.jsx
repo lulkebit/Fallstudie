@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useToast } from '../../context/toastContext';
 
 const Register = () => {
-    const navigate = useNavigate();
     const [data, setData] = useState({
         firstname: '',
         lastname: '',
@@ -11,6 +11,8 @@ const Register = () => {
         username: '',
         password: '',
     });
+    const navigate = useNavigate();
+    const { addToast } = useToast();
 
     const registerUser = async (event) => {
         event.preventDefault();
@@ -25,13 +27,14 @@ const Register = () => {
             });
 
             if (data.error) {
-                return alert(data.error);
+                addToast(data.error, 'error');
             } else {
                 setData({});
                 navigate('/login');
+                addToast('Registration successful!', 'success');
             }
         } catch (error) {
-            console.error('Registration failed:', error);
+            addToast('Registration failed. Please try again.', 'error');
         }
     };
 
