@@ -1,6 +1,8 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { UserContext } from '../context/userContext';
 import axios from 'axios';
+import { useDialog } from '../context/dialogContext';
+import ConfirmationDialog from './dialogs/confirmationDialog';
 
 const Table = () => {
     const [goals, setGoals] = useState([]);
@@ -11,6 +13,7 @@ const Table = () => {
     const [draggedItem, setDraggedItem] = useState(null);
     const [dragOverItem, setDragOverItem] = useState(null);
     const { user } = useContext(UserContext);
+    const { addDialog, removeDialog } = useDialog();
 
     useEffect(() => {
         if (user) {
@@ -71,17 +74,23 @@ const Table = () => {
     };
 
     const handleDeleteGoal = (id) => {
-        if (
-            window.confirm(
-                'Sind Sie sicher, dass Sie dieses Ziel löschen möchten?'
-            )
-        ) {
-            axios
-                .delete(`/goals/${id}`, { data: { userId: user._id } })
-                .then(({ data }) => {
-                    setGoals(data);
-                });
-        }
+        addDialog({
+            component: ConfirmationDialog,
+            props: {
+                message: 'Möchten Sie diesen Eintrag wirklich löschen?',
+                onConfirm: () => {
+                    axios
+                        .delete(`/goals/${id}`, { data: { userId: user._id } })
+                        .then(({ data }) => {
+                            setGoals(data);
+                            removeDialog(id);
+                        });
+                },
+                onClose: () => {
+                    removeDialog(id);
+                },
+            },
+        });
     };
 
     const handleDragStart = (e, index) => {
