@@ -115,6 +115,35 @@ const loginUser = async (req, res) => {
     }
 };
 
+const changePassword = async (req, res) => {
+    const { oldPassword, newPassword } = req.body;
+    const userId = req.user._id;
+
+    try {
+        logger.info(`User ${userId} is attempting to change password`);
+        const user = await User.findById(userId);
+        if (!user) {
+            logger.warn(`User ${userId} not found`);
+            return res.status(404).json({ error: 'Benutzer nicht gefunden' });
+        }
+
+        const isMatch = await comparePassword(oldPassword, user.password);
+        if (!isMatch) {
+            logger.warn('Old password is incorrect');
+            return res.status(400).json({ error: 'Altes Passwort ist falsch' });
+        }
+
+        user.password = await hashPassword(newPassword);
+        await user.save();
+
+        logger.info('Password successfully changed');
+        res.status(200).json({ message: 'Passwort erfolgreich geändert' });
+    } catch (error) {
+        logger.error('Fehler beim Ändern des Passworts:', error);
+        res.status(500).json({ error: 'Fehler beim Ändern des Passworts' });
+    }
+};
+
 const getProfile = async (req, res) => {
     logger.info('Attempting to retrieve user profile');
     const { token } = req.cookies;
@@ -133,7 +162,7 @@ const getProfile = async (req, res) => {
                 try {
                     const user = await User.findById(decoded.id).select(
                         '-password -goals'
-                    ); // Exclude password
+                    );
                     if (!user) {
                         logger.warn('User not found for profile retrieval');
                         return res
@@ -176,7 +205,6 @@ const updateProfile = async (req, res) => {
             return res.status(404).json({ error: 'Benutzer nicht gefunden' });
         }
 
-        // Log the changes
         if (user.username !== username) {
             logger.info(
                 `User ID: ${userId} - Username changed from '${user.username}' to '${username}'`
@@ -205,20 +233,17 @@ const updateProfile = async (req, res) => {
             );
         }
 
-        // Update the user profile
         user.username = username;
         user.email = email;
         user.firstname = firstname;
         user.lastname = lastname;
 
-        // Ensure avatar is not undefined or null before updating
         if (avatar !== undefined && avatar !== null) {
             user.avatar = avatar;
         }
 
         await user.save();
 
-        // Update the cookie with the new user data
         res.cookie('user', JSON.stringify(user), { httpOnly: true });
 
         res.json(user);
@@ -254,8 +279,8 @@ const addGoal = async (req, res) => {
         logger.info('Ziel hinzugefügt:', newGoal);
         res.status(200).json(user.goals);
     } catch (error) {
-        logger.error('Fehler beim Hinzufügen des Ziel:', error);
-        res.status(500).json({ error: 'Fehler beim Hinzufügen des Ziel' });
+        logger.error('Fehler beim Hinzufügen des Ziels:', error);
+        res.status(500).json({ error: 'Fehler beim Hinzufügen des Ziels' });
     }
 };
 
@@ -316,7 +341,7 @@ const updateGoal = async (req, res) => {
         logger.info(`Ziel mit ID ${id} erfolgreich aktualisiert`);
         res.status(200).json(user.goals);
     } catch (error) {
-        logger.error('Fehler beim Aktualisieren des Ziel:', error);
+        logger.error('Fehler beim Aktualisieren des Ziels:', error);
         res.status(500).json({ error: 'Fehler beim Aktualisieren des Ziels' });
     }
 };
@@ -330,4 +355,5 @@ module.exports = {
     deleteGoal,
     updateGoal,
     updateProfile,
+    changePassword,
 };

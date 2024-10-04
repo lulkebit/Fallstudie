@@ -27,7 +27,7 @@ app.use(express.urlencoded({ extended: false }));
 
 // Verwendet die Authentifizierungsrouten aus der Datei './routes/authRoutes'
 // Alle Anfragen, die an die Wurzel ('/') gesendet werden, werden an den Router weitergeleitet
-app.use('/', require('./routes/authRoutes'));
+app.use('/', require('./routes/routes'));
 
 // Definiert den Port, auf dem der Server läuft
 const port = 8000;

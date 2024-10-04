@@ -13,7 +13,8 @@ const {
     deleteGoal,
     updateGoal,
     updateProfile,
-} = require('../controllers/authController');
+    changePassword,
+} = require('../controllers/controller');
 
 // Konfiguriere CORS für diesen Router
 // - credentials: true ermöglicht das Senden von Cookies in Cross-Origin-Anfragen
@@ -39,6 +40,7 @@ router.get('/goals', getGoals);
 router.delete('/goals/:id', deleteGoal);
 router.put('/goals/:id', updateGoal);
 router.put('/profile', upload.single('avatar'), updateProfile);
+router.put('/change-password', changePassword);
 
 // Exportiere den Router, damit er in der Hauptanwendung verwendet werden kann
 module.exports = router;
