@@ -3,6 +3,7 @@ import { UserContext } from '../context/userContext';
 import axios from 'axios';
 import { useDialog } from '../context/dialogContext';
 import ConfirmationDialog from './dialogs/confirmationDialog';
+import { useToast } from '../context/toastContext';
 
 const Table = () => {
     const [goals, setGoals] = useState([]);
@@ -14,6 +15,7 @@ const Table = () => {
     const [dragOverItem, setDragOverItem] = useState(null);
     const { user } = useContext(UserContext);
     const { addDialog, removeDialog } = useDialog();
+    const { addToast } = useToast();
 
     useEffect(() => {
         if (user) {
@@ -44,7 +46,6 @@ const Table = () => {
 
     const handleSaveGoal = () => {
         if (currentGoal) {
-            // Bearbeiten einer bestehenden Karte
             const updatedGoal = {
                 ...currentGoal,
                 title: newTitle,
@@ -57,6 +58,14 @@ const Table = () => {
                 })
                 .then(({ data }) => {
                     setGoals(data);
+                    addToast('Ziel aktualisiert!', 'success');
+                })
+                .catch((error) => {
+                    addToast(
+                        'Fehler beim Aktualisieren des Ziels. Bitte versuchen Sie es erneut.' +
+                            error,
+                        'error'
+                    );
                 });
         } else {
             const newGoal = {
@@ -67,6 +76,14 @@ const Table = () => {
                 .post('/goals', { userId: user._id, goal: newGoal })
                 .then(({ data }) => {
                     setGoals(data);
+                    addToast('Ziel erstellt!', 'success');
+                })
+                .catch((error) => {
+                    addToast(
+                        'Fehler beim Erstellen des Ziels. Bitte versuchen Sie es erneut.' +
+                            error,
+                        'error'
+                    );
                 });
         }
         setIsDialogOpen(false);
@@ -84,6 +101,13 @@ const Table = () => {
                         .then(({ data }) => {
                             setGoals(data);
                             removeDialog(id);
+                            addToast('Ziel gelöscht!', 'success');
+                        })
+                        .catch((error) => {
+                            addToast(
+                                'Fehler beim Löschen des Ziels. Bitte versuchen Sie es erneut.',
+                                'error'
+                            );
                         });
                 },
                 onClose: () => {
