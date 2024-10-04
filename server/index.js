@@ -7,15 +7,17 @@ const cookieParser = require('cookie-parser');
 // Erstellt eine Express-Anwendung
 const app = express();
 
+const logger = require('./utils/logger');
+
 mongoose
     .connect(
         'mongodb+srv://admin:TrackMyGoalAdmin@cluster0.s0t2g.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0' // Sicherheitsrisiko: Verwende eine Umgebungsvariable für die Verbindung
     )
     .then(() => {
-        console.log('Database connected');
+        logger.info('Database connected');
     })
     .catch((err) => {
-        console.log('Error connecting to database', err);
+        logger.error('Error connecting to database:', err);
     });
 
 // Middleware zum Parsen von JSON-Daten im Anfragekörper
@@ -32,5 +34,5 @@ const port = 8000;
 
 // Startet den Server und gibt eine Nachricht in der Konsole aus, dass der Server läuft
 app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+    logger.info(`Server is running on port ${port}`);
 });
