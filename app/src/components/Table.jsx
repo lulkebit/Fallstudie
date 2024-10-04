@@ -15,7 +15,7 @@ const Table = () => {
     useEffect(() => {
         if (user) {
             axios
-                .get('/goals', { params: { userId: user.id } })
+                .get('/goals', { params: { userId: user._id } })
                 .then(({ data }) => {
                     setGoals(data);
                 })
@@ -49,20 +49,19 @@ const Table = () => {
             };
             axios
                 .put(`/goals/${currentGoal.id}`, {
-                    userId: user.id,
+                    userId: user._id,
                     goal: updatedGoal,
                 })
                 .then(({ data }) => {
                     setGoals(data);
                 });
         } else {
-            // Hinzufügen einer neuen Karte
             const newGoal = {
                 title: newTitle,
                 description: newDescription,
             };
             axios
-                .post('/goals', { userId: user.id, goal: newGoal })
+                .post('/goals', { userId: user._id, goal: newGoal })
                 .then(({ data }) => {
                     setGoals(data);
                 });
@@ -78,7 +77,7 @@ const Table = () => {
             )
         ) {
             axios
-                .delete(`/goals/${id}`, { data: { userId: user.id } })
+                .delete(`/goals/${id}`, { data: { userId: user._id } })
                 .then(({ data }) => {
                     setGoals(data);
                 });
