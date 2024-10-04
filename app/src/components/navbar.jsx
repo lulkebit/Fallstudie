@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const navigate = useNavigate();
 
     return (
         <div className='p-4'>
@@ -16,12 +18,12 @@ const Navbar = () => {
                             </div>
                             <div className='hidden md:block ml-4 flex-grow'>
                                 <div className='flex items-baseline space-x-4'>
-                                    <a
-                                        href='#'
+                                    <button
+                                        onClick={() => navigate('/dashboard')}
                                         className='text-white hover:bg-blue-400 hover:text-white px-3 py-2 rounded-md text-sm font-medium'
                                     >
                                         Dashboard
-                                    </a>
+                                    </button>
                                     <a
                                         href='#'
                                         className='text-white hover:bg-blue-400 hover:text-white px-3 py-2 rounded-md text-sm font-medium'
@@ -34,12 +36,12 @@ const Navbar = () => {
                                     >
                                         Benachrichtigungen
                                     </a>
-                                    <a
-                                        href='#'
+                                    <button
+                                        onClick={() => navigate('/profile')}
                                         className='text-white hover:bg-blue-400 hover:text-white px-3 py-2 rounded-md text-sm font-medium'
                                     >
                                         Profil
-                                    </a>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -93,30 +95,30 @@ const Navbar = () => {
                 {isOpen && (
                     <div className='md:hidden' id='mobile-menu'>
                         <div className='px-2 pt-2 pb-3 space-y-1 sm:px-3'>
-                            <a
-                                href='#'
+                            <button
+                                onClick={() => navigate('/dashboard')}
                                 className='text-white hover:bg-blue-400 block px-3 py-2 rounded-md text-base font-medium'
                             >
                                 Dashboard
+                            </button>
+                            <a
+                                href='#'
+                                className='text-white hover:bg-blue-400 block px-3 py-2 rounded-md text-base font-medium'
+                            >
+                                Freunde
                             </a>
                             <a
                                 href='#'
                                 className='text-white hover:bg-blue-400 block px-3 py-2 rounded-md text-base font-medium'
                             >
-                                Goals
+                                Benachrichtigungen
                             </a>
-                            <a
-                                href='#'
+                            <button
+                                onClick={() => navigate('/profile')}
                                 className='text-white hover:bg-blue-400 block px-3 py-2 rounded-md text-base font-medium'
                             >
-                                Progress
-                            </a>
-                            <a
-                                href='#'
-                                className='text-white hover:bg-blue-400 block px-3 py-2 rounded-md text-base font-medium'
-                            >
-                                Settings
-                            </a>
+                                Profil
+                            </button>
                         </div>
                     </div>
                 )}
