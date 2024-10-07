@@ -2,6 +2,7 @@ const User = require('../models/user');
 const { hashPassword, comparePassword } = require('../helpers/auth');
 const jwt = require('jsonwebtoken');
 const logger = require('../utils/logger');
+const avatars = require('../ressources/avatars');
 
 const registerUser = async (req, res) => {
     try {
@@ -42,13 +43,16 @@ const registerUser = async (req, res) => {
 
         const hashedPassword = await hashPassword(password);
 
+        const randomAvatar =
+            avatars[Math.floor(Math.random() * avatars.length)];
+
         const user = await User.create({
             username,
             email,
             password: hashedPassword,
             firstname,
             lastname,
-            avatar: null,
+            avatar: randomAvatar,
         });
 
         logger.info(`User registered successfully: ${username}`);
