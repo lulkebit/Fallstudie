@@ -1,4 +1,5 @@
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 
@@ -57,6 +58,39 @@ const error = (message, err, ...args) => {
     }
     return errorId;
 };
+
+const logServerVitals = () => {
+    const memoryUsage = process.memoryUsage();
+    const loadAverage = os.loadavg();
+    const uptime = process.uptime();
+
+    const formattedMemoryUsage = `
+        RSS: ${(memoryUsage.rss / 1024 / 1024).toFixed(2)} MB
+        Heap Total: ${(memoryUsage.heapTotal / 1024 / 1024).toFixed(2)} MB
+        Heap Used: ${(memoryUsage.heapUsed / 1024 / 1024).toFixed(2)} MB
+        External: ${(memoryUsage.external / 1024 / 1024).toFixed(2)} MB
+    `;
+
+    const formattedLoadAverage = `
+        1-min: ${loadAverage[0].toFixed(2)}
+        5-min: ${loadAverage[1].toFixed(2)}
+        15-min: ${loadAverage[2].toFixed(2)}
+    `;
+
+    const formattedUptime = `${(uptime / 60).toFixed(2)} minutes`;
+
+    const vitalsMessage = `
+        Server Vitals:
+        Memory Usage: ${formattedMemoryUsage}
+        Load Average: ${formattedLoadAverage}
+        Uptime: ${formattedUptime}
+    `;
+
+    debug(vitalsMessage.trim());
+};
+
+// Log server vitals every 5 minutes (300000 milliseconds)
+setInterval(logServerVitals, 300000);
 
 module.exports = {
     info,
