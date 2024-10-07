@@ -4,22 +4,30 @@ const cors = require('cors');
 const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
+
 const {
     registerUser,
     loginUser,
     logoutUser,
     getProfile,
+    updateProfile,
+    changePassword,
+} = require('../controllers/authController');
+
+const {
     addGoal,
     getGoals,
     deleteGoal,
     updateGoal,
-    updateProfile,
-    changePassword,
-} = require('../controllers/controller');
+} = require('../controllers/goalController');
 
-// Konfiguriere CORS für diesen Router
-// - credentials: true ermöglicht das Senden von Cookies in Cross-Origin-Anfragen
-// - origin: ['http://localhost:3000'] erlaubt nur Anfragen von dieser spezifischen Domain (in diesem Fall, einem Frontend, das auf localhost:3000 läuft)
+const {
+    sendFriendRequest,
+    acceptFriendRequest,
+    declineFriendRequest,
+    getFriends,
+} = require('../controllers/friendController');
+
 router.use(
     cors({
         credentials: true,
@@ -27,22 +35,24 @@ router.use(
     })
 );
 
-// Definiere eine POST-Route für die Benutzerregistrierung, die die Funktion registerUser aufruft
+// Authentifizierungsrouten
 router.post('/register', registerUser);
-
-// Definiere eine POST-Route für die Benutzeranmeldung, die die Funktion loginUser aufruft
 router.post('/login', loginUser);
 router.post('/logout', logoutUser);
-
-// Definiert eine GET-Route für '/profile', die die Funktion getProfile aufruft, um das Profil des angemeldeten Benutzers abzurufen.
 router.get('/profile', getProfile);
+router.put('/profile', upload.single('avatar'), updateProfile);
+router.put('/change-password', changePassword);
 
+// Ziel-Management-Routen
 router.post('/goals', addGoal);
 router.get('/goals', getGoals);
 router.delete('/goals/:id', deleteGoal);
 router.put('/goals/:id', updateGoal);
-router.put('/profile', upload.single('avatar'), updateProfile);
-router.put('/change-password', changePassword);
 
-// Exportiere den Router, damit er in der Hauptanwendung verwendet werden kann
+// Freundesystem-Routen
+router.post('/friends/send', sendFriendRequest);
+router.put('/friends/accept/:requestId', acceptFriendRequest);
+router.put('/friends/decline/:requestId', declineFriendRequest);
+router.get('/friends/:userId', getFriends);
+
 module.exports = router;
