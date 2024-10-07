@@ -8,14 +8,17 @@ import {
 } from 'react-router-dom';
 import axios from 'axios';
 import './index.css';
+
 import { UserContextProvider } from './context/userContext';
+import { ToastProvider } from './context/toastContext';
+import { DialogProvider } from './context/dialogContext';
+
 import Landingpage from './pages/landingpage';
 import Dashboard from './pages/dashboard';
 import Login from './pages/auth/login';
 import Register from './pages/auth/register';
 import Profile from './pages/profile';
-import { ToastProvider } from './context/toastContext';
-import { DialogProvider } from './context/dialogContext';
+import Friends from './pages/friends';
 
 const routes = [
     { path: '/home', element: Landingpage },
@@ -23,6 +26,7 @@ const routes = [
     { path: '/login', element: Login },
     { path: '/register', element: Register },
     { path: '/profile', element: Profile },
+    { path: '/friends', element: Friends },
     { path: '/', element: Navigate, to: '/home' },
 ];
 

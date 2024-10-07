@@ -26,6 +26,8 @@ const {
     acceptFriendRequest,
     declineFriendRequest,
     getFriends,
+    getFriendRequests,
+    deleteFriend,
 } = require('../controllers/friendController');
 
 router.use(
@@ -54,5 +56,7 @@ router.post('/friends/send', sendFriendRequest);
 router.put('/friends/accept/:requestId', acceptFriendRequest);
 router.put('/friends/decline/:requestId', declineFriendRequest);
 router.get('/friends/:userId', getFriends);
+router.get('/friends/requests/:userId', getFriendRequests);
+router.delete('/friends/:userId/:friendId', deleteFriend);
 
 module.exports = router;
