@@ -50,7 +50,7 @@ const Table = () => {
         addDialog({
             component: EditGoalDialog,
             props: {
-                goal: newGoal,
+                goal: null,
                 onSave: handleSaveGoal,
                 onChange: handleInputChange,
                 onClose: removeDialog,
