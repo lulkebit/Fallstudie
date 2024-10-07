@@ -3,14 +3,25 @@ import { UserContext } from '../context/userContext';
 import axios from 'axios';
 import { useDialog } from '../context/dialogContext';
 import ConfirmationDialog from './dialogs/confirmationDialog';
+import EditGoalDialog from './dialogs/editGoalDialog';
 import { useToast } from '../context/toastContext';
 
 const Table = () => {
     const [goals, setGoals] = useState([]);
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [currentGoal, setCurrentGoal] = useState(null);
-    const [newTitle, setNewTitle] = useState('');
-    const [newDescription, setNewDescription] = useState('');
+    const [newGoal, setNewGoal] = useState({
+        title: '',
+        description: '',
+        category: '',
+        startDate: '',
+        endDate: '',
+        public: false,
+        targetValue: 0,
+        unit: '',
+        direction: '',
+        reminderInterval: 0,
+        reminderType: '',
+        progress: 0,
+    });
     const [draggedItem, setDraggedItem] = useState(null);
     const [dragOverItem, setDragOverItem] = useState(null);
     const { user } = useContext(UserContext);
@@ -21,73 +32,77 @@ const Table = () => {
         if (user) {
             axios
                 .get('/goals', { params: { userId: user._id } })
-                .then(({ data }) => {
-                    setGoals(data);
-                })
-                .catch((error) => {
-                    console.error('Fehler beim Abrufen der Karten:', error);
-                });
+                .then(({ data }) => setGoals(data))
+                .catch((error) =>
+                    addToast('Fehler beim Abrufen der Ziele.' + error, 'error')
+                );
         }
     }, [user]);
 
+    const handleInputChange = (updatedGoal) => {
+        setNewGoal((prevState) => ({
+            ...prevState,
+            ...updatedGoal,
+        }));
+    };
+
     const handleAddGoal = () => {
-        setCurrentGoal(null);
-        setNewTitle('');
-        setNewDescription('');
-        setIsDialogOpen(true);
+        addDialog({
+            component: EditGoalDialog,
+            props: {
+                goal: newGoal,
+                onSave: handleSaveGoal,
+                onChange: handleInputChange,
+                onClose: removeDialog,
+            },
+        });
     };
 
     const handleEditGoal = (goal) => {
-        setCurrentGoal(goal);
-        setNewTitle(goal.title);
-        setNewDescription(goal.description);
-        setIsDialogOpen(true);
+        addDialog({
+            component: EditGoalDialog,
+            props: {
+                goal,
+                onSave: handleSaveGoal,
+                onChange: handleInputChange,
+                onClose: removeDialog,
+            },
+        });
     };
 
-    const handleSaveGoal = () => {
-        if (currentGoal) {
-            const updatedGoal = {
-                ...currentGoal,
-                title: newTitle,
-                description: newDescription,
-            };
+    const handleSaveGoal = (currentGoal) => {
+        if (currentGoal.id) {
             axios
                 .put(`/goals/${currentGoal.id}`, {
                     userId: user._id,
-                    goal: updatedGoal,
+                    goal: currentGoal,
                 })
                 .then(({ data }) => {
                     setGoals(data);
                     addToast('Ziel aktualisiert!', 'success');
                 })
-                .catch((error) => {
+                .catch((error) =>
                     addToast(
                         'Fehler beim Aktualisieren des Ziels. Bitte versuchen Sie es erneut.' +
                             error,
                         'error'
-                    );
-                });
+                    )
+                );
         } else {
-            const newGoal = {
-                title: newTitle,
-                description: newDescription,
-            };
             axios
-                .post('/goals', { userId: user._id, goal: newGoal })
+                .post('/goals', { userId: user._id, goal: currentGoal })
                 .then(({ data }) => {
                     setGoals(data);
                     addToast('Ziel erstellt!', 'success');
                 })
-                .catch((error) => {
+                .catch((error) =>
                     addToast(
                         'Fehler beim Erstellen des Ziels. Bitte versuchen Sie es erneut.' +
                             error,
                         'error'
-                    );
-                });
+                    )
+                );
         }
-        setIsDialogOpen(false);
-        setCurrentGoal(null);
     };
 
     const handleDeleteGoal = (id) => {
@@ -103,16 +118,14 @@ const Table = () => {
                             removeDialog(id);
                             addToast('Ziel gelöscht!', 'success');
                         })
-                        .catch((error) => {
+                        .catch((error) =>
                             addToast(
                                 'Fehler beim Löschen des Ziels. Bitte versuchen Sie es erneut.',
                                 'error'
-                            );
-                        });
+                            )
+                        );
                 },
-                onClose: () => {
-                    removeDialog(id);
-                },
+                onClose: () => removeDialog(id),
             },
         });
     };
@@ -172,17 +185,17 @@ const Table = () => {
                     <div
                         key={goal.id}
                         className={`bg-white rounded-lg shadow-md p-6 transition duration-300 ease-in-out hover:shadow-lg 
-                                    ${
-                                        dragOverItem === index
-                                            ? 'border-2 border-blue-500'
-                                            : ''
-                                    }
-                                    ${
-                                        draggedItem === goal
-                                            ? 'opacity-50'
-                                            : 'opacity-100'
-                                    }
-                                    transform hover:scale-[1.02] cursor-move`}
+                                ${
+                                    dragOverItem === index
+                                        ? 'border-2 border-blue-500'
+                                        : ''
+                                }
+                                ${
+                                    draggedItem === goal
+                                        ? 'opacity-50'
+                                        : 'opacity-100'
+                                }
+                                transform hover:scale-[1.02] cursor-move`}
                         draggable
                         onDragStart={(e) => handleDragStart(e, index)}
                         onDragOver={(e) => handleDragOver(e, index)}
@@ -211,6 +224,37 @@ const Table = () => {
                             </h2>
                         </div>
                         <p className='text-gray-600 mb-4'>{goal.description}</p>
+                        <div className='grid grid-cols-2 gap-4 mb-4'>
+                            <p>
+                                <strong>Kategorie:</strong> {goal.category}
+                            </p>
+                            <p>
+                                <strong>Start Datum:</strong>{' '}
+                                {new Date(goal.startDate).toLocaleDateString()}
+                            </p>
+                            <p>
+                                <strong>End Datum:</strong>{' '}
+                                {new Date(goal.endDate).toLocaleDateString()}
+                            </p>
+                            <p>
+                                <strong>Öffentlich:</strong>{' '}
+                                {goal.public ? 'Ja' : 'Nein'}
+                            </p>
+                            <p>
+                                <strong>Zielwert:</strong> {goal.targetValue}{' '}
+                                {goal.unit}
+                            </p>
+                            <p>
+                                <strong>Richtung:</strong> {goal.direction}
+                            </p>
+                            <p>
+                                <strong>Erinnerungsintervall:</strong>{' '}
+                                {goal.reminderInterval} {goal.reminderType}
+                            </p>
+                            <p>
+                                <strong>Fortschritt:</strong> {goal.progress}%
+                            </p>
+                        </div>
                         <div className='flex justify-end items-center space-x-2'>
                             <button
                                 onClick={() => handleEditGoal(goal)}
@@ -228,66 +272,6 @@ const Table = () => {
                     </div>
                 ))}
             </div>
-
-            {isDialogOpen && (
-                <div className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center'>
-                    <div className='bg-white p-8 rounded-lg shadow-xl w-full max-w-md'>
-                        <h2 className='text-2xl font-bold mb-6 text-gray-800'>
-                            {currentGoal
-                                ? 'Ziel bearbeiten'
-                                : 'Neues Ziel erstellen'}
-                        </h2>
-                        <div className='mb-4'>
-                            <label
-                                htmlFor='title'
-                                className='block text-sm font-medium text-gray-700 mb-1'
-                            >
-                                Titel
-                            </label>
-                            <input
-                                type='text'
-                                id='title'
-                                value={newTitle}
-                                onChange={(e) => setNewTitle(e.target.value)}
-                                className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
-                                placeholder='Titel eingeben'
-                            />
-                        </div>
-                        <div className='mb-6'>
-                            <label
-                                htmlFor='description'
-                                className='block text-sm font-medium text-gray-700 mb-1'
-                            >
-                                Kurzbeschreibung
-                            </label>
-                            <textarea
-                                id='description'
-                                value={newDescription}
-                                onChange={(e) =>
-                                    setNewDescription(e.target.value)
-                                }
-                                className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
-                                rows='3'
-                                placeholder='Kurze Beschreibung eingeben'
-                            ></textarea>
-                        </div>
-                        <div className='flex justify-end space-x-4'>
-                            <button
-                                onClick={() => setIsDialogOpen(false)}
-                                className='px-4 py-2 text-gray-600 hover:text-gray-800 font-medium transition duration-300 ease-in-out'
-                            >
-                                Abbrechen
-                            </button>
-                            <button
-                                onClick={handleSaveGoal}
-                                className='bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out'
-                            >
-                                Speichern
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };
