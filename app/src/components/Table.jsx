@@ -7,26 +7,12 @@ import EditGoalDialog from './dialogs/editGoalDialog';
 import { useToast } from '../context/toastContext';
 
 const Table = () => {
-    const [goals, setGoals] = useState([]);
-    const [newGoal, setNewGoal] = useState({
-        title: '',
-        description: '',
-        category: '',
-        startDate: '',
-        endDate: '',
-        public: false,
-        targetValue: 0,
-        unit: '',
-        direction: '',
-        reminderInterval: 0,
-        reminderType: '',
-        progress: 0,
-    });
-    const [draggedItem, setDraggedItem] = useState(null);
     const [dragOverItem, setDragOverItem] = useState(null);
+    const [draggedItem, setDraggedItem] = useState(null);
     const { user } = useContext(UserContext);
     const { addDialog, removeDialog } = useDialog();
     const { addToast } = useToast();
+    const [goals, setGoals] = useState([]);
 
     useEffect(() => {
         if (user) {
@@ -40,10 +26,13 @@ const Table = () => {
     }, [user]);
 
     const handleInputChange = (updatedGoal) => {
-        setNewGoal((prevState) => ({
-            ...prevState,
-            ...updatedGoal,
-        }));
+        setGoals((prevState) =>
+            prevState.map((goal) =>
+                goal._id === updatedGoal._id
+                    ? { ...goal, ...updatedGoal }
+                    : goal
+            )
+        );
     };
 
     const handleAddGoal = () => {
