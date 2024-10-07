@@ -1,7 +1,7 @@
-const User = require('../models/user');
-const { hashPassword, comparePassword } = require('../helpers/auth');
 const jwt = require('jsonwebtoken');
+const User = require('../models/user');
 const logger = require('../utils/logger');
+const { hashPassword, comparePassword } = require('../helpers/auth');
 const avatars = require('../ressources/avatars');
 
 const registerUser = async (req, res) => {
@@ -133,34 +133,6 @@ const logoutUser = (req, res) => {
     }
 };
 
-const changePassword = async (req, res) => {
-    const { userId, oldPassword, newPassword } = req.body;
-
-    try {
-        logger.info(`User ${userId} is attempting to change password`);
-        const user = await User.findById(userId);
-        if (!user) {
-            logger.warn(`User ${userId} not found`);
-            return res.status(404).json({ error: 'Benutzer nicht gefunden' });
-        }
-
-        const isMatch = await comparePassword(oldPassword, user.password);
-        if (!isMatch) {
-            logger.warn('Old password is incorrect');
-            return res.status(400).json({ error: 'Altes Passwort ist falsch' });
-        }
-
-        user.password = await hashPassword(newPassword);
-        await user.save();
-
-        logger.info('Password successfully changed');
-        res.status(200).json({ message: 'Passwort erfolgreich geändert' });
-    } catch (error) {
-        logger.error('Fehler beim Ändern des Passworts:', error);
-        res.status(500).json({ error: 'Fehler beim Ändern des Passworts' });
-    }
-};
-
 const getProfile = async (req, res) => {
     logger.info('Attempting to retrieve user profile');
     const { token } = req.cookies;
@@ -272,94 +244,31 @@ const updateProfile = async (req, res) => {
     }
 };
 
-const addGoal = async (req, res) => {
-    const { userId, goal } = req.body;
+const changePassword = async (req, res) => {
+    const { userId, oldPassword, newPassword } = req.body;
+
     try {
-        logger.info('Hinzufügen eines neuen Ziels für Benutzer:', userId);
+        logger.info(`User ${userId} is attempting to change password`);
         const user = await User.findById(userId);
         if (!user) {
-            logger.warn('Benutzer nicht gefunden:', userId);
+            logger.warn(`User ${userId} not found`);
             return res.status(404).json({ error: 'Benutzer nicht gefunden' });
         }
 
-        const highestId = user.goals.reduce(
-            (maxId, goal) => Math.max(maxId, goal.id),
-            0
-        );
-        const newGoal = {
-            ...goal,
-            id: highestId + 1,
-        };
+        const isMatch = await comparePassword(oldPassword, user.password);
+        if (!isMatch) {
+            logger.warn('Old password is incorrect');
+            return res.status(400).json({ error: 'Altes Passwort ist falsch' });
+        }
 
-        user.goals.push(newGoal);
+        user.password = await hashPassword(newPassword);
         await user.save();
-        logger.info('Ziel hinzugefügt:', newGoal);
-        res.status(200).json(user.goals);
-    } catch (error) {
-        logger.error('Fehler beim Hinzufügen des Ziels:', error);
-        res.status(500).json({ error: 'Fehler beim Hinzufügen des Ziels' });
-    }
-};
 
-const getGoals = async (req, res) => {
-    const { userId } = req.query;
-    try {
-        logger.info('Abrufen der Ziele für Benutzer:', userId);
-        const user = await User.findById(userId);
-        if (!user) {
-            logger.warn('Benutzer nicht gefunden:', userId);
-            return res.status(404).json({ error: 'Benutzer nicht gefunden' });
-        }
-        logger.info('Ziele gefunden:', user.goals);
-        res.status(200).json(user.goals);
+        logger.info('Password successfully changed');
+        res.status(200).json({ message: 'Passwort erfolgreich geändert' });
     } catch (error) {
-        logger.error('Fehler beim Abrufen der Ziele:', error);
-        res.status(500).json({ error: 'Fehler beim Abrufen der Ziele' });
-    }
-};
-
-const deleteGoal = async (req, res) => {
-    const { userId } = req.body;
-    const { id } = req.params;
-    try {
-        logger.info('Löschen des Ziels mit ID:', id, 'für Benutzer:', userId);
-        const user = await User.findById(userId);
-        if (!user) {
-            logger.warn('Benutzer nicht gefunden:', userId);
-            return res.status(404).json({ error: 'Benutzer nicht gefunden' });
-        }
-        user.goals = user.goals.filter((goal) => goal.id !== parseInt(id));
-        await user.save();
-        logger.info('Ziel gelöscht:', id);
-        res.status(200).json(user.goals);
-    } catch (error) {
-        logger.error('Fehler beim Löschen des Ziels:', error);
-        res.status(500).json({ error: 'Fehler beim Löschen des Ziels' });
-    }
-};
-
-const updateGoal = async (req, res) => {
-    const { userId, goal } = req.body;
-    const { id } = req.params;
-    try {
-        logger.info(`Aktualisiere Ziel mit ID ${id} für Benutzer ${userId}`);
-        const user = await User.findById(userId);
-        if (!user) {
-            logger.warn(`Benutzer mit ID ${userId} nicht gefunden`);
-            return res.status(404).json({ error: 'Benutzer nicht gefunden' });
-        }
-        const goalIndex = user.goals.findIndex((g) => g.id === parseInt(id));
-        if (goalIndex === -1) {
-            logger.warn(`Ziel mit ID ${id} nicht gefunden`);
-            return res.status(404).json({ error: 'Ziel nicht gefunden' });
-        }
-        user.goals[goalIndex] = goal;
-        await user.save();
-        logger.info(`Ziel mit ID ${id} erfolgreich aktualisiert`);
-        res.status(200).json(user.goals);
-    } catch (error) {
-        logger.error('Fehler beim Aktualisieren des Ziels:', error);
-        res.status(500).json({ error: 'Fehler beim Aktualisieren des Ziels' });
+        logger.error('Fehler beim Ändern des Passworts:', error);
+        res.status(500).json({ error: 'Fehler beim Ändern des Passworts' });
     }
 };
 
@@ -368,10 +277,6 @@ module.exports = {
     loginUser,
     logoutUser,
     getProfile,
-    addGoal,
-    getGoals,
-    deleteGoal,
-    updateGoal,
     updateProfile,
     changePassword,
 };
