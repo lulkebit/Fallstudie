@@ -54,12 +54,12 @@ const Navbar = () => {
                                 >
                                     Dashboard
                                 </button>
-                                <a
-                                    href='#'
+                                <button
+                                    onClick={() => navigate('/friends')}
                                     className='text-white hover:bg-white hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium transition duration-300'
                                 >
                                     Freunde
-                                </a>
+                                </button>
                                 <a
                                     href='#'
                                     className='text-white hover:bg-white hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium transition duration-300'
@@ -159,13 +159,15 @@ const Navbar = () => {
                         >
                             Dashboard
                         </button>
-                        <a
-                            href='#'
-                            className='text-white hover:bg-white hover:text-purple-600 block px-3 py-2 rounded-md text-base font-medium transition duration-300'
-                            onClick={() => setIsOpen(false)}
+                        <button
+                            onClick={() => {
+                                navigate('/friends');
+                                setIsOpen(false);
+                            }}
+                            className='text-white hover:bg-white hover:text-purple-600 block px-3 py-2 rounded-md text-base font-medium w-full text-left transition duration-300'
                         >
                             Freunde
-                        </a>
+                        </button>
                         <a
                             href='#'
                             className='text-white hover:bg-white hover:text-purple-600 block px-3 py-2 rounded-md text-base font-medium transition duration-300'
