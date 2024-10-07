@@ -119,6 +119,20 @@ const loginUser = async (req, res) => {
     }
 };
 
+const logoutUser = (req, res) => {
+    try {
+        logger.info('Attempting user logout');
+        res.clearCookie('token');
+        res.json({ message: 'Erfolgreich abgemeldet' });
+        logger.info('User logged out');
+    } catch (error) {
+        logger.error('Error on user logout:', error);
+        return res.json({
+            error: error.message,
+        });
+    }
+};
+
 const changePassword = async (req, res) => {
     const { userId, oldPassword, newPassword } = req.body;
 
@@ -352,6 +366,7 @@ const updateGoal = async (req, res) => {
 module.exports = {
     registerUser,
     loginUser,
+    logoutUser,
     getProfile,
     addGoal,
     getGoals,

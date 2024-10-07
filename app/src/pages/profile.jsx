@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/userContext';
 import Navbar from '../components/navbar';
 import { useToast } from '../context/toastContext';
@@ -25,6 +26,7 @@ const Profile = () => {
     const { addToast } = useToast();
     const [isModified, setIsModified] = useState(false);
     const { addDialog } = useDialog();
+    const navigate = useNavigate();
 
     const openChangePasswordDialog = () => {
         addDialog({ component: ChangePasswordDialog });
@@ -87,13 +89,38 @@ const Profile = () => {
         }
     };
 
+    const handleLogout = async () => {
+        try {
+            const { data } = await axios.post('/logout');
+
+            if (data.error) {
+                return addToast(data.error, 'error');
+            } else {
+                localStorage.removeItem('token');
+                navigate('/login');
+                addToast(data.message, 'success');
+            }
+        } catch (error) {
+            addToast(error.message, 'error');
+        }
+    };
+
     return (
         <div>
             <Navbar />
             <div className='max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-xl'>
-                <h2 className='text-2xl font-bold mb-6 text-center text-blue-600'>
-                    Profil bearbeiten
-                </h2>
+                <div className='flex items-center justify-between'>
+                    <h2 className='text-2xl font-bold mb-6 text-center text-blue-600'>
+                        Profil bearbeiten
+                    </h2>
+                    <button
+                        onClick={handleLogout}
+                        className='mt-4 px-4 py-2 bg-red-500 text-white rounded-md'
+                    >
+                        Abmelden
+                    </button>
+                </div>
+
                 <form onSubmit={handleSubmit} className='space-y-4'>
                     <div>
                         <label
