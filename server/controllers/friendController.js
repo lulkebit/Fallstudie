@@ -6,6 +6,21 @@ const sendFriendRequest = async (req, res) => {
     const { userId, friendUsername } = req.body;
 
     try {
+        const user = await User.findById(userId);
+        if (!user) {
+            logger.warn(`User with ID ${userId} not found`);
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        if (user.username === friendUsername) {
+            logger.warn(
+                `User ${user.username} cannot send a friend request to himself`
+            );
+            return res.status(400).json({
+                error: 'You cannot send a friend request to yourself',
+            });
+        }
+
         logger.info(
             `User ${userId} is sending a friend request to ${friendUsername}`
         );
