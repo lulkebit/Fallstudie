@@ -18,6 +18,7 @@ const addGoal = async (req, res) => {
         const newGoal = {
             ...goal,
             id: highestId + 1,
+            public: goal.public === 'on',
         };
 
         user.goals.push(newGoal);
@@ -25,7 +26,7 @@ const addGoal = async (req, res) => {
         logger.info('Ziel hinzugefügt:', newGoal);
         res.status(200).json(user.goals);
     } catch (error) {
-        logger.error('Fehler beim Hinzufügen des Ziels:', error);
+        logger.error('Fehler beim Hinzufügen des Ziels: ' + error, error);
         res.status(500).json({ error: 'Fehler beim Hinzufügen des Ziels' });
     }
 };
@@ -62,7 +63,7 @@ const deleteGoal = async (req, res) => {
         logger.info('Ziel gelöscht:', id);
         res.status(200).json(user.goals);
     } catch (error) {
-        logger.error('Fehler beim Löschen des Ziels:', error);
+        logger.error('Fehler beim Löschen des Ziels: ' + error, error);
         res.status(500).json({ error: 'Fehler beim Löschen des Ziels' });
     }
 };
@@ -87,7 +88,7 @@ const updateGoal = async (req, res) => {
         logger.info(`Ziel mit ID ${id} erfolgreich aktualisiert`);
         res.status(200).json(user.goals);
     } catch (error) {
-        logger.error('Fehler beim Aktualisieren des Ziels:', error);
+        logger.error('Fehler beim Aktualisieren des Ziels: ' + error, error);
         res.status(500).json({ error: 'Fehler beim Aktualisieren des Ziels' });
     }
 };
@@ -98,11 +99,17 @@ const getPublicGoalsOfFriends = async (req, res) => {
         const user = await User.findById(userId).populate('friends');
 
         if (!user) {
+            logger.warn(`User with ID ${userId} not found`);
             return res.status(404).json({ error: 'User not found' });
         }
 
         const publicGoals = user.friends.flatMap((friend) =>
-            friend.goals.filter((goal) => goal.public)
+            friend.goals
+                .filter((goal) => goal.public)
+                .map((goal) => ({
+                    ...goal.toObject(),
+                    friendName: friend.username,
+                }))
         );
 
         logger.info(
