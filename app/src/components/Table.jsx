@@ -7,12 +7,12 @@ import EditGoalDialog from './dialogs/editGoalDialog';
 import { useToast } from '../context/toastContext';
 
 const Table = () => {
-    const [dragOverItem, setDragOverItem] = useState(null);
-    const [draggedItem, setDraggedItem] = useState(null);
     const { user } = useContext(UserContext);
     const { addDialog, removeDialog } = useDialog();
     const { addToast } = useToast();
     const [goals, setGoals] = useState([]);
+    const [sortField, setSortField] = useState('title');
+    const [sortDirection, setSortDirection] = useState('asc');
 
     useEffect(() => {
         if (user) {
@@ -23,7 +23,7 @@ const Table = () => {
                     addToast('Fehler beim Abrufen der Ziele.' + error, 'error')
                 );
         }
-    }, [user]);
+    }, [user, addToast]);
 
     const handleInputChange = (updatedGoal) => {
         setGoals((prevState) =>
@@ -119,49 +119,29 @@ const Table = () => {
         });
     };
 
-    const handleDragStart = (e, index) => {
-        setDraggedItem(goals[index]);
-        e.dataTransfer.effectAllowed = 'move';
-        e.target.style.opacity = '0.5';
-        e.dataTransfer.setData('text/html', e.target);
-    };
-
-    const handleDragOver = (e, index) => {
-        e.preventDefault();
-        setDragOverItem(index);
-    };
-
-    const handleDragLeave = (e) => {
-        setDragOverItem(null);
-    };
-
-    const handleDrop = (e, index) => {
-        e.preventDefault();
-        const draggedOverItem = goals[index];
-
-        if (draggedItem === draggedOverItem) {
-            return;
+    const handleSort = (field) => {
+        if (field === sortField) {
+            setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+        } else {
+            setSortField(field);
+            setSortDirection('asc');
         }
-
-        const items = goals.filter((goal) => goal !== draggedItem);
-        items.splice(index, 0, draggedItem);
-
-        setGoals(items);
-        setDragOverItem(null);
     };
 
-    const handleDragEnd = (e) => {
-        e.target.style.opacity = '1';
-        setDraggedItem(null);
-        setDragOverItem(null);
-    };
+    const sortedGoals = [...goals].sort((a, b) => {
+        if (a[sortField] < b[sortField])
+            return sortDirection === 'asc' ? -1 : 1;
+        if (a[sortField] > b[sortField])
+            return sortDirection === 'asc' ? 1 : -1;
+        return 0;
+    });
 
     return (
         <div className='container mx-auto p-6'>
             <div className='flex justify-between items-center mb-6'>
-                <h1 className='text-3xl font-bold text-gray-800'>
+                <h2 className='text-2xl font-bold text-gray-800'>
                     Meine Ziele
-                </h1>
+                </h2>
                 <button
                     onClick={handleAddGoal}
                     className='bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105'
@@ -170,30 +150,33 @@ const Table = () => {
                 </button>
             </div>
             <div className='space-y-4'>
-                {goals.map((goal, index) => (
+                <div className='flex space-x-4 mb-4'>
+                    <button
+                        onClick={() => handleSort('title')}
+                        className='font-medium'
+                    >
+                        Sortieren nach Titel{' '}
+                        {sortField === 'title' &&
+                            (sortDirection === 'asc' ? '↑' : '↓')}
+                    </button>
+                    <button
+                        onClick={() => handleSort('progress')}
+                        className='font-medium'
+                    >
+                        Sortieren nach Fortschritt{' '}
+                        {sortField === 'progress' &&
+                            (sortDirection === 'asc' ? '↑' : '↓')}
+                    </button>
+                </div>
+                {sortedGoals.map((goal, index) => (
                     <div
                         key={goal.id}
-                        className={`bg-white rounded-lg shadow-md p-6 transition duration-300 ease-in-out hover:shadow-lg 
-                                ${
-                                    dragOverItem === index
-                                        ? 'border-2 border-blue-500'
-                                        : ''
-                                }
-                                ${
-                                    draggedItem === goal
-                                        ? 'opacity-50'
-                                        : 'opacity-100'
-                                }
-                                transform hover:scale-[1.02] cursor-move`}
-                        draggable
-                        onDragStart={(e) => handleDragStart(e, index)}
-                        onDragOver={(e) => handleDragOver(e, index)}
-                        onDragLeave={handleDragLeave}
-                        onDrop={(e) => handleDrop(e, index)}
-                        onDragEnd={handleDragEnd}
+                        className={
+                            'goal-card bg-white rounded-lg shadow-md p-6 transition duration-300 ease-in-out hover:shadow-lg transform hover:scale-[1.02]'
+                        }
                     >
                         <div className='flex items-center mb-2'>
-                            <div className='w-6 h-6 mr-3 flex-shrink-0 cursor-move'>
+                            <div className='w-6 h-6 mr-3 flex-shrink-0'>
                                 <svg
                                     xmlns='http://www.w3.org/2000/svg'
                                     fill='none'
@@ -244,7 +227,17 @@ const Table = () => {
                                 <strong>Fortschritt:</strong> {goal.progress}%
                             </p>
                         </div>
-                        <div className='flex justify-end items-center space-x-2'>
+                        <div className='w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 mt-4'>
+                            <div
+                                className='bg-blue-600 h-2.5 rounded-full'
+                                style={{ width: `${goal.progress}%` }}
+                                role='progressbar'
+                                aria-valuenow={goal.progress}
+                                aria-valuemin='0'
+                                aria-valuemax='100'
+                            ></div>
+                        </div>
+                        <div className='flex justify-end items-center space-x-2 mt-4'>
                             <button
                                 onClick={() => handleEditGoal(goal)}
                                 className='bg-blue-100 text-blue-600 hover:bg-blue-200 font-medium py-1 px-3 rounded transition duration-300 ease-in-out'
