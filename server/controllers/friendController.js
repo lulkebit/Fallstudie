@@ -73,6 +73,19 @@ const acceptFriendRequest = async (req, res) => {
         });
         await reciprocalFriendRequest.save();
 
+        const user = await User.findById(friendRequest.userId);
+        const friend = await User.findById(friendRequest.friendId);
+
+        if (!user.friends.includes(friendRequest.friendId)) {
+            user.friends.push(friendRequest.friendId);
+            await user.save();
+        }
+
+        if (!friend.friends.includes(friendRequest.userId)) {
+            friend.friends.push(friendRequest.userId);
+            await friend.save();
+        }
+
         logger.info(`Friend request with ID ${requestId} accepted`);
         res.status(200).json(friendRequest);
     } catch (error) {

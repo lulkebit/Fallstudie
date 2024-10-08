@@ -1,9 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const cors = require('cors');
-const multer = require('multer');
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
 
 const {
     registerUser,
@@ -38,22 +35,22 @@ router.use(
     })
 );
 
-// Authentifizierungsrouten
+// Auth routes
 router.post('/register', registerUser);
 router.post('/login', loginUser);
 router.post('/logout', logoutUser);
 router.get('/profile', getProfile);
-router.put('/profile', upload.single('avatar'), updateProfile);
+router.put('/profile', updateProfile);
 router.put('/change-password', changePassword);
 
-// Ziel-Management-Routen
+// Goal routes
+router.get('/goals/friends/:userId', getPublicGoalsOfFriends);
 router.post('/goals', addGoal);
 router.get('/goals', getGoals);
 router.delete('/goals/:id', deleteGoal);
 router.put('/goals/:id', updateGoal);
-router.get('/goals/friends/:userId', getPublicGoalsOfFriends);
 
-// Freundesystem-Routen
+// Friend routes
 router.post('/friends/send', sendFriendRequest);
 router.put('/friends/accept/:requestId', acceptFriendRequest);
 router.put('/friends/decline/:requestId', declineFriendRequest);

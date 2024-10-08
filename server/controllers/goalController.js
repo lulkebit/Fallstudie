@@ -96,6 +96,8 @@ const updateGoal = async (req, res) => {
 const getPublicGoalsOfFriends = async (req, res) => {
     try {
         const userId = req.params.userId;
+        logger.info(`Fetching public goals for user: ${userId}`);
+
         const user = await User.findById(userId).populate('friends');
 
         if (!user) {
@@ -113,11 +115,14 @@ const getPublicGoalsOfFriends = async (req, res) => {
         );
 
         logger.info(
-            `Public goals of friends for user ${userId} retrieved successfully`
+            `Retrieved ${publicGoals.length} public goals for user ${userId}`
         );
         res.status(200).json(publicGoals);
     } catch (error) {
-        logger.error('Error retrieving public goals of friends:', error);
+        logger.error(
+            'Error retrieving public goals of friends: ' + error,
+            error
+        );
         res.status(500).json({
             error: 'Error retrieving public goals of friends',
         });
