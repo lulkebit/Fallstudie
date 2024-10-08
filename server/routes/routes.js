@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const cors = require('cors');
+const multer = require('multer');
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 const {
     registerUser,
@@ -40,7 +43,7 @@ router.post('/register', registerUser);
 router.post('/login', loginUser);
 router.post('/logout', logoutUser);
 router.get('/profile', getProfile);
-router.put('/profile', updateProfile);
+router.put('/profile', upload.single('avatar'), updateProfile);
 router.put('/change-password', changePassword);
 
 // Goal routes
