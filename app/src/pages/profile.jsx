@@ -109,17 +109,9 @@ const Profile = () => {
         <div className='bg-gray-100'>
             <Navbar />
             <div className='max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-xl'>
-                <div className='flex items-center justify-between'>
-                    <h2 className='text-2xl font-bold mb-6 text-center text-blue-600'>
-                        Profil bearbeiten
-                    </h2>
-                    <button
-                        onClick={handleLogout}
-                        className='mt-4 px-4 py-2 bg-red-500 text-white rounded-md'
-                    >
-                        Abmelden
-                    </button>
-                </div>
+                <h2 className='text-2xl font-bold mb-6 text-center text-blue-600'>
+                    Profil bearbeiten
+                </h2>
 
                 <form onSubmit={handleSubmit} className='space-y-4'>
                     <div>
