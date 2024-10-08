@@ -46,7 +46,7 @@ const PublicGoalTable = () => {
     return (
         <div className='container mx-auto p-6'>
             <h2 className='text-2xl font-bold text-gray-800 mb-6'>
-                Public Goals of Friends
+                Ziele von Freunden
             </h2>
             <div className='space-y-4'>
                 {publicGoals.length > 0 ? (
