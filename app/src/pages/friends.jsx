@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import { UserPlus, UserCheck, UserX } from 'lucide-react';
+import { UserPlus, UserCheck, UserX, Users } from 'lucide-react';
 import Navbar from '../components/navbar';
 import { UserContext } from '../context/userContext';
 import { useToast } from '../context/toastContext';
@@ -104,8 +104,9 @@ const Friends = () => {
                     </h1>
 
                     <div className='bg-white shadow-lg rounded-lg p-6 mb-8'>
-                        <h2 className='text-xl font-semibold mb-4'>
-                            Freundschaftsanfrage senden
+                        <h2 className='text-2xl font-semibold mb-4 flex items-center'>
+                            <UserPlus className='mr-2' />
+                            Freund hinzufügen
                         </h2>
                         <div className='flex'>
                             <input
@@ -129,7 +130,8 @@ const Friends = () => {
 
                     <div className='grid md:grid-cols-2 gap-8'>
                         <div className='bg-white shadow-lg rounded-lg p-6'>
-                            <h2 className='text-xl font-semibold mb-4'>
+                            <h2 className='text-2xl font-semibold mb-4 flex items-center'>
+                                <Users className='mr-2' />
                                 Freundschaftsanfragen
                             </h2>
                             {friendRequests.length === 0 ? (
@@ -183,8 +185,9 @@ const Friends = () => {
                         </div>
 
                         <div className='bg-white shadow-lg rounded-lg p-6'>
-                            <h2 className='text-xl font-semibold mb-4'>
-                                Freundesliste
+                            <h2 className='text-2xl font-semibold mb-6 flex items-center'>
+                                <Users className='mr-2' />
+                                Meine Freunde
                             </h2>
                             {friends.length === 0 ? (
                                 <p className='text-gray-500'>
@@ -197,9 +200,16 @@ const Friends = () => {
                                             key={friend._id}
                                             className='flex items-center justify-between bg-gray-50 p-4 rounded-lg shadow transition duration-300 hover:shadow-md'
                                         >
-                                            <span className='font-medium text-gray-700'>
-                                                {friend.friendId.username}
-                                            </span>
+                                            <div className='flex items-center space-x-4'>
+                                                <img
+                                                    src={`data:image/jpeg;base64,${friend.friendId.avatar}`}
+                                                    alt={`${friend.friendId.firstname} ${friend.friendId.lastname}`}
+                                                    className='h-10 w-10 rounded-full'
+                                                />
+                                                <span className='font-medium text-gray-700'>
+                                                    {friend.friendId.username}
+                                                </span>
+                                            </div>
                                             <button
                                                 onClick={() =>
                                                     handleDeleteClick(
