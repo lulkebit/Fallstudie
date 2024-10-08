@@ -5,6 +5,7 @@ import { useDialog } from '../context/dialogContext';
 import ConfirmationDialog from './dialogs/confirmationDialog';
 import EditGoalDialog from './dialogs/editGoalDialog';
 import { useToast } from '../context/toastContext';
+import { Archive } from 'lucide-react';
 
 const Table = () => {
     const { user } = useContext(UserContext);
@@ -177,19 +178,7 @@ const Table = () => {
                     >
                         <div className='flex items-center mb-2'>
                             <div className='w-6 h-6 mr-3 flex-shrink-0'>
-                                <svg
-                                    xmlns='http://www.w3.org/2000/svg'
-                                    fill='none'
-                                    viewBox='0 0 24 24'
-                                    stroke='currentColor'
-                                >
-                                    <path
-                                        strokeLinecap='round'
-                                        strokeLinejoin='round'
-                                        strokeWidth={2}
-                                        d='M4 6h16M4 12h16M4 18h16'
-                                    />
-                                </svg>
+                                <Archive />
                             </div>
                             <h2 className='text-xl font-semibold text-gray-800 flex-grow'>
                                 {goal.title}
