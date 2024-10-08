@@ -49,7 +49,7 @@ const Friends = () => {
             fetchFriendRequests();
             addToast('Freundschaftsanfrage gesendet.', 'success');
         } catch (error) {
-            addToast('Error sending friend request', 'error');
+            addToast('Error: ' + error, 'error');
         }
     };
 

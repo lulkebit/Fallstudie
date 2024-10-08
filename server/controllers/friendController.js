@@ -30,6 +30,19 @@ const sendFriendRequest = async (req, res) => {
             return res.status(404).json({ error: 'User not found' });
         }
 
+        const existingRequest = await Friend.findOne({
+            userId,
+            friendId: friend._id,
+        });
+        if (existingRequest) {
+            logger.warn(
+                `Friend request from ${userId} to ${friend._id} already exists`
+            );
+            return res
+                .status(400)
+                .json({ error: 'Friend request already sent' });
+        }
+
         const friendRequest = new Friend({ userId, friendId: friend._id });
         await friendRequest.save();
         logger.info(
