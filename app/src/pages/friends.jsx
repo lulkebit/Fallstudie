@@ -97,121 +97,131 @@ const Friends = () => {
     return (
         <div>
             <Navbar />
-            <div className='container mx-auto px-4 py-8'>
-                <h1 className='text-3xl font-bold mb-8 text-center text-blue-600'>
-                    Freunde
-                </h1>
+            <div className='bg-gray-100 min-h-screen'>
+                <div className='container mx-auto px-4 py-8'>
+                    <h1 className='text-3xl font-bold mb-8 text-center text-blue-600'>
+                        Freunde
+                    </h1>
 
-                <div className='bg-white shadow-md rounded-lg p-6 mb-8'>
-                    <h2 className='text-xl font-semibold mb-4'>
-                        Freundschaftsanfrage senden
-                    </h2>
-                    <div className='flex'>
-                        <input
-                            type='text'
-                            value={newFriendUsername}
-                            onChange={(e) =>
-                                setNewFriendUsername(e.target.value)
-                            }
-                            placeholder='Freund Username'
-                            className='flex-grow px-4 py-2 border rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500'
-                        />
-                        <button
-                            onClick={sendFriendRequest}
-                            className='bg-blue-500 text-white px-4 py-2 rounded-r-md hover:bg-blue-600 transition duration-300 flex items-center'
-                        >
-                            <UserPlus size={18} className='mr-2' />
-                            Anfrage senden
-                        </button>
-                    </div>
-                </div>
-
-                <div className='grid md:grid-cols-2 gap-8'>
-                    <div className='bg-white shadow-md rounded-lg p-6'>
+                    <div className='bg-white shadow-lg rounded-lg p-6 mb-8'>
                         <h2 className='text-xl font-semibold mb-4'>
-                            Freundschaftsanfragen
+                            Freundschaftsanfrage senden
                         </h2>
-                        {friendRequests.length === 0 ? (
-                            <p className='text-gray-500'>
-                                Keine offenen Anfragen.
-                            </p>
-                        ) : (
-                            <ul className='space-y-4'>
-                                {friendRequests.map((request) => (
-                                    <li
-                                        key={request._id}
-                                        className='flex items-center justify-between bg-gray-50 p-3 rounded-md'
-                                    >
-                                        <span>{request.userId.username}</span>
-                                        <div className='space-x-2'>
+                        <div className='flex'>
+                            <input
+                                type='text'
+                                value={newFriendUsername}
+                                onChange={(e) =>
+                                    setNewFriendUsername(e.target.value)
+                                }
+                                placeholder='Freund Username'
+                                className='flex-grow px-4 py-2 border rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+                            />
+                            <button
+                                onClick={sendFriendRequest}
+                                className='bg-blue-500 text-white px-4 py-2 rounded-r-md hover:bg-blue-600 transition duration-300 flex items-center'
+                            >
+                                <UserPlus size={18} className='mr-2' />
+                                Anfrage senden
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className='grid md:grid-cols-2 gap-8'>
+                        <div className='bg-white shadow-lg rounded-lg p-6'>
+                            <h2 className='text-xl font-semibold mb-4'>
+                                Freundschaftsanfragen
+                            </h2>
+                            {friendRequests.length === 0 ? (
+                                <p className='text-gray-500'>
+                                    Keine offenen Anfragen.
+                                </p>
+                            ) : (
+                                <ul className='space-y-4'>
+                                    {friendRequests.map((request) => (
+                                        <li
+                                            key={request._id}
+                                            className='flex items-center justify-between bg-gray-50 p-4 rounded-lg shadow transition duration-300 hover:shadow-md'
+                                        >
+                                            <span className='font-medium text-gray-700'>
+                                                {request.userId.username}
+                                            </span>
+                                            <div className='flex space-x-2'>
+                                                <button
+                                                    onClick={() =>
+                                                        acceptFriendRequest(
+                                                            request._id
+                                                        )
+                                                    }
+                                                    className='bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600 transition duration-300 flex items-center'
+                                                >
+                                                    <UserCheck
+                                                        size={16}
+                                                        className='mr-2'
+                                                    />
+                                                    Annehmen
+                                                </button>
+                                                <button
+                                                    onClick={() =>
+                                                        declineFriendRequest(
+                                                            request._id
+                                                        )
+                                                    }
+                                                    className='bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 transition duration-300 flex items-center'
+                                                >
+                                                    <UserX
+                                                        size={16}
+                                                        className='mr-2'
+                                                    />
+                                                    Ablehnen
+                                                </button>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                        </div>
+
+                        <div className='bg-white shadow-lg rounded-lg p-6'>
+                            <h2 className='text-xl font-semibold mb-4'>
+                                Freundesliste
+                            </h2>
+                            {friends.length === 0 ? (
+                                <p className='text-gray-500'>
+                                    Du hast noch keine Freunde hinzugefügt.
+                                </p>
+                            ) : (
+                                <ul className='space-y-3'>
+                                    {friends.map((friend) => (
+                                        <li
+                                            key={friend._id}
+                                            className='flex items-center justify-between bg-gray-50 p-4 rounded-lg shadow transition duration-300 hover:shadow-md'
+                                        >
+                                            <span className='font-medium text-gray-700'>
+                                                {friend.friendId.username}
+                                            </span>
                                             <button
                                                 onClick={() =>
-                                                    acceptFriendRequest(
-                                                        request._id
+                                                    handleDeleteClick(
+                                                        friend.friendId._id
                                                     )
                                                 }
-                                                className='bg-green-500 text-white px-3 py-1 rounded-md hover:bg-green-600 transition duration-300 flex items-center'
-                                            >
-                                                <UserCheck
-                                                    size={16}
-                                                    className='mr-1'
-                                                />
-                                                Annehmen
-                                            </button>
-                                            <button
-                                                onClick={() =>
-                                                    declineFriendRequest(
-                                                        request._id
-                                                    )
-                                                }
-                                                className='bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition duration-300 flex items-center'
+                                                className='bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 transition duration-300 flex items-center'
                                             >
                                                 <UserX
                                                     size={16}
-                                                    className='mr-1'
+                                                    className='mr-2'
                                                 />
-                                                Ablehnen
+                                                Entfernen
                                             </button>
-                                        </div>
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
-                    </div>
-
-                    <div className='bg-white shadow-md rounded-lg p-6'>
-                        <h2 className='text-xl font-semibold mb-4'>
-                            Freundesliste
-                        </h2>
-                        {friends.length === 0 ? (
-                            <p className='text-gray-500'>
-                                Du hast noch keine Freunde hinzugefügt.
-                            </p>
-                        ) : (
-                            <ul className='space-y-2'>
-                                {friends.map((friend) => (
-                                    <li
-                                        key={friend._id}
-                                        className='flex items-center justify-between bg-gray-50 p-3 rounded-md'
-                                    >
-                                        <span>{friend.friendId.username}</span>
-                                        <button
-                                            onClick={() =>
-                                                handleDeleteClick(
-                                                    friend.friendId._id
-                                                )
-                                            }
-                                            className='bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition duration-300 flex items-center'
-                                        >
-                                            Entfernen
-                                        </button>
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                        </div>
                     </div>
                 </div>
-            </div>
+            </div>{' '}
         </div>
     );
 };
