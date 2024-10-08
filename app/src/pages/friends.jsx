@@ -145,9 +145,16 @@ const Friends = () => {
                                             key={request._id}
                                             className='flex items-center justify-between bg-gray-50 p-4 rounded-lg shadow transition duration-300 hover:shadow-md'
                                         >
-                                            <span className='font-medium text-gray-700'>
-                                                {request.userId.username}
-                                            </span>
+                                            <div className='flex items-center space-x-4'>
+                                                <img
+                                                    src={`data:image/jpeg;base64,${request.userId.avatar}`}
+                                                    alt={`${request.userId.firstname} ${request.userId.lastname}`}
+                                                    className='h-10 w-10 rounded-full'
+                                                />
+                                                <span className='font-medium text-gray-700'>
+                                                    {request.userId.username}
+                                                </span>
+                                            </div>
                                             <div className='flex space-x-2'>
                                                 <button
                                                     onClick={() =>
