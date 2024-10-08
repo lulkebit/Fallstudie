@@ -95,9 +95,9 @@ const Friends = () => {
     };
 
     return (
-        <div>
+        <div className='bg-gray-100'>
             <Navbar />
-            <div className='bg-gray-100 min-h-screen'>
+            <div className='min-h-screen'>
                 <div className='container mx-auto px-4 py-8'>
                     <h1 className='text-3xl font-bold mb-8 text-center text-blue-600'>
                         Freunde

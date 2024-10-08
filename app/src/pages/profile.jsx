@@ -106,7 +106,7 @@ const Profile = () => {
     };
 
     return (
-        <div>
+        <div className='bg-gray-100'>
             <Navbar />
             <div className='max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-xl'>
                 <div className='flex items-center justify-between'>
