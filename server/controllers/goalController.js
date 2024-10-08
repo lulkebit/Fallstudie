@@ -92,9 +92,35 @@ const updateGoal = async (req, res) => {
     }
 };
 
+const getPublicGoalsOfFriends = async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const user = await User.findById(userId).populate('friends');
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        const publicGoals = user.friends.flatMap((friend) =>
+            friend.goals.filter((goal) => goal.public)
+        );
+
+        logger.info(
+            `Public goals of friends for user ${userId} retrieved successfully`
+        );
+        res.status(200).json(publicGoals);
+    } catch (error) {
+        logger.error('Error retrieving public goals of friends:', error);
+        res.status(500).json({
+            error: 'Error retrieving public goals of friends',
+        });
+    }
+};
+
 module.exports = {
     addGoal,
     getGoals,
     deleteGoal,
     updateGoal,
+    getPublicGoalsOfFriends,
 };
