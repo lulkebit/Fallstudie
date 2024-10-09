@@ -22,7 +22,7 @@ const PublicGoalTable = () => {
                 setPublicGoals(response.data);
                 setLoading(false);
             } catch (error) {
-                addToast('Error fetching public goals:', error);
+                addToast('Error fetching public goals: ' + error, 'error');
                 setError(
                     error.response?.data?.error || 'Error fetching public goals'
                 );
