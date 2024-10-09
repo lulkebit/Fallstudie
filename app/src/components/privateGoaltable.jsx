@@ -5,7 +5,7 @@ import { useDialog } from '../context/dialogContext';
 import ConfirmationDialog from './dialogs/confirmationDialog';
 import EditGoalDialog from './dialogs/editGoalDialog';
 import { useToast } from '../context/toastContext';
-import { Archive } from 'lucide-react';
+import { Goal } from 'lucide-react';
 
 const Table = () => {
     const { user } = useContext(UserContext);
@@ -178,7 +178,7 @@ const Table = () => {
                     >
                         <div className='flex items-center mb-2'>
                             <div className='w-6 h-6 mr-3 flex-shrink-0'>
-                                <Archive />
+                                <Goal />
                             </div>
                             <h2 className='text-xl font-semibold text-gray-800 flex-grow'>
                                 {goal.title}
