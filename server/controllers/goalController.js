@@ -1,14 +1,15 @@
 const User = require('../models/user');
 const logger = require('../utils/logger');
+const texts = require('../ressources/texts');
 
 const addGoal = async (req, res) => {
     const { userId, goal } = req.body;
     try {
-        logger.info('Hinzufügen eines neuen Ziels für Benutzer:', userId);
+        logger.info(texts.INFO.ADDING_GOAL(userId));
         const user = await User.findById(userId);
         if (!user) {
-            logger.warn('Benutzer nicht gefunden:', userId);
-            return res.status(404).json({ error: 'Benutzer nicht gefunden' });
+            logger.warn(texts.WARNINGS.USER_NOT_FOUND);
+            return res.status(404).json({ error: texts.ERRORS.USER_NOT_FOUND });
         }
 
         const highestId = user.goals.reduce(
@@ -23,28 +24,28 @@ const addGoal = async (req, res) => {
 
         user.goals.push(newGoal);
         await user.save();
-        logger.info('Ziel hinzugefügt:', newGoal);
+        logger.info(texts.SUCCESS.GOAL_ADDED);
         res.status(200).json(user.goals);
     } catch (error) {
-        logger.error('Fehler beim Hinzufügen des Ziels: ' + error, error);
-        res.status(500).json({ error: 'Fehler beim Hinzufügen des Ziels' });
+        logger.error(texts.ERRORS.ERROR('adding goal', error));
+        res.status(500).json({ error: texts.ERRORS.ADD_GOAL });
     }
 };
 
 const getGoals = async (req, res) => {
     const { userId } = req.query;
     try {
-        logger.info('Abrufen der Ziele für Benutzer:', userId);
+        logger.info(texts.INFO.FETCHING_GOALS(userId));
         const user = await User.findById(userId);
         if (!user) {
-            logger.warn('Benutzer nicht gefunden:', userId);
-            return res.status(404).json({ error: 'Benutzer nicht gefunden' });
+            logger.warn(texts.WARNINGS.USER_NOT_FOUND);
+            return res.status(404).json({ error: texts.ERRORS.USER_NOT_FOUND });
         }
-        logger.info('Ziele gefunden:', user.goals);
+        logger.info(texts.SUCCESS.GOAL_ADDED);
         res.status(200).json(user.goals);
     } catch (error) {
-        logger.error('Fehler beim Abrufen der Ziele:', error);
-        res.status(500).json({ error: 'Fehler beim Abrufen der Ziele' });
+        logger.error(texts.ERRORS.ERROR('fetching goals', error));
+        res.status(500).json({ error: texts.ERRORS.FETCH_GOALS });
     }
 };
 
@@ -52,19 +53,19 @@ const deleteGoal = async (req, res) => {
     const { userId } = req.body;
     const { id } = req.params;
     try {
-        logger.info('Löschen des Ziels mit ID:', id, 'für Benutzer:', userId);
+        logger.info(texts.INFO.DELETING_GOAL(id, userId));
         const user = await User.findById(userId);
         if (!user) {
-            logger.warn('Benutzer nicht gefunden:', userId);
-            return res.status(404).json({ error: 'Benutzer nicht gefunden' });
+            logger.warn(texts.WARNINGS.USER_NOT_FOUND);
+            return res.status(404).json({ error: texts.ERRORS.USER_NOT_FOUND });
         }
         user.goals = user.goals.filter((goal) => goal.id !== parseInt(id));
         await user.save();
-        logger.info('Ziel gelöscht:', id);
+        logger.info(texts.SUCCESS.GOAL_DELETED);
         res.status(200).json(user.goals);
     } catch (error) {
-        logger.error('Fehler beim Löschen des Ziels: ' + error, error);
-        res.status(500).json({ error: 'Fehler beim Löschen des Ziels' });
+        logger.error(texts.ERRORS.ERROR('deleting goal', error));
+        res.status(500).json({ error: texts.ERRORS.DELETE_GOAL });
     }
 };
 
@@ -72,37 +73,37 @@ const updateGoal = async (req, res) => {
     const { userId, goal } = req.body;
     const { id } = req.params;
     try {
-        logger.info(`Aktualisiere Ziel mit ID ${id} für Benutzer ${userId}`);
+        logger.info(texts.INFO.UPDATING_GOAL(id, userId));
         const user = await User.findById(userId);
         if (!user) {
-            logger.warn(`Benutzer mit ID ${userId} nicht gefunden`);
-            return res.status(404).json({ error: 'Benutzer nicht gefunden' });
+            logger.warn(texts.WARNINGS.USER_NOT_FOUND);
+            return res.status(404).json({ error: texts.ERRORS.USER_NOT_FOUND });
         }
         const goalIndex = user.goals.findIndex((g) => g.id === parseInt(id));
         if (goalIndex === -1) {
-            logger.warn(`Ziel mit ID ${id} nicht gefunden`);
-            return res.status(404).json({ error: 'Ziel nicht gefunden' });
+            logger.warn(texts.ERRORS.GOAL_NOT_FOUND);
+            return res.status(404).json({ error: texts.ERRORS.GOAL_NOT_FOUND });
         }
         user.goals[goalIndex] = goal;
         await user.save();
-        logger.info(`Ziel mit ID ${id} erfolgreich aktualisiert`);
+        logger.info(texts.SUCCESS.GOAL_UPDATED);
         res.status(200).json(user.goals);
     } catch (error) {
-        logger.error('Fehler beim Aktualisieren des Ziels: ' + error, error);
-        res.status(500).json({ error: 'Fehler beim Aktualisieren des Ziels' });
+        logger.error(texts.ERRORS.ERROR('updating goal', error));
+        res.status(500).json({ error: texts.ERRORS.UPDATE_GOAL });
     }
 };
 
 const getPublicGoalsOfFriends = async (req, res) => {
     try {
         const userId = req.params.userId;
-        logger.info(`Fetching public goals for user: ${userId}`);
+        logger.info(texts.INFO.FETCHING_PUBLIC_GOALS(userId));
 
         const user = await User.findById(userId).populate('friends');
 
         if (!user) {
-            logger.warn(`User with ID ${userId} not found`);
-            return res.status(404).json({ error: 'User not found' });
+            logger.warn(texts.WARNINGS.USER_NOT_FOUND);
+            return res.status(404).json({ error: texts.ERRORS.USER_NOT_FOUND });
         }
 
         const publicGoals = user.friends.flatMap((friend) =>
@@ -115,17 +116,14 @@ const getPublicGoalsOfFriends = async (req, res) => {
         );
 
         logger.info(
-            `Retrieved ${publicGoals.length} public goals for user ${userId}`
+            texts.INFO.PUBLIC_GOALS_RETRIEVED(publicGoals.length, userId)
         );
         res.status(200).json(publicGoals);
     } catch (error) {
         logger.error(
-            'Error retrieving public goals of friends: ' + error,
-            error
+            texts.ERRORS.ERROR('retrieving public goals of friends', error)
         );
-        res.status(500).json({
-            error: 'Error retrieving public goals of friends',
-        });
+        res.status(500).json({ error: texts.ERRORS.FETCH_PUBLIC_GOALS });
     }
 };
 

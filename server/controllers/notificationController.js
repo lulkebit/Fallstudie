@@ -1,5 +1,6 @@
 const Notification = require('../models/notification');
 const logger = require('../utils/logger');
+const texts = require('../ressources/texts');
 
 const getNotifications = async (req, res) => {
     const { userId } = req.params;
@@ -13,8 +14,8 @@ const getNotifications = async (req, res) => {
 
         res.status(200).json(notifications);
     } catch (error) {
-        logger.error('Error fetching notifications: ' + error);
-        res.status(500).json({ error: 'Error fetching notifications' });
+        logger.error(texts.ERRORS.ERROR('fetching notifications', error));
+        res.status(500).json({ error: texts.ERRORS.FETCH_NOTIFICATIONS });
     }
 };
 
@@ -27,13 +28,15 @@ const markNotificationAsRead = async (req, res) => {
             { new: true }
         );
         if (!notification) {
-            return res.status(404).json({ error: 'Notification not found' });
+            return res
+                .status(404)
+                .json({ error: texts.ERRORS.NOTIFICATION_NOT_FOUND });
         }
-        logger.info(`Marked notification ${notificationId} as read`);
+        logger.info(texts.INFO.NOTIFICATION_MARKED_READ(notificationId));
         res.status(200).json(notification);
     } catch (error) {
-        logger.error('Error marking notification as read: ' + error);
-        res.status(500).json({ error: 'Error marking notification as read' });
+        logger.error(texts.ERRORS.ERROR('marking notification as read', error));
+        res.status(500).json({ error: texts.ERRORS.MARK_NOTIFICATION_READ });
     }
 };
 

@@ -3,41 +3,42 @@ const User = require('../models/user');
 const logger = require('../utils/logger');
 const { hashPassword, comparePassword } = require('../helpers/auth');
 const avatars = require('../ressources/avatars');
+const texts = require('../ressources/texts');
 
 const registerUser = async (req, res) => {
     try {
-        logger.info('Attempting to register a new user');
+        logger.info(texts.INFO.ATTEMPTING_REGISTER_USER);
         const { firstname, lastname, email, username, password } = req.body;
 
         const emailExist = await User.findOne({ email });
         if (emailExist) {
-            logger.warn(`Registration failed: Email ${email} already in use`);
+            logger.warn(texts.WARNINGS.EMAIL_ALREADY_EXISTS_SERVER(email));
             return res.json({
-                error: 'Email wird bereits verwendet',
+                error: texts.WARNINGS.EMAIL_ALREADY_EXISTS_CLIENT,
             });
         }
 
         const usernameExist = await User.findOne({ username });
         if (usernameExist) {
             logger.warn(
-                `Registration failed: Username ${username} already in use`
+                texts.WARNINGS.USERNAME_ALREADY_EXISTS_SERVER(username)
             );
             return res.json({
-                error: 'Username wird bereits verwendet',
+                error: texts.WARNINGS.USERNAME_ALREADY_EXISTS_CLIENT,
             });
         }
 
         if (!password || password.length < 6) {
-            logger.warn('Registration failed: Password too short');
+            logger.warn(texts.WARNINGS.PASSWORD_TOO_SHORT);
             return res.json({
-                error: 'Passwort muss mindestens 6 Zeichen lang sein',
+                error: texts.WARNINGS.PASSWORD_TOO_SHORT,
             });
         }
 
         if (!firstname || !lastname) {
-            logger.warn('Registration failed: Missing first or last name');
+            logger.warn(texts.WARNINGS.NAME_MISSING_SERVER);
             return res.json({
-                error: 'Bitte geben Sie Ihren Vor- und Nachnamen ein',
+                error: texts.WARNINGS.NAME_MISSING_CLIENT,
             });
         }
 
@@ -55,24 +56,24 @@ const registerUser = async (req, res) => {
             avatar: randomAvatar,
         });
 
-        logger.info(`User registered successfully: ${username}`);
+        logger.info(texts.SUCCESS.USER_REGISTERED(username));
         return res.json(user);
     } catch (error) {
-        logger.error('Error during user registration:', error);
+        logger.error(texts.ERRORS.ERROR('user registration', error));
         res.status(500).json({ message: error.message });
     }
 };
 
 const loginUser = async (req, res) => {
     try {
-        logger.info('Attempting user login');
+        logger.info(texts.INFO.ATTEMPTING_LOGIN_USER);
         const { email, password } = req.body;
 
         const user = await User.findOne({ email });
         if (!user) {
-            logger.warn(`Login failed: No user found with email ${email}`);
+            logger.warn(texts.WARNINGS.WRONG_EMAIL_SERVER(email));
             return res.json({
-                error: 'Ungültige Anmeldedaten',
+                error: texts.WARNINGS.WRONG_CREDENTIALS_CLIENT,
             });
         }
 
@@ -90,15 +91,13 @@ const loginUser = async (req, res) => {
                 {},
                 (err, token) => {
                     if (err) {
-                        logger.error('Token creation failed:', err);
-                        return res
-                            .status(500)
-                            .json({ error: 'Token-Erstellung fehlgeschlagen' });
+                        logger.error(texts.ERRORS.ERROR('token creation', err));
+                        return res.status(500).json({
+                            error: texts.ERRORS.TOKEN_CREATION_CLIENT,
+                        });
                     }
 
-                    logger.info(
-                        `User logged in successfully: ${user.username}`
-                    );
+                    logger.info(texts.SUCCESS.USER_LOGGED_IN(user.username));
                     res.cookie('token', token, {
                         httpOnly: true,
                         secure: true,
@@ -106,27 +105,25 @@ const loginUser = async (req, res) => {
                 }
             );
         } else {
-            logger.warn(
-                `Login failed: Incorrect password for user ${user.username}`
-            );
+            logger.warn(texts.WARNINGS.WRONG_PASSWORD_SERVER(user.username));
             return res.json({
-                error: 'Ungültige Anmeldedaten',
+                error: texts.WARNINGS.WRONG_CREDENTIALS_CLIENT,
             });
         }
     } catch (error) {
-        logger.error('Error during user login:', error);
+        logger.error(texts.ERRORS.ERROR('user login', error));
         res.status(500).json({ message: error.message });
     }
 };
 
 const logoutUser = (req, res) => {
     try {
-        logger.info('Attempting user logout');
+        logger.info(texts.INFO.ATTEMPTING_LOGOUT_USER);
         res.clearCookie('token');
-        res.json({ message: 'Erfolgreich abgemeldet' });
-        logger.info('User logged out');
+        res.json({ message: texts.MESSAGES.LOGOUT_SUCCESS });
+        logger.info(texts.SUCCESS.USER_LOGGED_OUT);
     } catch (error) {
-        logger.error('Error on user logout:', error);
+        logger.error(texts.ERRORS.ERROR('user logout', error));
         return res.json({
             error: error.message,
         });
@@ -134,7 +131,7 @@ const logoutUser = (req, res) => {
 };
 
 const getProfile = async (req, res) => {
-    logger.info('Attempting to retrieve user profile');
+    logger.info(texts.INFO.ATTEMPTING_PROFILE_RETRIEVAL);
     const { token } = req.cookies;
 
     if (token) {
@@ -144,8 +141,8 @@ const getProfile = async (req, res) => {
             {},
             async (err, decoded) => {
                 if (err) {
-                    logger.warn('Invalid token provided for profile retrieval');
-                    return res.json({ error: 'Invalid token' });
+                    logger.warn(texts.WARNINGS.INVALID_TOKEN);
+                    return res.json({ error: texts.WARNINGS.INVALID_TOKEN });
                 }
 
                 try {
@@ -153,27 +150,27 @@ const getProfile = async (req, res) => {
                         '-password -goals'
                     );
                     if (!user) {
-                        logger.warn('User not found for profile retrieval');
+                        logger.warn(texts.WARNINGS.USER_NOT_FOUND);
                         return res
                             .status(404)
-                            .json({ error: 'User not found' });
+                            .json({ error: texts.WARNINGS.USER_NOT_FOUND });
                     }
 
-                    logger.info(
-                        `Profile retrieved successfully for user: ${user.username}`
-                    );
+                    logger.info(texts.SUCCESS.USER_LOGGED_IN(user.username));
                     res.json(user);
                 } catch (error) {
-                    logger.error('Error retrieving user profile:', error);
+                    logger.error(
+                        texts.ERRORS.ERROR('user profile retrieval', error)
+                    );
                     res.status(500).json({
-                        error: 'Error retrieving user profile',
+                        error: texts.ERRORS.USER_PROFILE_RETRIEVAL,
                     });
                 }
             }
         );
     } else {
-        logger.warn('No token found for profile retrieval');
-        res.json('No token found');
+        logger.warn(texts.WARNINGS.NO_TOKEN_FOUND);
+        res.json(texts.WARNINGS.NO_TOKEN_FOUND);
     }
 };
 
@@ -184,41 +181,64 @@ const updateProfile = async (req, res) => {
             ? req.file.buffer.toString('base64')
             : undefined;
 
-        logger.info(`Attempting to update profile for user ID: ${userId}`);
+        logger.info(texts.INFO.ATTEMPTING_PROFILE_UPDATE(userId));
 
         const user = await User.findById(userId);
         if (!user) {
-            logger.warn(
-                `Profile update failed: User not found with ID ${userId}`
-            );
-            return res.status(404).json({ error: 'Benutzer nicht gefunden' });
+            logger.warn(texts.WARNINGS.USER_NOT_FOUND);
+            return res
+                .status(404)
+                .json({ error: texts.WARNINGS.USER_NOT_FOUND });
         }
 
         if (user.username !== username) {
             logger.info(
-                `User ID: ${userId} - Username changed from '${user.username}' to '${username}'`
+                texts.INFO.PROFILE_FIELD_CHANGED(
+                    userId,
+                    'Username',
+                    user.username,
+                    username
+                )
             );
         }
         if (user.email !== email) {
             logger.info(
-                `User ID: ${userId} - Email changed from '${user.email}' to '${email}'`
+                texts.INFO.PROFILE_FIELD_CHANGED(
+                    userId,
+                    'Email',
+                    user.email,
+                    email
+                )
             );
         }
         if (user.firstname !== firstname) {
             logger.info(
-                `User ID: ${userId} - Firstname changed from '${user.firstname}' to '${firstname}'`
+                texts.INFO.PROFILE_FIELD_CHANGED(
+                    userId,
+                    'Firstname',
+                    user.firstname,
+                    firstname
+                )
             );
         }
         if (user.lastname !== lastname) {
             logger.info(
-                `User ID: ${userId} - Lastname changed from '${user.lastname}' to '${lastname}'`
+                texts.INFO.PROFILE_FIELD_CHANGED(
+                    userId,
+                    'Lastname',
+                    user.lastname,
+                    lastname
+                )
             );
         }
         if (avatar !== undefined) {
             logger.info(
-                `User ID: ${userId} - Avatar changed from '...${user.avatar.slice(
-                    -10
-                )}' to '...${avatar.slice(-10)}'`
+                texts.INFO.PROFILE_FIELD_CHANGED(
+                    userId,
+                    'Avatar',
+                    `...${user.avatar.slice(-10)}`,
+                    `...${avatar.slice(-10)}`
+                )
             );
         }
 
@@ -237,9 +257,9 @@ const updateProfile = async (req, res) => {
 
         res.json(user);
     } catch (error) {
-        logger.error('Fehler beim Aktualisieren des Profils:', error);
+        logger.error(texts.ERRORS.ERROR('profile update', error));
         res.status(500).json({
-            error: 'Fehler beim Aktualisieren des Profils',
+            error: texts.ERRORS.PROFILE_UPDATE,
         });
     }
 };
@@ -248,27 +268,31 @@ const changePassword = async (req, res) => {
     const { userId, oldPassword, newPassword } = req.body;
 
     try {
-        logger.info(`User ${userId} is attempting to change password`);
+        logger.info(texts.INFO.ATTEMPTING_PASSWORD_CHANGE(userId));
         const user = await User.findById(userId);
         if (!user) {
-            logger.warn(`User ${userId} not found`);
-            return res.status(404).json({ error: 'Benutzer nicht gefunden' });
+            logger.warn(texts.WARNINGS.USER_NOT_FOUND);
+            return res
+                .status(404)
+                .json({ error: texts.WARNINGS.USER_NOT_FOUND });
         }
 
         const isMatch = await comparePassword(oldPassword, user.password);
         if (!isMatch) {
-            logger.warn('Old password is incorrect');
-            return res.status(400).json({ error: 'Altes Passwort ist falsch' });
+            logger.warn(texts.WARNINGS.OLD_PASSWORD_INCORRECT);
+            return res
+                .status(400)
+                .json({ error: texts.WARNINGS.OLD_PASSWORD_INCORRECT });
         }
 
         user.password = await hashPassword(newPassword);
         await user.save();
 
-        logger.info('Password successfully changed');
-        res.status(200).json({ message: 'Passwort erfolgreich geändert' });
+        logger.info(texts.SUCCESS.PASSWORD_CHANGED);
+        res.status(200).json({ message: texts.SUCCESS.PASSWORD_CHANGED });
     } catch (error) {
-        logger.error('Fehler beim Ändern des Passworts:', error);
-        res.status(500).json({ error: 'Fehler beim Ändern des Passworts' });
+        logger.error(texts.ERRORS.ERROR('password change', error));
+        res.status(500).json({ error: texts.ERRORS.PASSWORD_CHANGE });
     }
 };
 
