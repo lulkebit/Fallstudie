@@ -3,6 +3,7 @@ const User = require('../models/user');
 const Notification = require('../models/notification');
 const logger = require('../utils/logger');
 const { sendNotification } = require('../helpers/notification');
+const texts = require('../ressources/texts');
 
 const sendFriendRequest = async (req, res) => {
     const { userId, friendUsername } = req.body;
@@ -10,26 +11,22 @@ const sendFriendRequest = async (req, res) => {
     try {
         const user = await User.findById(userId);
         if (!user) {
-            logger.warn(`User with ID ${userId} not found`);
-            return res.status(404).json({ error: 'User not found' });
+            logger.warn(texts.ERRORS.USER_NOT_FOUND);
+            return res.status(404).json({ error: texts.ERRORS.USER_NOT_FOUND });
         }
 
         if (user.username === friendUsername) {
-            logger.warn(
-                `User ${user.username} cannot send a friend request to himself`
-            );
-            return res.status(400).json({
-                error: 'You cannot send a friend request to yourself',
-            });
+            logger.warn(texts.WARNINGS.FRIEND_REQUEST_SELF(user.username));
+            return res
+                .status(400)
+                .json({ error: texts.ERRORS.FRIEND_REQUEST_SELF });
         }
 
-        logger.info(
-            `User ${userId} is sending a friend request to ${friendUsername}`
-        );
+        logger.info(texts.INFO.SENDING_FRIEND_REQUEST(userId, friendUsername));
         const friend = await User.findOne({ username: friendUsername });
         if (!friend) {
-            logger.warn(`User ${friendUsername} not found`);
-            return res.status(404).json({ error: 'User not found' });
+            logger.warn(texts.ERRORS.USER_NOT_FOUND);
+            return res.status(404).json({ error: texts.ERRORS.USER_NOT_FOUND });
         }
 
         const existingRequest = await Friend.findOne({
@@ -39,22 +36,20 @@ const sendFriendRequest = async (req, res) => {
         });
         if (existingRequest) {
             logger.warn(
-                `Friend request from ${userId} to ${friend._id} already exists`
+                texts.WARNINGS.FRIEND_REQUEST_ALREADY_EXISTS(userId, friend._id)
             );
             return res
                 .status(400)
-                .json({ error: 'Friend request already sent' });
+                .json({ error: texts.ERRORS.FRIEND_REQUEST_ALREADY_SENT });
         }
 
         const friendRequest = new Friend({ userId, friendId: friend._id });
         await friendRequest.save();
-        logger.info(
-            `Friend request from ${userId} to ${friend._id} saved successfully`
-        );
+        logger.info(texts.INFO.FRIEND_REQUEST_SAVED(userId, friend._id));
 
         const notification = await sendNotification(
             friend._id,
-            `${user.username} hat dir eine Freundschaftsanfrage gesendet!`,
+            texts.MESSAGES.FRIEND_REQUEST_NOTIFICATION(user.username),
             false
         );
 
@@ -63,17 +58,20 @@ const sendFriendRequest = async (req, res) => {
 
         res.status(201).json(friendRequest);
     } catch (error) {
-        logger.error('Error sending friend request: ' + error);
-        res.status(500).json({ error: 'Error sending friend request' });
+        logger.error(texts.ERRORS.ERROR('sending friend request', error));
+        res.status(500).json({ error: texts.ERRORS.SEND_FRIEND_REQUEST });
     }
 };
 
 const acceptFriendRequest = async (req, res) => {
     const { requestId } = req.params;
     try {
+        logger.info(texts.INFO.ACCEPTING_FRIEND_REQUEST(requestId));
         const friendRequest = await Friend.findById(requestId);
         if (!friendRequest) {
-            return res.status(404).json({ error: 'Friend request not found' });
+            return res
+                .status(404)
+                .json({ error: texts.ERRORS.FRIEND_REQUEST_NOT_FOUND });
         }
 
         friendRequest.status = 'accepted';
@@ -106,83 +104,85 @@ const acceptFriendRequest = async (req, res) => {
         );
 
         if (notification) {
-            logger.info(`Marked notification ${notification._id} as read`);
+            logger.info(texts.INFO.NOTIFICATION_MARKED_READ(notification._id));
         } else {
-            logger.warn(
-                `Notification not found for friend request ${requestId}`
-            );
+            logger.warn(texts.WARNINGS.NOTIFICATION_NOT_FOUND(requestId));
         }
 
-        logger.info(`Friend request with ID ${requestId} accepted`);
+        logger.info(texts.SUCCESS.FRIEND_REQUEST_ACCEPTED);
         res.status(200).json(friendRequest);
     } catch (error) {
-        logger.error('Error accepting friend request: ' + error);
-        res.status(500).json({ error: 'Error accepting friend request' });
+        logger.error(texts.ERRORS.ERROR('accepting friend request', error));
+        res.status(500).json({ error: texts.ERRORS.ACCEPT_FRIEND_REQUEST });
     }
 };
 
 const declineFriendRequest = async (req, res) => {
     const { requestId } = req.params;
     try {
+        logger.info(texts.INFO.DECLINING_FRIEND_REQUEST(requestId));
         const friendRequest = await Friend.findByIdAndUpdate(
             requestId,
             { status: 'declined' },
             { new: true }
         );
         if (!friendRequest) {
-            return res.status(404).json({ error: 'Friend request not found' });
+            return res
+                .status(404)
+                .json({ error: texts.ERRORS.FRIEND_REQUEST_NOT_FOUND });
         }
-        logger.info(`Friend request with ID ${requestId} declined`);
+        logger.info(texts.SUCCESS.FRIEND_REQUEST_DECLINED);
         res.status(200).json(friendRequest);
     } catch (error) {
-        logger.error('Error declining friend request: ' + error);
-        res.status(500).json({ error: 'Error declining friend request' });
+        logger.error(texts.ERRORS.ERROR('declining friend request', error));
+        res.status(500).json({ error: texts.ERRORS.DECLINE_FRIEND_REQUEST });
     }
 };
 
 const getFriends = async (req, res) => {
     const { userId } = req.params;
     try {
-        logger.info(`Fetching friends for user ${userId}`);
+        logger.info(texts.INFO.FETCHING_FRIENDS(userId));
         const friends = await Friend.find({
             userId,
             status: 'accepted',
         }).populate('friendId');
-        logger.info(`Friends fetched successfully for user ${userId}`);
+        logger.info(texts.SUCCESS.FRIEND_REQUEST_ACCEPTED);
         res.status(200).json(friends);
     } catch (error) {
-        logger.error('Error fetching friends:', error);
-        res.status(500).json({ error: 'Error fetching friends' });
+        logger.error(texts.ERRORS.ERROR('fetching friends', error));
+        res.status(500).json({ error: texts.ERRORS.FETCH_FRIENDS });
     }
 };
 
 const getFriendRequests = async (req, res) => {
     const { userId } = req.params;
     try {
-        logger.info(`Fetching friend requests for user ${userId}`);
+        logger.info(texts.INFO.FETCHING_FRIEND_REQUESTS(userId));
         const friendRequests = await Friend.find({
             friendId: userId,
             status: 'pending',
         }).populate('userId');
-        logger.info(`Friend requests fetched successfully for user ${userId}`);
+        logger.info(texts.SUCCESS.FRIEND_REQUEST_ACCEPTED);
         res.status(200).json(friendRequests);
     } catch (error) {
-        logger.error('Error fetching friend requests:', error);
-        res.status(500).json({ error: 'Error fetching friend requests' });
+        logger.error(texts.ERRORS.ERROR('fetching friend requests', error));
+        res.status(500).json({ error: texts.ERRORS.FETCH_FRIEND_REQUESTS });
     }
 };
 
 const deleteFriend = async (req, res) => {
     const { userId, friendId } = req.params;
     try {
+        logger.info(texts.INFO.DELETING_FRIENDSHIP(userId, friendId));
         await Friend.deleteOne({ userId, friendId });
         await Friend.deleteOne({ userId: friendId, friendId: userId });
 
-        logger.info(`Friendship between ${userId} and ${friendId} deleted`);
-        res.status(200).json({ message: 'Friendship deleted' });
+        logger.info(texts.SUCCESS.FRIENDSHIP_DELETED);
+        res.status(200).json({ message: texts.SUCCESS.FRIENDSHIP_DELETED });
     } catch (error) {
-        logger.error('Error deleting friendship:', error);
-        res.status(500).json({ error: 'Error deleting friendship' });
+        logger.error(texts.ERRORS.ERROR('deleting friendship', error));
+        res.status(500).json({ error: texts.ERRORS.DELETE_FRIENDSHIP });
     }
 };
 
