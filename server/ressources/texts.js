@@ -119,4 +119,8 @@ module.exports = {
         FRIEND_REQUEST_NOTIFICATION: (benutzername) =>
             `${benutzername} hat dir eine Freundschaftsanfrage gesendet!`,
     },
+    SERVER: {
+        RUNNING: (port) => `Server läuft auf Port ${port}`,
+        DATABASE_CONNECTED: 'Datenbank verbunden',
+    },
 };
