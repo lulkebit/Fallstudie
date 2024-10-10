@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useToast } from '../context/toastContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { UserContext } from '../context/userContext';
+import NotificationCard from './notificationCard';
 
 const Navbar = () => {
     const [showProfileCard, setShowProfileCard] = useState(false);
@@ -75,15 +76,10 @@ const Navbar = () => {
                             >
                                 Freunde
                             </button>
-                            <a
-                                href='#'
-                                className={getNavItemClass('/notifications')}
-                            >
-                                Benachrichtigungen
-                            </a>
                         </div>
                     </div>
                     <div className='hidden sm:ml-6 sm:flex sm:items-center'>
+                        <NotificationCard />
                         <div
                             className='ml-3 relative'
                             ref={profileRef}

@@ -31,7 +31,10 @@ const {
     deleteFriend,
 } = require('../controllers/friendController');
 
-const { getNotifications } = require('../controllers/notificationController');
+const {
+    getNotifications,
+    markNotificationAsRead,
+} = require('../controllers/notificationController');
 
 router.use(
     cors({
@@ -50,6 +53,7 @@ router.put('/change-password', changePassword);
 
 // Notification routes
 router.get('/notifications/:userId', getNotifications);
+router.patch('/notifications/:notificationId/read', markNotificationAsRead);
 
 // Goal routes
 router.get('/goals/friends/:userId', getPublicGoalsOfFriends);

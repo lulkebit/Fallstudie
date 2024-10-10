@@ -16,6 +16,10 @@ const friendSchema = new mongoose.Schema({
         enum: ['pending', 'accepted', 'declined'],
         default: 'pending',
     },
+    notificationId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Notification',
+    },
 });
 
 module.exports = mongoose.model('Friend', friendSchema);
