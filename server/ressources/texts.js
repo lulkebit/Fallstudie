@@ -1,114 +1,122 @@
 module.exports = {
     ERRORS: {
-        ERROR: (type, error) => `Error during ${type}: ${error}`,
-        TOKEN_CREATION_CLIENT: 'Token creation failed',
-        USER_PROFILE_RETRIEVAL: 'Error retrieving user profile',
+        ERROR: (typ, fehler) => `Fehler während ${typ}: ${fehler}`,
+        TOKEN_CREATION_CLIENT: 'Token-Erstellung fehlgeschlagen',
+        USER_PROFILE_RETRIEVAL: 'Fehler beim Abrufen des Benutzerprofils',
         PROFILE_UPDATE: 'Fehler beim Aktualisieren des Profils',
         PASSWORD_CHANGE: 'Fehler beim Ändern des Passworts',
-        USER_NOT_FOUND: 'User not found',
-        FRIEND_REQUEST_SELF: 'You cannot send a friend request to yourself',
-        FRIEND_REQUEST_ALREADY_SENT: 'Friend request already sent',
-        FRIEND_REQUEST_NOT_FOUND: 'Friend request not found',
-        SEND_FRIEND_REQUEST: 'Error sending friend request',
-        ACCEPT_FRIEND_REQUEST: 'Error accepting friend request',
-        DECLINE_FRIEND_REQUEST: 'Error declining friend request',
-        FETCH_FRIENDS: 'Error fetching friends',
-        FETCH_FRIEND_REQUESTS: 'Error fetching friend requests',
-        DELETE_FRIENDSHIP: 'Error deleting friendship',
+        USER_NOT_FOUND: 'Benutzer nicht gefunden',
+        FRIEND_REQUEST_SELF:
+            'Du kannst dir selbst keine Freundschaftsanfrage senden',
+        FRIEND_REQUEST_ALREADY_SENT:
+            'Freundschaftsanfrage wurde bereits gesendet',
+        FRIEND_REQUEST_NOT_FOUND: 'Freundschaftsanfrage nicht gefunden',
+        SEND_FRIEND_REQUEST: 'Fehler beim Senden der Freundschaftsanfrage',
+        ACCEPT_FRIEND_REQUEST: 'Fehler beim Annehmen der Freundschaftsanfrage',
+        DECLINE_FRIEND_REQUEST: 'Fehler beim Ablehnen der Freundschaftsanfrage',
+        FETCH_FRIENDS: 'Fehler beim Abrufen der Freunde',
+        FETCH_FRIEND_REQUESTS: 'Fehler beim Abrufen der Freundschaftsanfragen',
+        DELETE_FRIENDSHIP: 'Fehler beim Löschen der Freundschaft',
         ADD_GOAL: 'Fehler beim Hinzufügen des Ziels',
         FETCH_GOALS: 'Fehler beim Abrufen der Ziele',
         DELETE_GOAL: 'Fehler beim Löschen des Ziels',
         UPDATE_GOAL: 'Fehler beim Aktualisieren des Ziels',
         GOAL_NOT_FOUND: 'Ziel nicht gefunden',
-        FETCH_PUBLIC_GOALS: 'Error retrieving public goals of friends',
-        FETCH_NOTIFICATIONS: 'Error fetching notifications',
-        MARK_NOTIFICATION_READ: 'Error marking notification as read',
-        NOTIFICATION_NOT_FOUND: 'Notification not found',
+        FETCH_PUBLIC_GOALS:
+            'Fehler beim Abrufen der öffentlichen Ziele von Freunden',
+        FETCH_NOTIFICATIONS: 'Fehler beim Abrufen der Benachrichtigungen',
+        MARK_NOTIFICATION_READ:
+            'Fehler beim Markieren der Benachrichtigung als gelesen',
+        NOTIFICATION_NOT_FOUND: 'Benachrichtigung nicht gefunden',
     },
     SUCCESS: {
-        SERVER_RUNNING: (port) => `Server is running on port ${port}`,
-        USER_REGISTERED: (username) =>
-            `User registered successfully: ${username}`,
-        USER_LOGGED_IN: (username) =>
-            `User logged in successfully: ${username}`,
-        USER_LOGGED_OUT: 'User logged out',
+        SERVER_RUNNING: (port) => `Server läuft auf Port ${port}`,
+        USER_REGISTERED: (benutzername) =>
+            `Benutzer erfolgreich registriert: ${benutzername}`,
+        USER_LOGGED_IN: (benutzername) =>
+            `Benutzer erfolgreich angemeldet: ${benutzername}`,
+        USER_LOGGED_OUT: 'Benutzer abgemeldet',
         PASSWORD_CHANGED: 'Passwort erfolgreich geändert',
-        FRIEND_REQUEST_SENT: 'Friend request sent successfully',
-        FRIEND_REQUEST_ACCEPTED: 'Friend request accepted successfully',
-        FRIEND_REQUEST_DECLINED: 'Friend request declined successfully',
-        FRIENDSHIP_DELETED: 'Friendship deleted successfully',
+        FRIEND_REQUEST_SENT: 'Freundschaftsanfrage erfolgreich gesendet',
+        FRIEND_REQUEST_ACCEPTED: 'Freundschaftsanfrage erfolgreich angenommen',
+        FRIEND_REQUEST_DECLINED: 'Freundschaftsanfrage erfolgreich abgelehnt',
+        FRIENDSHIP_DELETED: 'Freundschaft erfolgreich gelöscht',
         GOAL_ADDED: 'Ziel erfolgreich hinzugefügt',
         GOAL_DELETED: 'Ziel erfolgreich gelöscht',
         GOAL_UPDATED: 'Ziel erfolgreich aktualisiert',
-        NOTIFICATION_MARKED_READ: 'Notification marked as read successfully',
+        NOTIFICATION_MARKED_READ:
+            'Benachrichtigung erfolgreich als gelesen markiert',
     },
     INFO: {
-        ATTEMPTING_REGISTER_USER: 'Attempting to register a new user',
-        ATTEMPTING_LOGIN_USER: 'Attempting to log in user',
-        ATTEMPTING_LOGOUT_USER: 'Attempting user logout',
-        ATTEMPTING_PROFILE_RETRIEVAL: 'Attempting to retrieve user profile',
-        ATTEMPTING_PROFILE_UPDATE: (userId) =>
-            `Attempting to update profile for user ID: ${userId}`,
-        ATTEMPTING_PASSWORD_CHANGE: (userId) =>
-            `User ${userId} is attempting to change password`,
-        PROFILE_FIELD_CHANGED: (userId, field, oldValue, newValue) =>
-            `User ID: ${userId} - ${field} changed from '${oldValue}' to '${newValue}'`,
-        SENDING_FRIEND_REQUEST: (userId, friendUsername) =>
-            `User ${userId} is sending a friend request to ${friendUsername}`,
-        FRIEND_REQUEST_SAVED: (userId, friendId) =>
-            `Friend request from ${userId} to ${friendId} saved successfully`,
-        ACCEPTING_FRIEND_REQUEST: (requestId) =>
-            `Accepting friend request with ID ${requestId}`,
-        DECLINING_FRIEND_REQUEST: (requestId) =>
-            `Declining friend request with ID ${requestId}`,
-        FETCHING_FRIENDS: (userId) => `Fetching friends for user ${userId}`,
-        FETCHING_FRIEND_REQUESTS: (userId) =>
-            `Fetching friend requests for user ${userId}`,
-        DELETING_FRIENDSHIP: (userId, friendId) =>
-            `Deleting friendship between ${userId} and ${friendId}`,
-        ADDING_GOAL: (userId) =>
-            `Hinzufügen eines neuen Ziels für Benutzer: ${userId}`,
-        FETCHING_GOALS: (userId) => `Abrufen der Ziele für Benutzer: ${userId}`,
-        DELETING_GOAL: (id, userId) =>
-            `Löschen des Ziels mit ID: ${id} für Benutzer: ${userId}`,
-        UPDATING_GOAL: (id, userId) =>
-            `Aktualisiere Ziel mit ID ${id} für Benutzer ${userId}`,
-        FETCHING_PUBLIC_GOALS: (userId) =>
-            `Fetching public goals for user: ${userId}`,
-        PUBLIC_GOALS_RETRIEVED: (count, userId) =>
-            `Retrieved ${count} public goals for user ${userId}`,
-        NOTIFICATION_MARKED_READ: (notificationId) =>
-            `Marked notification ${notificationId} as read`,
+        ATTEMPTING_REGISTER_USER:
+            'Versuch, einen neuen Benutzer zu registrieren',
+        ATTEMPTING_LOGIN_USER: 'Versuch, Benutzer anzumelden',
+        ATTEMPTING_LOGOUT_USER: 'Versuch, Benutzer abzumelden',
+        ATTEMPTING_PROFILE_RETRIEVAL: 'Versuch, Benutzerprofil abzurufen',
+        ATTEMPTING_PROFILE_UPDATE: (benutzerId) =>
+            `Versuch, Profil für Benutzer-ID zu aktualisieren: ${benutzerId}`,
+        ATTEMPTING_PASSWORD_CHANGE: (benutzerId) =>
+            `Benutzer ${benutzerId} versucht, das Passwort zu ändern`,
+        PROFILE_FIELD_CHANGED: (benutzerId, feld, alterWert, neuerWert) =>
+            `Benutzer-ID: ${benutzerId} - ${feld} geändert von '${alterWert}' zu '${neuerWert}'`,
+        SENDING_FRIEND_REQUEST: (benutzerId, freundBenutzername) =>
+            `Benutzer ${benutzerId} sendet eine Freundschaftsanfrage an ${freundBenutzername}`,
+        FRIEND_REQUEST_SAVED: (benutzerId, freundId) =>
+            `Freundschaftsanfrage von ${benutzerId} an ${freundId} erfolgreich gespeichert`,
+        ACCEPTING_FRIEND_REQUEST: (anfrageId) =>
+            `Freundschaftsanfrage mit ID ${anfrageId} wird angenommen`,
+        DECLINING_FRIEND_REQUEST: (anfrageId) =>
+            `Freundschaftsanfrage mit ID ${anfrageId} wird abgelehnt`,
+        FETCHING_FRIENDS: (benutzerId) =>
+            `Freunde für Benutzer ${benutzerId} werden abgerufen`,
+        FETCHING_FRIEND_REQUESTS: (benutzerId) =>
+            `Freundschaftsanfragen für Benutzer ${benutzerId} werden abgerufen`,
+        DELETING_FRIENDSHIP: (benutzerId, freundId) =>
+            `Freundschaft zwischen ${benutzerId} und ${freundId} wird gelöscht`,
+        ADDING_GOAL: (benutzerId) =>
+            `Hinzufügen eines neuen Ziels für Benutzer: ${benutzerId}`,
+        FETCHING_GOALS: (benutzerId) =>
+            `Abrufen der Ziele für Benutzer: ${benutzerId}`,
+        DELETING_GOAL: (id, benutzerId) =>
+            `Löschen des Ziels mit ID: ${id} für Benutzer: ${benutzerId}`,
+        UPDATING_GOAL: (id, benutzerId) =>
+            `Aktualisiere Ziel mit ID ${id} für Benutzer ${benutzerId}`,
+        FETCHING_PUBLIC_GOALS: (benutzerId) =>
+            `Abrufen öffentlicher Ziele für Benutzer: ${benutzerId}`,
+        PUBLIC_GOALS_RETRIEVED: (anzahl, benutzerId) =>
+            `${anzahl} öffentliche Ziele für Benutzer ${benutzerId} abgerufen`,
+        NOTIFICATION_MARKED_READ: (benachrichtigungsId) =>
+            `Benachrichtigung ${benachrichtigungsId} als gelesen markiert`,
     },
     WARNINGS: {
         EMAIL_ALREADY_EXISTS_SERVER: (email) =>
-            `Registration failed: Email ${email} already in use`,
-        EMAIL_ALREADY_EXISTS_CLIENT: 'Email already in use',
-        USERNAME_ALREADY_EXISTS_SERVER: (username) =>
-            `Registration failed: Username ${username} already in use`,
-        USERNAME_ALREADY_EXISTS_CLIENT: 'Username already in use',
-        PASSWORD_TOO_SHORT: 'Password must be at least 6 characters long',
-        NAME_MISSING_SERVER: 'Missing first or last name',
+            `Registrierung fehlgeschlagen: E-Mail ${email} wird bereits verwendet`,
+        EMAIL_ALREADY_EXISTS_CLIENT: 'E-Mail wird bereits verwendet',
+        USERNAME_ALREADY_EXISTS_SERVER: (benutzername) =>
+            `Registrierung fehlgeschlagen: Benutzername ${benutzername} wird bereits verwendet`,
+        USERNAME_ALREADY_EXISTS_CLIENT: 'Benutzername wird bereits verwendet',
+        PASSWORD_TOO_SHORT: 'Passwort muss mindestens 6 Zeichen lang sein',
+        NAME_MISSING_SERVER: 'Vor- oder Nachname fehlt',
         NAME_MISSING_CLIENT: 'Bitte geben Sie Ihren Vor- und Nachnamen ein',
         WRONG_EMAIL_SERVER: (email) =>
-            `Login failed: No user found with email ${email}`,
-        WRONG_PASSWORD_SERVER: (username) =>
-            `Login failed: Wrong password for ${username}`,
-        WRONG_CREDENTIALS_CLIENT: 'Wrong email or password',
-        INVALID_TOKEN: 'Invalid token',
-        NO_TOKEN_FOUND: 'No token found',
+            `Anmeldung fehlgeschlagen: Kein Benutzer mit E-Mail ${email} gefunden`,
+        WRONG_PASSWORD_SERVER: (benutzername) =>
+            `Anmeldung fehlgeschlagen: Falsches Passwort für ${benutzername}`,
+        WRONG_CREDENTIALS_CLIENT: 'Falsche E-Mail oder falsches Passwort',
+        INVALID_TOKEN: 'Ungültiges Token',
+        NO_TOKEN_FOUND: 'Kein Token gefunden',
         USER_NOT_FOUND: 'Benutzer nicht gefunden',
         OLD_PASSWORD_INCORRECT: 'Altes Passwort ist falsch',
-        FRIEND_REQUEST_SELF: (username) =>
-            `User ${username} cannot send a friend request to himself`,
-        FRIEND_REQUEST_ALREADY_EXISTS: (userId, friendId) =>
-            `Friend request from ${userId} to ${friendId} already exists`,
-        NOTIFICATION_NOT_FOUND: (requestId) =>
-            `Notification not found for friend request ${requestId}`,
+        FRIEND_REQUEST_SELF: (benutzername) =>
+            `Benutzer ${benutzername} kann sich selbst keine Freundschaftsanfrage senden`,
+        FRIEND_REQUEST_ALREADY_EXISTS: (benutzerId, freundId) =>
+            `Freundschaftsanfrage von ${benutzerId} an ${freundId} existiert bereits`,
+        NOTIFICATION_NOT_FOUND: (anfrageId) =>
+            `Benachrichtigung für Freundschaftsanfrage ${anfrageId} nicht gefunden`,
     },
     MESSAGES: {
         LOGOUT_SUCCESS: 'Erfolgreich abgemeldet',
-        FRIEND_REQUEST_NOTIFICATION: (username) =>
-            `${username} hat dir eine Freundschaftsanfrage gesendet!`,
+        FRIEND_REQUEST_NOTIFICATION: (benutzername) =>
+            `${benutzername} hat dir eine Freundschaftsanfrage gesendet!`,
     },
 };
