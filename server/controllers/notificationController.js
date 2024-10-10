@@ -10,9 +10,7 @@ const getNotifications = async (req, res) => {
         }).sort({
             createdAt: -1,
         });
-        logger.info(
-            `Fetched ${notifications.length} unread notifications for user ${userId}`
-        );
+
         res.status(200).json(notifications);
     } catch (error) {
         logger.error('Error fetching notifications: ' + error);

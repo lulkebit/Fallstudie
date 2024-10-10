@@ -54,7 +54,7 @@ const sendFriendRequest = async (req, res) => {
 
         const notification = await sendNotification(
             friend._id,
-            `Du hast eine Freundschaftsanfrage von ${user.username} erhalten!`,
+            `${user.username} hat dir eine Freundschaftsanfrage gesendet!`,
             false
         );
 
