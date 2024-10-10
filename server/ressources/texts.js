@@ -40,10 +40,13 @@ module.exports = {
         FRIEND_REQUEST_SENT: 'Freundschaftsanfrage erfolgreich gesendet',
         FRIEND_REQUEST_ACCEPTED: 'Freundschaftsanfrage erfolgreich angenommen',
         FRIEND_REQUEST_DECLINED: 'Freundschaftsanfrage erfolgreich abgelehnt',
+        FRIEND_REQUESTS_LOADED: 'Freundschaftsanfragen erfolgreich geladen',
+        FRIENDS_LOADED: 'Freunde erfolgreich geladen',
         FRIENDSHIP_DELETED: 'Freundschaft erfolgreich gelöscht',
         GOAL_ADDED: 'Ziel erfolgreich hinzugefügt',
         GOAL_DELETED: 'Ziel erfolgreich gelöscht',
         GOAL_UPDATED: 'Ziel erfolgreich aktualisiert',
+        GOAL_LOADED: 'Ziele erfolgreich geladen',
         NOTIFICATION_MARKED_READ:
             'Benachrichtigung erfolgreich als gelesen markiert',
     },

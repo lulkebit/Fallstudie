@@ -41,7 +41,7 @@ const getGoals = async (req, res) => {
             logger.warn(texts.WARNINGS.USER_NOT_FOUND);
             return res.status(404).json({ error: texts.ERRORS.USER_NOT_FOUND });
         }
-        logger.info(texts.SUCCESS.GOAL_ADDED);
+        logger.info(texts.SUCCESS.GOAL_LOADED);
         res.status(200).json(user.goals);
     } catch (error) {
         logger.error(texts.ERRORS.ERROR('fetching goals', error));

@@ -147,7 +147,7 @@ const getFriends = async (req, res) => {
             userId,
             status: 'accepted',
         }).populate('friendId');
-        logger.info(texts.SUCCESS.FRIEND_REQUEST_ACCEPTED);
+        logger.info(texts.SUCCESS.FRIENDS_LOADED);
         res.status(200).json(friends);
     } catch (error) {
         logger.error(texts.ERRORS.ERROR('fetching friends', error));
@@ -163,7 +163,7 @@ const getFriendRequests = async (req, res) => {
             friendId: userId,
             status: 'pending',
         }).populate('userId');
-        logger.info(texts.SUCCESS.FRIEND_REQUEST_ACCEPTED);
+        logger.info(texts.SUCCESS.FRIEND_REQUESTS_LOADED);
         res.status(200).json(friendRequests);
     } catch (error) {
         logger.error(texts.ERRORS.ERROR('fetching friend requests', error));
