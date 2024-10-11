@@ -89,7 +89,7 @@ const PublicGoalTable = () => {
                     ))
                 ) : (
                     <p className='text-gray-600 text-center py-8'>
-                        No public goals from friends to display.
+                        Noch keine öffnetliche Ziele vorhanden.
                     </p>
                 )}
             </div>
