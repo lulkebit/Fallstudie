@@ -27,7 +27,7 @@ TrackMyGoal ist eine Webanwendung, die Benutzern hilft, ihre Ziele zu verfolgen 
 1. Klone das Repository:
 
     ```sh
-    git clone https://github.com/dein-benutzername/trackmygoal.git
+    git clone https://github.com/lulkebit/Fallstudie.git
     cd trackmygoal
     ```
 
@@ -107,16 +107,6 @@ server/
 -   `texts.js`: Enthält Textnachrichten für das Backend.
 -   `logger.js`: Logger-Konfiguration.
 
-## Umgebungsvariablen
-
-Erstelle eine `.env` Datei im `server` Verzeichnis und füge die folgenden Umgebungsvariablen hinzu:
-
-```plaintext
-MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/<dbname>?retryWrites=true&w=majority
-PORT=8000
-JWT_SECRET=your_jwt_secret
-```
-
 ## Skripte
 
 ### Frontend
@@ -126,7 +116,7 @@ JWT_SECRET=your_jwt_secret
 
 ### Backend
 
--   `npm start`: Startet den Server mit [`nodemon`](command:_github.copilot.openSymbolFromReferences?%5B%22%22%2C%5B%7B%22uri%22%3A%22file%22%2C%22authority%22%3A%22%22%2C%22path%22%3A%22%2Fc%3A%2FUsers%2Flukes%2FOneDrive%2FDokumente%2FSTORAGE%2FDHBW%2F3.%20Semester%2FWeb-Programmierung%2FEntwicklung%2FFallstudie%2Fserver%2Fpackage.json%22%2C%22query%22%3A%22%22%2C%22fragment%22%3A%22%22%7D%2C%22pos%22%3A%7B%22line%22%3A6%2C%22character%22%3A18%7D%7D%5D%2C%225a5f6e08-46fb-43a6-be9c-5c72f246f04d%22%5D 'Go to definition') für die Entwicklung.
+-   `npm start`: Startet den Server mit [`nodemon`] für die Entwicklung.
 
 ## API-Endpunkte
 
