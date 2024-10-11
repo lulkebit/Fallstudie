@@ -90,6 +90,8 @@ module.exports = {
             `${anzahl} öffentliche Ziele für Benutzer ${benutzerId} abgerufen`,
         NOTIFICATION_MARKED_READ: (benachrichtigungsId) =>
             `Benachrichtigung ${benachrichtigungsId} als gelesen markiert`,
+        FETCHING_NOTIFICATIONS: (benutzerId, seite, limit) =>
+            `Abrufen von Benachrichtigungen für Benutzer ${benutzerId} mit Seite ${seite} und Limit ${limit}`,
     },
     WARNINGS: {
         EMAIL_ALREADY_EXISTS_SERVER: (email) =>

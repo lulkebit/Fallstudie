@@ -34,6 +34,7 @@ const {
 const {
     getNotifications,
     markNotificationAsRead,
+    getAllNotifications,
 } = require('../controllers/notificationController');
 
 router.use(
@@ -54,6 +55,7 @@ router.put('/change-password', changePassword);
 // Notification routes
 router.get('/notifications/:userId', getNotifications);
 router.patch('/notifications/:notificationId/read', markNotificationAsRead);
+router.get('/notifications/all/:userId', getAllNotifications);
 
 // Goal routes
 router.get('/goals/friends/:userId', getPublicGoalsOfFriends);

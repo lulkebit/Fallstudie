@@ -40,7 +40,37 @@ const markNotificationAsRead = async (req, res) => {
     }
 };
 
+const getAllNotifications = async (req, res) => {
+    const { userId } = req.params;
+    const { page = 1, limit = 10 } = req.query;
+
+    const skip = (page - 1) * limit;
+
+    logger.info(texts.INFO.FETCHING_NOTIFICATIONS(userId, page, limit));
+
+    try {
+        const notifications = await Notification.find({ userId })
+            .sort({ createdAt: -1 })
+            .limit(parseInt(limit))
+            .skip(parseInt(skip));
+
+        const totalNotifications = await Notification.countDocuments({
+            userId,
+        });
+
+        res.status(200).json({
+            notifications,
+            totalPages: Math.ceil(totalNotifications / limit),
+            currentPage: parseInt(page),
+        });
+    } catch (error) {
+        logger.error(texts.ERRORS.ERROR('fetching notifications', error));
+        res.status(500).json({ error: texts.ERRORS.FETCH_NOTIFICATIONS });
+    }
+};
+
 module.exports = {
     getNotifications,
     markNotificationAsRead,
+    getAllNotifications,
 };
