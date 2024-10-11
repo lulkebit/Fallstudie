@@ -89,24 +89,8 @@ const Profile = () => {
         }
     };
 
-    const handleLogout = async () => {
-        try {
-            const { data } = await axios.post('/logout');
-
-            if (data.error) {
-                return addToast(data.error, 'error');
-            } else {
-                localStorage.removeItem('token');
-                navigate('/login');
-                addToast(data.message, 'success');
-            }
-        } catch (error) {
-            addToast(error.message, 'error');
-        }
-    };
-
     return (
-        <div className='bg-gray-100'>
+        <div className='bg-gray-100 min-h-screen'>
             <Navbar />
             <div className='max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-xl'>
                 <h2 className='text-2xl font-bold mb-6 text-center text-blue-600'>
