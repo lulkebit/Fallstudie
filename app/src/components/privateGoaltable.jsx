@@ -5,7 +5,7 @@ import { useDialog } from '../context/dialogContext';
 import ConfirmationDialog from './dialogs/confirmationDialog';
 import EditGoalDialog from './dialogs/editGoalDialog';
 import { useToast } from '../context/toastContext';
-import { Goal } from 'lucide-react';
+import { Goal, Loader } from 'lucide-react';
 
 const Table = () => {
     const { user } = useContext(UserContext);
@@ -143,10 +143,6 @@ const Table = () => {
         return 0;
     });
 
-    if (loading) {
-        return <div className='text-center py-8'>Loading public goals...</div>;
-    }
-
     return (
         <div className='container mx-auto p-6'>
             <div className='flex justify-between items-center mb-6'>
@@ -160,7 +156,12 @@ const Table = () => {
                     + Neues Ziel
                 </button>
             </div>
-            {goals.length === 0 ? (
+            {loading ? (
+                <div className='flex items-center justify-center py-4'>
+                    <Loader className='animate-spin mr-2' />
+                    <span>Lädt Ziele...</span>
+                </div>
+            ) : goals.length === 0 ? (
                 <p className='text-gray-600 text-center py-8'>
                     Noch keine Ziele erstellt.
                 </p>

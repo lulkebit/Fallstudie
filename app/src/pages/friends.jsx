@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import { UserPlus, UserCheck, UserX, Users } from 'lucide-react';
+import { UserPlus, UserCheck, UserX, Users, Loader } from 'lucide-react';
 import Navbar from '../components/navbar';
 import { UserContext } from '../context/userContext';
 import { useToast } from '../context/toastContext';
@@ -14,6 +14,7 @@ const Friends = () => {
     const [friends, setFriends] = useState([]);
     const [friendRequests, setFriendRequests] = useState([]);
     const [newFriendUsername, setNewFriendUsername] = useState('');
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         if (user) {
@@ -28,6 +29,8 @@ const Friends = () => {
             setFriends(response.data);
         } catch (error) {
             addToast('Error fetching friends', 'error');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -37,6 +40,8 @@ const Friends = () => {
             setFriendRequests(response.data);
         } catch (error) {
             addToast('Error fetching friend requests', 'error');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -133,7 +138,12 @@ const Friends = () => {
                             <Users className='mr-2' />
                             Freundschaftsanfragen
                         </h2>
-                        {friendRequests.length === 0 ? (
+                        {loading ? (
+                            <div className='flex items-center justify-center py-4'>
+                                <Loader className='animate-spin mr-2' />
+                                <span>Lädt Anfragen...</span>
+                            </div>
+                        ) : friendRequests.length === 0 ? (
                             <p className='text-gray-500'>
                                 Keine offenen Anfragen.
                             </p>
@@ -195,7 +205,12 @@ const Friends = () => {
                             <Users className='mr-2' />
                             Meine Freunde
                         </h2>
-                        {friends.length === 0 ? (
+                        {loading ? (
+                            <div className='flex items-center justify-center py-4'>
+                                <Loader className='animate-spin mr-2' />
+                                <span>Lädt Freunde...</span>
+                            </div>
+                        ) : friends.length === 0 ? (
                             <p className='text-gray-500'>
                                 Du hast noch keine Freunde hinzugefügt.
                             </p>

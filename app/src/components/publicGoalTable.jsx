@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { UserContext } from '../context/userContext';
 import { useToast } from '../context/toastContext';
+import { Loader } from 'lucide-react';
 
 const PublicGoalTable = () => {
     const { user } = useContext(UserContext);
@@ -33,10 +34,6 @@ const PublicGoalTable = () => {
         fetchPublicGoals();
     }, [user, addToast]);
 
-    if (loading) {
-        return <div className='text-center py-8'>Loading public goals...</div>;
-    }
-
     if (error) {
         return (
             <div className='text-center py-8 text-red-600'>Error: {error}</div>
@@ -49,7 +46,12 @@ const PublicGoalTable = () => {
                 Ziele von Freunden
             </h2>
             <div className='space-y-4'>
-                {publicGoals.length > 0 ? (
+                {loading ? (
+                    <div className='flex items-center justify-center py-4'>
+                        <Loader className='animate-spin mr-2' />
+                        <span>Lädt Ziele...</span>
+                    </div>
+                ) : publicGoals.length > 0 ? (
                     publicGoals.map((goal) => (
                         <div
                             key={goal._id}
