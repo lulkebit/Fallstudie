@@ -3,6 +3,7 @@ import axios from 'axios';
 import { UserContext } from '../context/userContext';
 import { useToast } from '../context/toastContext';
 import { Bell, CheckCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const NotificationCard = () => {
     const { user } = useContext(UserContext);
@@ -10,6 +11,7 @@ const NotificationCard = () => {
     const [notifications, setNotifications] = useState([]);
     const [isOpen, setIsOpen] = useState(false);
     const cardRef = useRef(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchNotifications();
@@ -126,9 +128,17 @@ const NotificationCard = () => {
                                 ))}
                             </ul>
                         ) : (
-                            <p className='text-gray-500 text-center py-4'>
-                                Keine Benachrichtigungen
-                            </p>
+                            <>
+                                <p className='text-gray-500 text-center py-4'>
+                                    Keine Benachrichtigungen
+                                </p>
+                                <button
+                                    onClick={() => navigate('/notifications')}
+                                    className='text-blue-600 hover:text-blue-800 text-center w-full'
+                                >
+                                    Alle Benachrichtigungen
+                                </button>
+                            </>
                         )}
                     </div>
                 </div>

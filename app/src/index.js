@@ -19,6 +19,7 @@ import Login from './pages/auth/login';
 import Register from './pages/auth/register';
 import Profile from './pages/profile';
 import Friends from './pages/friends';
+import Notifications from './pages/notifications';
 
 const routes = [
     { path: '/home', element: Landingpage },
@@ -27,6 +28,7 @@ const routes = [
     { path: '/register', element: Register },
     { path: '/profile', element: Profile },
     { path: '/friends', element: Friends },
+    { path: '/notifications', element: Notifications },
     { path: '/', element: Navigate, to: '/home' },
 ];
 
