@@ -1,79 +1,174 @@
-# Fallstudie
+# TrackMyGoal
 
-Hier folgt die beschreibung unseres Projektes <br>
-Das Projekt verwendet `live-server` für die lokale Entwicklung und `tailwindcss` für die Erstellung von CSS-Stilen.
+TrackMyGoal ist eine Webanwendung, die Benutzern hilft, ihre Ziele zu verfolgen und zu verwalten. Diese Anwendung besteht aus einem Frontend, das mit React und Tailwind CSS erstellt wurde, und einem Backend, das mit Node.js und Express betrieben wird und MongoDB als Datenbank verwendet.
 
 ## Inhaltsverzeichnis
 
--   [Installation](#installation)
--   [Entwicklungsserver starten](#entwicklungsserver-starten)
--   [Projektstruktur](#projektstruktur)
--   [Beitragen](#beitragen)
--   [Autoren](#autoren)
+-   Installation
+-   Verwendung
+-   Projektstruktur
+-   Umgebungsvariablen
+-   Skripte
+-   API-Endpunkte
+-   Technologien
+-   Mitwirkende
+-   Lizenz
 
 ## Installation
 
-Stelle sicher, dass Node.js und npm auf deinem Rechner installiert sind. Du kannst die neueste Version von Node.js [hier](https://nodejs.org/) herunterladen.
+### Voraussetzungen
+
+-   Node.js (>= 14.x)
+-   npm (>= 6.x)
+-   MongoDB
+
+### Schritte
 
 1. Klone das Repository:
 
     ```sh
-    git clone https://github.com/lulkebit/Fallstudie.git
-    cd fallstudie
+    git clone https://github.com/dein-benutzername/trackmygoal.git
+    cd trackmygoal
     ```
 
-2. Installiere die Abhängigkeiten:
+2. Installiere die Abhängigkeiten für das Frontend:
 
     ```sh
     cd app
     npm install
+    ```
 
+3. Installiere die Abhängigkeiten für das Backend:
+
+    ```sh
     cd ../server
     npm install
     ```
 
-## Entwicklungsserver starten
+## Verwendung
 
-Um den Entwicklungsserver zu starten, verwende die folgenden Befehle:
+### Frontend
 
-1. Starte den Server:
+Um das Frontend zu starten, navigiere in das `app` Verzeichnis und führe den folgenden Befehl aus:
 
-    ```sh
-    cd server
-    npm start
-    ```
+```sh
+npm start
+```
 
-2. Starte die App:
+Das Frontend wird auf `http://localhost:3000` laufen.
 
-    ```sh
-    cd app
-    npm start
-    ```
+### Backend
 
-Dies startet den Server auf `http://localhost:8000` und die App auf `http://localhost:3000`. Änderungen an den Dateien werden automatisch im Browser aktualisiert.
+Um das Backend zu starten, navigiere in das `server` Verzeichnis und führe den folgenden Befehl aus:
+
+```sh
+npm start
+```
+
+Das Backend wird auf `http://localhost:8000` laufen.
 
 ## Projektstruktur
 
-Hier ist eine Übersicht der Projektstruktur:
-_folgt_
+```plaintext
+.gitignore
+.idea/
+app/
+    build/
+    package.json
+    public/
+    src/
+        components/
+        context/
+        index.css
+        index.js
+        pages/
+    tailwind.config.js
+server/
+    controllers/
+        authController.js
+        friendController.js
+    helpers/
+    index.js
+    models/
+    package.json
+    ressources/
+        texts.js
+    routes/
+    utils/
+        logger.js
+        logs/
+```
 
-## Beitragen
+### Wichtige Dateien und Verzeichnisse
 
-Wenn du zu diesem Projekt beitragen möchtest, folge bitte diesen Schritten:
+-   `index.js`: Einstiegspunkt für das Frontend.
+-   `tailwind.config.js`: Tailwind CSS Konfigurationsdatei.
+-   `index.js`: Einstiegspunkt für das Backend.
+-   `texts.js`: Enthält Textnachrichten für das Backend.
+-   `logger.js`: Logger-Konfiguration.
 
-1. Forke das Repository.
-2. Führe deine Änderungen durch und committe sie:
-    ```sh
-    git commit -m "TRAC-??? <message>"
-    ```
-3. Pushe deine Änderungen direkt zur `main`-Branch:
-    ```sh
-    git push origin main
-    ```
+## Umgebungsvariablen
 
-## Autoren
+Erstelle eine `.env` Datei im `server` Verzeichnis und füge die folgenden Umgebungsvariablen hinzu:
+
+```plaintext
+MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/<dbname>?retryWrites=true&w=majority
+PORT=8000
+JWT_SECRET=your_jwt_secret
+```
+
+## Skripte
+
+### Frontend
+
+-   `npm start`: Startet die Entwicklungsumgebung.
+-   `npm run build`: Erstellt eine Produktionsversion der Anwendung.
+
+### Backend
+
+-   `npm start`: Startet den Server mit [`nodemon`](command:_github.copilot.openSymbolFromReferences?%5B%22%22%2C%5B%7B%22uri%22%3A%22file%22%2C%22authority%22%3A%22%22%2C%22path%22%3A%22%2Fc%3A%2FUsers%2Flukes%2FOneDrive%2FDokumente%2FSTORAGE%2FDHBW%2F3.%20Semester%2FWeb-Programmierung%2FEntwicklung%2FFallstudie%2Fserver%2Fpackage.json%22%2C%22query%22%3A%22%22%2C%22fragment%22%3A%22%22%7D%2C%22pos%22%3A%7B%22line%22%3A6%2C%22character%22%3A18%7D%7D%5D%2C%225a5f6e08-46fb-43a6-be9c-5c72f246f04d%22%5D 'Go to definition') für die Entwicklung.
+
+## API-Endpunkte
+
+### Authentifizierung
+
+-   `POST /api/auth/register`: Registriert einen neuen Benutzer.
+-   `POST /api/auth/login`: Meldet einen Benutzer an.
+
+### Ziele
+
+-   `GET /api/goals`: Ruft die Ziele des angemeldeten Benutzers ab.
+-   `POST /api/goals`: Erstellt ein neues Ziel.
+-   `DELETE /api/goals/:id`: Löscht ein Ziel.
+
+### Freunde
+
+-   `GET /api/friends`: Ruft die Freundesliste des angemeldeten Benutzers ab.
+-   `POST /api/friends/request`: Sendet eine Freundschaftsanfrage.
+-   `POST /api/friends/accept`: Akzeptiert eine Freundschaftsanfrage.
+-   `POST /api/friends/reject`: Lehnt eine Freundschaftsanfrage ab.
+
+## Technologien
+
+### Frontend
+
+-   React
+-   Tailwind CSS
+
+### Backend
+
+-   Node.js
+-   Express
+-   MongoDB
+-   Mongoose
+
+## Mitwirkende
 
 -   Luke
 -   Sönke
 -   Jean-Luc
 -   Arman
+
+## Lizenz
+
+Dieses Projekt ist unter der ISC-Lizenz lizenziert.
