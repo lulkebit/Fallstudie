@@ -49,6 +49,7 @@ const sendFriendRequest = async (req, res) => {
 
         const notification = await sendNotification(
             friend._id,
+            texts.MESSAGES.FRIEND_REQUEST_TITEl,
             texts.MESSAGES.FRIEND_REQUEST_NOTIFICATION(user.username),
             false
         );

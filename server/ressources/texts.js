@@ -121,6 +121,7 @@ module.exports = {
     },
     MESSAGES: {
         LOGOUT_SUCCESS: 'Erfolgreich abgemeldet',
+        FRIEND_REQUEST_TITEl: 'Freundschaftsanfrage',
         FRIEND_REQUEST_NOTIFICATION: (benutzername) =>
             `${benutzername} hat dir eine Freundschaftsanfrage gesendet!`,
     },

@@ -128,18 +128,18 @@ const NotificationCard = () => {
                                 ))}
                             </ul>
                         ) : (
-                            <>
+                            <div>
                                 <p className='text-gray-500 text-center py-4'>
                                     Keine Benachrichtigungen
                                 </p>
-                                <button
-                                    onClick={() => navigate('/notifications')}
-                                    className='text-blue-600 hover:text-blue-800 text-center w-full'
-                                >
-                                    Alle Benachrichtigungen
-                                </button>
-                            </>
+                            </div>
                         )}
+                        <button
+                            onClick={() => navigate('/notifications')}
+                            className='text-blue-600 hover:text-blue-800 text-center w-full pt-1'
+                        >
+                            Alle Benachrichtigungen
+                        </button>
                     </div>
                 </div>
             )}
