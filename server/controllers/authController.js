@@ -67,11 +67,14 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
     try {
         logger.info(texts.INFO.ATTEMPTING_LOGIN_USER);
-        const { email, password } = req.body;
+        const { emailOrUsername, password } = req.body;
 
-        const user = await User.findOne({ email });
+        const user = await User.findOne({
+            $or: [{ email: emailOrUsername }, { username: emailOrUsername }],
+        });
+
         if (!user) {
-            logger.warn(texts.WARNINGS.WRONG_EMAIL_SERVER(email));
+            logger.warn(texts.WARNINGS.WRONG_EMAIL_SERVER(emailOrUsername));
             return res.json({
                 error: texts.WARNINGS.WRONG_CREDENTIALS_CLIENT,
             });
@@ -96,7 +99,6 @@ const loginUser = async (req, res) => {
                             error: texts.ERRORS.TOKEN_CREATION_CLIENT,
                         });
                     }
-
                     logger.info(texts.SUCCESS.USER_LOGGED_IN(user.username));
                     res.cookie('token', token, {
                         httpOnly: true,

@@ -6,7 +6,7 @@ import { useToast } from '../../context/toastContext';
 
 const Login = () => {
     const [data, setData] = useState({
-        email: '',
+        emailOrUsername: '',
         password: '',
     });
     const { setUser } = useContext(UserContext);
@@ -15,10 +15,10 @@ const Login = () => {
 
     const loginUser = async (event) => {
         event.preventDefault();
-        const { email, password } = data;
+        const { emailOrUsername, password } = data;
         try {
             const { data } = await axios.post('/login', {
-                email,
+                emailOrUsername,
                 password,
             });
 
@@ -51,22 +51,22 @@ const Login = () => {
                         <form onSubmit={loginUser} className='space-y-6'>
                             <div>
                                 <label
-                                    htmlFor='email'
+                                    htmlFor='emailOrUsername'
                                     className='block text-sm font-medium text-gray-700'
                                 >
-                                    E-Mail-Adresse
+                                    E-Mail-Adresse oder Benutzername
                                 </label>
                                 <input
-                                    id='email'
-                                    name='email'
-                                    type='email'
+                                    id='emailOrUsername'
+                                    name='emailOrUsername'
+                                    type='text'
                                     required
                                     className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500'
-                                    value={data.email}
+                                    value={data.emailOrUsername}
                                     onChange={(e) =>
                                         setData({
                                             ...data,
-                                            email: e.target.value,
+                                            emailOrUsername: e.target.value,
                                         })
                                     }
                                 />
@@ -115,7 +115,7 @@ const Login = () => {
                     </div>
                     <div className='px-10 py-4 bg-gray-50 border-t border-gray-200 flex justify-center'>
                         <div className='text-sm'>
-                            Noch kein Konto?{' '}
+                            Noch kein Konto?
                             <Link
                                 to='/register'
                                 className='font-medium text-blue-600 hover:text-blue-500'
