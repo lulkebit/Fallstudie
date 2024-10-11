@@ -71,11 +71,11 @@ const PublicGoalTable = () => {
                                     <strong>Kategorie:</strong> {goal.category}
                                 </p>
                                 <p>
-                                    <strong>Zielwert:</strong>{' '}
+                                    <strong>Zielwert:</strong>
                                     {goal.targetValue} {goal.unit}
                                 </p>
                                 <p>
-                                    <strong>Fortschritt:</strong>{' '}
+                                    <strong>Fortschritt:</strong>
                                     {goal.progress}%
                                 </p>
                             </div>

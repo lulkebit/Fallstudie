@@ -171,7 +171,7 @@ const Table = () => {
                             onClick={() => handleSort('title')}
                             className='font-medium'
                         >
-                            Sortieren nach Titel{' '}
+                            Sortieren nach Titel
                             {sortField === 'title' &&
                                 (sortDirection === 'asc' ? '↑' : '↓')}
                         </button>
@@ -179,7 +179,7 @@ const Table = () => {
                             onClick={() => handleSort('progress')}
                             className='font-medium'
                         >
-                            Sortieren nach Fortschritt{' '}
+                            Sortieren nach Fortschritt
                             {sortField === 'progress' &&
                                 (sortDirection === 'asc' ? '↑' : '↓')}
                         </button>
@@ -207,34 +207,34 @@ const Table = () => {
                                     <strong>Kategorie:</strong> {goal.category}
                                 </p>
                                 <p>
-                                    <strong>Start Datum:</strong>{' '}
+                                    <strong>Start Datum:</strong>
                                     {new Date(
                                         goal.startDate
                                     ).toLocaleDateString()}
                                 </p>
                                 <p>
-                                    <strong>End Datum:</strong>{' '}
+                                    <strong>End Datum:</strong>
                                     {new Date(
                                         goal.endDate
                                     ).toLocaleDateString()}
                                 </p>
                                 <p>
-                                    <strong>Öffentlich:</strong>{' '}
+                                    <strong>Öffentlich:</strong>
                                     {goal.public ? 'Ja' : 'Nein'}
                                 </p>
                                 <p>
-                                    <strong>Zielwert:</strong>{' '}
+                                    <strong>Zielwert:</strong>
                                     {goal.targetValue} {goal.unit}
                                 </p>
                                 <p>
                                     <strong>Richtung:</strong> {goal.direction}
                                 </p>
                                 <p>
-                                    <strong>Erinnerungsintervall:</strong>{' '}
+                                    <strong>Erinnerungsintervall:</strong>
                                     {goal.reminderInterval} {goal.reminderType}
                                 </p>
                                 <p>
-                                    <strong>Fortschritt:</strong>{' '}
+                                    <strong>Fortschritt:</strong>
                                     {goal.progress}%
                                 </p>
                             </div>

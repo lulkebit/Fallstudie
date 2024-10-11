@@ -176,7 +176,7 @@ const Register = () => {
                     </div>
                     <div className='px-10 py-4 bg-gray-50 border-t border-gray-200 flex justify-center'>
                         <div className='text-sm'>
-                            Bereits ein Konto?{' '}
+                            Bereits ein Konto?
                             <Link
                                 to='/login'
                                 className='font-medium text-blue-600 hover:text-blue-500'
