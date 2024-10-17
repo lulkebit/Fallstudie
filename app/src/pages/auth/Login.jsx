@@ -1,8 +1,8 @@
 import React, { useState, useContext } from 'react';
-import { UserContext } from '../../context/userContext';
+import { UserContext } from '../../context/UserContext';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import { useToast } from '../../context/toastContext';
+import { useToast } from '../../context/ToastContext';
 
 const Login = () => {
     const [data, setData] = useState({

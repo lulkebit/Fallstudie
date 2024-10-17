@@ -1,20 +1,20 @@
 import React, { useContext } from 'react';
-import { UserContext } from './context/userContext';
+import { UserContext } from './context/UserContext';
 import {
     BrowserRouter as Router,
     Route,
     Routes,
     Navigate,
 } from 'react-router-dom';
-import Dashboard from './pages/dashboard';
-import Landingpage from './pages/landingpage';
-import Profile from './pages/profile';
-import Login from './pages/auth/login';
-import Register from './pages/auth/register';
-import Friends from './pages/friends';
-import Notifications from './pages/notifications';
+import Dashboard from './pages/Dashboard';
+import Landingpage from './pages/Landingpage';
+import Profile from './pages/Profile';
+import Login from './pages/auth/Login';
+import Register from './pages/auth/Register';
+import Friends from './pages/Friends';
+import Notifications from './pages/Notifications';
 import { Loader } from 'lucide-react';
-import PrivateRoute from './components/privateRoute';
+import PrivateRoute from './components/PrivateRoute';
 
 function MyRoutes() {
     const { user, loading } = useContext(UserContext);
@@ -30,14 +30,14 @@ function MyRoutes() {
                 <Route
                     path='/login'
                     element={
-                        user ? <Navigate to='/dashboard' replace /> : <Login />
+                        user ? <Navigate to='/Dashboard' replace /> : <Login />
                     }
                 />
                 <Route
                     path='/register'
                     element={
                         user ? (
-                            <Navigate to='/dashboard' replace />
+                            <Navigate to='/Dashboard' replace />
                         ) : (
                             <Register />
                         )

@@ -67,7 +67,6 @@ const AvatarCropDialog = ({ onClose, onSave, imageFile }) => {
                 rotation
             );
 
-            // Rufen Sie onSave mit dem Base64-String auf
             onSave(croppedImageBase64);
             onClose();
         } catch (e) {

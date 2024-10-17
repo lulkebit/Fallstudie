@@ -1,7 +1,7 @@
 import React from 'react';
-import Navbar from '../components/navbar';
-import Table from '../components/privateGoaltable';
-import PublicGoalTable from '../components/publicGoaltable';
+import Navbar from '../components/Navbar';
+import Table from '../components/PrivateGoaltable';
+import PublicGoalTable from '../components/PublicGoaltable';
 
 const Dashboard = () => {
     return (

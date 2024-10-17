@@ -1,5 +1,5 @@
 import React from 'react';
-import Toast from '../toast';
+import Toast from '../Toast';
 
 const ToastContainer = ({ toasts, removeToast }) => {
     return (

@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
-import { UserContext } from '../context/userContext';
-import { useToast } from '../context/toastContext';
+import { UserContext } from '../context/UserContext';
+import { useToast } from '../context/ToastContext';
 import { Bell, ChevronDown, Check, X } from 'lucide-react';
-import Navbar from '../components/navbar';
+import Navbar from '../components/Navbar';
 
 const Notifications = () => {
     const { user } = useContext(UserContext);

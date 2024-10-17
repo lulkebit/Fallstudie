@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
-import { UserContext } from '../context/userContext';
+import { UserContext } from '../context/UserContext';
 
 const PrivateRoute = () => {
     const { user, loading } = useContext(UserContext);

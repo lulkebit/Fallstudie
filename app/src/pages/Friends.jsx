@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { UserPlus, UserCheck, UserX, Users, Loader, Globe } from 'lucide-react';
-import Navbar from '../components/navbar';
-import { UserContext } from '../context/userContext';
-import { useToast } from '../context/toastContext';
-import { useDialog } from '../context/dialogContext';
-import ConfirmationDialog from '../components/dialogs/confirmationDialog';
-import FriendGoalsDialog from '../components/dialogs/friendGoalsDialog'; // Importiere den neuen Dialog
+import Navbar from '../components/Navbar';
+import { UserContext } from '../context/UserContext';
+import { useToast } from '../context/ToastContext';
+import { useDialog } from '../context/DialogContext';
+import ConfirmationDialog from '../components/dialogs/ConfirmationDialog';
+import FriendGoalsDialog from '../components/dialogs/FriendGoalsDialog';
 
 const Friends = () => {
     const { user } = useContext(UserContext);
@@ -16,7 +16,7 @@ const Friends = () => {
     const [friendRequests, setFriendRequests] = useState([]);
     const [newFriendUsername, setNewFriendUsername] = useState('');
     const [loading, setLoading] = useState(true);
-    const [selectedFriendId, setSelectedFriendId] = useState(null); // Zustand für den ausgewählten Freund
+    const [selectedFriendId, setSelectedFriendId] = useState(null);
 
     useEffect(() => {
         if (user) {

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import { useToast } from '../../context/toastContext';
+import { useToast } from '../../context/ToastContext';
 
 const Register = () => {
     const [data, setData] = useState({

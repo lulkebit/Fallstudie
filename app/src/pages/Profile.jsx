@@ -1,11 +1,11 @@
 import React, { useContext, useState, useEffect } from 'react';
 import axios from 'axios';
-import { UserContext } from '../context/userContext';
-import Navbar from '../components/navbar';
-import { useToast } from '../context/toastContext';
-import { useDialog } from '../context/dialogContext';
-import ChangePasswordDialog from '../components/dialogs/changePasswordDialog';
-import AvatarCropDialog from '../components/dialogs/avatarCropDialog';
+import { UserContext } from '../context/UserContext';
+import Navbar from '../components/Navbar';
+import { useToast } from '../context/ToastContext';
+import { useDialog } from '../context/DialogContext';
+import ChangePasswordDialog from '../components/dialogs/ChangePasswordDialog';
+import AvatarCropDialog from '../components/dialogs/AvatarCropDialog';
 
 const Profile = () => {
     const { user, updateUser } = useContext(UserContext);
@@ -132,7 +132,6 @@ const Profile = () => {
                 formData[key] &&
                 formData[key].startsWith('data:image')
             ) {
-                // Convert base64 to blob
                 const response = await fetch(formData[key]);
                 const blob = await response.blob();
                 formDataToSend.append(key, blob, 'avatar.jpg');

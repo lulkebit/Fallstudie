@@ -6,8 +6,8 @@ import React, {
     useMemo,
 } from 'react';
 import axios from 'axios';
-import { UserContext } from '../context/userContext';
-import { useToast } from '../context/toastContext';
+import { UserContext } from '../context/UserContext';
+import { useToast } from '../context/ToastContext';
 import { Loader, ChevronDown, ChevronUp } from 'lucide-react';
 
 const GoalCard = React.memo(({ goal, isExpanded, onToggle }) => {

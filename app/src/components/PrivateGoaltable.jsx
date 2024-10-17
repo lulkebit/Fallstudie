@@ -5,13 +5,13 @@ import React, {
     useCallback,
     useMemo,
 } from 'react';
-import { UserContext } from '../context/userContext';
+import { UserContext } from '../context/UserContext';
 import axios from 'axios';
-import { useDialog } from '../context/dialogContext';
-import { useToast } from '../context/toastContext';
+import { useDialog } from '../context/DialogContext';
+import { useToast } from '../context/ToastContext';
 import { Goal, Loader, ChevronDown, ChevronUp } from 'lucide-react';
-import ConfirmationDialog from './dialogs/confirmationDialog';
-import EditGoalDialog from './dialogs/editGoalDialog';
+import ConfirmationDialog from './dialogs/ConfirmationDialog';
+import EditGoalDialog from './dialogs/EditGoalDialog';
 
 const GoalCard = React.memo(
     ({ goal, onEdit, onDelete, isExpanded, onToggle }) => {
@@ -103,7 +103,6 @@ const GoalCard = React.memo(
     }
 );
 
-// Extracted useGoals custom hook
 const useGoals = (user, addToast) => {
     const [goals, setGoals] = useState([]);
     const [loading, setLoading] = useState(true);

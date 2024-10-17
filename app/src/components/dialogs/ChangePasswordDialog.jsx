@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import axios from 'axios';
-import { UserContext } from '../../context/userContext';
-import { useToast } from '../../context/toastContext';
+import { UserContext } from '../../context/UserContext';
+import { useToast } from '../../context/ToastContext';
 import { X, Lock } from 'lucide-react';
 
 const InputField = ({ id, label, value, onChange, placeholder }) => (

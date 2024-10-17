@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import axios from 'axios';
-import { UserContextProvider } from './context/userContext';
-import { ToastProvider } from './context/toastContext';
-import { DialogProvider } from './context/dialogContext';
 import './index.css';
-import MyRoutes from './routes';
+import MyRoutes from './Routes';
+import { UserContextProvider } from './context/UserContext';
+import { ToastProvider } from './context/ToastContext';
+import { DialogProvider } from './context/DialogContext';
 
 axios.defaults.baseURL = 'http://localhost:8000';
 axios.defaults.withCredentials = true;

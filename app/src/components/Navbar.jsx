@@ -1,9 +1,9 @@
 import React, { useState, useContext, useRef, useEffect } from 'react';
 import axios from 'axios';
-import { useToast } from '../context/toastContext';
+import { useToast } from '../context/ToastContext';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { UserContext } from '../context/userContext';
-import NotificationCard from './notificationCard';
+import { UserContext } from '../context/UserContext';
+import NotificationCard from './NotificationCard';
 
 const Navbar = () => {
     const [showProfileCard, setShowProfileCard] = useState(false);
@@ -65,8 +65,8 @@ const Navbar = () => {
                         </div>
                         <div className='hidden sm:ml-6 sm:flex sm:space-x-8'>
                             <button
-                                onClick={() => navigate('/dashboard')}
-                                className={getNavItemClass('/dashboard')}
+                                onClick={() => navigate('/Dashboard')}
+                                className={getNavItemClass('/Dashboard')}
                             >
                                 Dashboard
                             </button>
