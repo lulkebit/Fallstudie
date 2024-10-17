@@ -1,11 +1,104 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, {
+    useState,
+    useContext,
+    useEffect,
+    useCallback,
+    useMemo,
+} from 'react';
 import { UserContext } from '../context/userContext';
 import axios from 'axios';
 import { useDialog } from '../context/dialogContext';
 import ConfirmationDialog from './dialogs/confirmationDialog';
 import EditGoalDialog from './dialogs/editGoalDialog';
 import { useToast } from '../context/toastContext';
-import { Goal, Loader } from 'lucide-react';
+import { Goal, Loader, ChevronDown, ChevronUp } from 'lucide-react';
+
+const GoalCard = React.memo(
+    ({ goal, onEdit, onDelete, isExpanded, onToggle }) => {
+        return (
+            <div className='goal-card bg-white rounded-lg shadow-md p-4 transition duration-300 ease-in-out hover:shadow-lg'>
+                <div
+                    className='flex items-center justify-between mb-2 cursor-pointer'
+                    onClick={onToggle}
+                >
+                    <div className='flex items-center'>
+                        <div className='w-6 h-6 mr-3 flex-shrink-0'>
+                            <Goal />
+                        </div>
+                        <h2 className='text-xl font-semibold text-gray-800'>
+                            {goal.title}
+                        </h2>
+                    </div>
+                    {isExpanded ? (
+                        <ChevronUp size={20} />
+                    ) : (
+                        <ChevronDown size={20} />
+                    )}
+                </div>
+                <div className='w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 mb-2'>
+                    <div
+                        className='bg-blue-600 h-2.5 rounded-full'
+                        style={{ width: `${goal.progress}%` }}
+                        role='progressbar'
+                        aria-valuenow={goal.progress}
+                        aria-valuemin='0'
+                        aria-valuemax='100'
+                    ></div>
+                </div>
+                {isExpanded && (
+                    <>
+                        <p className='text-gray-600 mb-4'>{goal.description}</p>
+                        <div className='grid grid-cols-2 gap-4 mb-4'>
+                            <p>
+                                <strong>Kategorie:</strong> {goal.category}
+                            </p>
+                            <p>
+                                <strong>Start Datum:</strong>{' '}
+                                {new Date(goal.startDate).toLocaleDateString()}
+                            </p>
+                            <p>
+                                <strong>End Datum:</strong>{' '}
+                                {new Date(goal.endDate).toLocaleDateString()}
+                            </p>
+                            <p>
+                                <strong>Öffentlich:</strong>{' '}
+                                {goal.public ? 'Ja' : 'Nein'}
+                            </p>
+                            <p>
+                                <strong>Zielwert:</strong> {goal.targetValue}{' '}
+                                {goal.unit}
+                            </p>
+                            <p>
+                                <strong>Richtung:</strong> {goal.direction}
+                            </p>
+                            <p>
+                                <strong>Erinnerungsintervall:</strong>{' '}
+                                {goal.reminderInterval} {goal.reminderType}
+                            </p>
+                            <p>
+                                <strong>Fortschritt:</strong> {goal.progress}%
+                            </p>
+                        </div>
+                        <div className='flex justify-end items-center space-x-2 mt-4'>
+                            <button
+                                onClick={() => onEdit(goal)}
+                                className='bg-blue-100 text-blue-600 hover:bg-blue-200 font-medium py-1 px-3 rounded transition duration-300 ease-in-out'
+                            >
+                                Bearbeiten
+                            </button>
+                            <button
+                                onClick={() => onDelete(goal.id)}
+                                className='bg-red-100 text-red-600 hover:bg-red-200 font-medium py-1 px-3 rounded transition duration-300 ease-in-out'
+                            >
+                                Löschen
+                            </button>
+                        </div>
+                    </>
+                )}
+            </div>
+        );
+    }
+);
 
 const Table = () => {
     const { user } = useContext(UserContext);
@@ -15,6 +108,7 @@ const Table = () => {
     const [loading, setLoading] = useState(true);
     const [sortField, setSortField] = useState('title');
     const [sortDirection, setSortDirection] = useState('asc');
+    const [expandedGoals, setExpandedGoals] = useState({});
 
     useEffect(() => {
         if (user) {
@@ -32,7 +126,7 @@ const Table = () => {
         }
     }, [user, addToast]);
 
-    const handleInputChange = (updatedGoal) => {
+    const handleInputChange = useCallback((updatedGoal) => {
         setGoals((prevState) =>
             prevState.map((goal) =>
                 goal._id === updatedGoal._id
@@ -40,9 +134,9 @@ const Table = () => {
                     : goal
             )
         );
-    };
+    }, []);
 
-    const handleAddGoal = () => {
+    const handleAddGoal = useCallback(() => {
         addDialog({
             component: EditGoalDialog,
             props: {
@@ -52,96 +146,117 @@ const Table = () => {
                 onClose: removeDialog,
             },
         });
-    };
+    }, [addDialog, removeDialog, handleInputChange]);
 
-    const handleEditGoal = (goal) => {
-        addDialog({
-            component: EditGoalDialog,
-            props: {
-                goal,
-                onSave: handleSaveGoal,
-                onChange: handleInputChange,
-                onClose: removeDialog,
-            },
-        });
-    };
-
-    const handleSaveGoal = (currentGoal) => {
-        if (currentGoal.id) {
-            axios
-                .put(`/goals/${currentGoal.id}`, {
-                    userId: user._id,
-                    goal: currentGoal,
-                })
-                .then(({ data }) => {
-                    setGoals(data);
-                    addToast('Ziel aktualisiert!', 'success');
-                })
-                .catch((error) =>
-                    addToast(
-                        'Fehler beim Aktualisieren des Ziels. Bitte versuchen Sie es erneut.' +
-                            error,
-                        'error'
-                    )
-                );
-        } else {
-            axios
-                .post('/goals', { userId: user._id, goal: currentGoal })
-                .then(({ data }) => {
-                    setGoals(data);
-                    addToast('Ziel erstellt!', 'success');
-                })
-                .catch((error) =>
-                    addToast(
-                        'Fehler beim Erstellen des Ziels. Bitte versuchen Sie es erneut.' +
-                            error,
-                        'error'
-                    )
-                );
-        }
-    };
-
-    const handleDeleteGoal = (id) => {
-        addDialog({
-            component: ConfirmationDialog,
-            props: {
-                message: 'Möchten Sie diesen Eintrag wirklich löschen?',
-                onConfirm: () => {
-                    axios
-                        .delete(`/goals/${id}`, { data: { userId: user._id } })
-                        .then(({ data }) => {
-                            setGoals(data);
-                            removeDialog(id);
-                            addToast('Ziel gelöscht!', 'success');
-                        })
-                        .catch((error) =>
-                            addToast(
-                                'Fehler beim Löschen des Ziels. Bitte versuchen Sie es erneut.',
-                                'error'
-                            )
-                        );
+    const handleEditGoal = useCallback(
+        (goal) => {
+            addDialog({
+                component: EditGoalDialog,
+                props: {
+                    goal,
+                    onSave: handleSaveGoal,
+                    onChange: handleInputChange,
+                    onClose: removeDialog,
                 },
-                onClose: () => removeDialog(id),
-            },
+            });
+        },
+        [addDialog, removeDialog, handleInputChange]
+    );
+
+    const handleSaveGoal = useCallback(
+        (currentGoal) => {
+            if (currentGoal.id) {
+                axios
+                    .put(`/goals/${currentGoal.id}`, {
+                        userId: user._id,
+                        goal: currentGoal,
+                    })
+                    .then(({ data }) => {
+                        setGoals(data);
+                        addToast('Ziel aktualisiert!', 'success');
+                    })
+                    .catch((error) =>
+                        addToast(
+                            'Fehler beim Aktualisieren des Ziels. Bitte versuchen Sie es erneut.' +
+                                error,
+                            'error'
+                        )
+                    );
+            } else {
+                axios
+                    .post('/goals', { userId: user._id, goal: currentGoal })
+                    .then(({ data }) => {
+                        setGoals(data);
+                        addToast('Ziel erstellt!', 'success');
+                    })
+                    .catch((error) =>
+                        addToast(
+                            'Fehler beim Erstellen des Ziels. Bitte versuchen Sie es erneut.' +
+                                error,
+                            'error'
+                        )
+                    );
+            }
+        },
+        [user._id, addToast]
+    );
+
+    const handleDeleteGoal = useCallback(
+        (id) => {
+            addDialog({
+                component: ConfirmationDialog,
+                props: {
+                    message: 'Möchten Sie diesen Eintrag wirklich löschen?',
+                    onConfirm: () => {
+                        axios
+                            .delete(`/goals/${id}`, {
+                                data: { userId: user._id },
+                            })
+                            .then(({ data }) => {
+                                setGoals(data);
+                                removeDialog(id);
+                                addToast('Ziel gelöscht!', 'success');
+                            })
+                            .catch((error) =>
+                                addToast(
+                                    'Fehler beim Löschen des Ziels. Bitte versuchen Sie es erneut.',
+                                    'error'
+                                )
+                            );
+                    },
+                    onClose: () => removeDialog(id),
+                },
+            });
+        },
+        [addDialog, removeDialog, user._id, addToast]
+    );
+
+    const handleSort = useCallback((field) => {
+        setSortField((prevField) => {
+            if (field === prevField) {
+                setSortDirection((prevDirection) =>
+                    prevDirection === 'asc' ? 'desc' : 'asc'
+                );
+            } else {
+                setSortDirection('asc');
+            }
+            return field;
         });
-    };
+    }, []);
 
-    const handleSort = (field) => {
-        if (field === sortField) {
-            setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-        } else {
-            setSortField(field);
-            setSortDirection('asc');
-        }
-    };
+    const sortedGoals = useMemo(() => {
+        return [...goals].sort((a, b) => {
+            if (a[sortField] < b[sortField])
+                return sortDirection === 'asc' ? -1 : 1;
+            if (a[sortField] > b[sortField])
+                return sortDirection === 'asc' ? 1 : -1;
+            return 0;
+        });
+    }, [goals, sortField, sortDirection]);
 
-    const sortedGoals = [...goals].sort((a, b) => {
-        if (a[sortField] < b[sortField])
-            return sortDirection === 'asc' ? -1 : 1;
-        if (a[sortField] > b[sortField])
-            return sortDirection === 'asc' ? 1 : -1;
-        return 0;
-    });
+    const toggleGoalExpansion = useCallback((goalId) => {
+        setExpandedGoals((prev) => ({ ...prev, [goalId]: !prev[goalId] }));
+    }, []);
 
     return (
         <div className='container mx-auto p-6'>
@@ -185,85 +300,15 @@ const Table = () => {
                                 (sortDirection === 'asc' ? '↑' : '↓')}
                         </button>
                     </div>
-                    {sortedGoals.map((goal, index) => (
-                        <div
+                    {sortedGoals.map((goal) => (
+                        <GoalCard
                             key={goal.id}
-                            className={
-                                'goal-card bg-white rounded-lg shadow-md p-6 transition duration-300 ease-in-out hover:shadow-lg transform hover:scale-[1.02]'
-                            }
-                        >
-                            <div className='flex items-center mb-2'>
-                                <div className='w-6 h-6 mr-3 flex-shrink-0'>
-                                    <Goal />
-                                </div>
-                                <h2 className='text-xl font-semibold text-gray-800 flex-grow'>
-                                    {goal.title}
-                                </h2>
-                            </div>
-                            <p className='text-gray-600 mb-4'>
-                                {goal.description}
-                            </p>
-                            <div className='grid grid-cols-2 gap-4 mb-4'>
-                                <p>
-                                    <strong>Kategorie:</strong> {goal.category}
-                                </p>
-                                <p>
-                                    <strong>Start Datum:</strong>
-                                    {new Date(
-                                        goal.startDate
-                                    ).toLocaleDateString()}
-                                </p>
-                                <p>
-                                    <strong>End Datum:</strong>
-                                    {new Date(
-                                        goal.endDate
-                                    ).toLocaleDateString()}
-                                </p>
-                                <p>
-                                    <strong>Öffentlich:</strong>
-                                    {goal.public ? 'Ja' : 'Nein'}
-                                </p>
-                                <p>
-                                    <strong>Zielwert:</strong>
-                                    {goal.targetValue} {goal.unit}
-                                </p>
-                                <p>
-                                    <strong>Richtung:</strong> {goal.direction}
-                                </p>
-                                <p>
-                                    <strong>Erinnerungsintervall:</strong>
-                                    {goal.reminderInterval} {goal.reminderType}
-                                </p>
-                                <p>
-                                    <strong>Fortschritt:</strong>
-                                    {goal.progress}%
-                                </p>
-                            </div>
-                            <div className='w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 mt-4'>
-                                <div
-                                    className='bg-blue-600 h-2.5 rounded-full'
-                                    style={{ width: `${goal.progress}%` }}
-                                    role='progressbar'
-                                    aria-valuenow={goal.progress}
-                                    aria-valuemin='0'
-                                    aria-valuemax='100'
-                                ></div>
-                            </div>
-                            <div className='flex justify-end items-center space-x-2 mt-4'>
-                                <button
-                                    onClick={() => handleEditGoal(goal)}
-                                    className='bg-blue-100 text-blue-600 hover:bg-blue-200 font-medium py-1 px-3 rounded transition duration-300 ease-in-out'
-                                >
-                                    Bearbeiten
-                                </button>
-                                <button
-                                    onClick={() => handleDeleteGoal(goal.id)}
-                                    className='bg-red-100 text-red-600 hover:bg-red-200 font-medium py-1 px-3 rounded transition duration-300 ease-in-out'
-                                >
-                                    Löschen
-                                </button>
-                            </div>
-                        </div>
+                            goal={goal}
+                            onEdit={handleEditGoal}
+                            onDelete={handleDeleteGoal}
+                            isExpanded={expandedGoals[goal.id]}
+                            onToggle={() => toggleGoalExpansion(goal.id)}
+                        />
                     ))}
                 </div>
             )}
