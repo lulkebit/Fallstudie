@@ -8,13 +8,16 @@ import React, {
 import { UserContext } from '../context/userContext';
 import axios from 'axios';
 import { useDialog } from '../context/dialogContext';
-import ConfirmationDialog from './dialogs/confirmationDialog';
-import EditGoalDialog from './dialogs/editGoalDialog';
 import { useToast } from '../context/toastContext';
 import { Goal, Loader, ChevronDown, ChevronUp } from 'lucide-react';
+import ConfirmationDialog from './dialogs/confirmationDialog';
+import EditGoalDialog from './dialogs/editGoalDialog';
 
 const GoalCard = React.memo(
     ({ goal, onEdit, onDelete, isExpanded, onToggle }) => {
+        const progressBarColor =
+            goal.progress === 100 ? 'bg-yellow-500' : 'bg-blue-500';
+
         return (
             <div className='goal-card bg-white rounded-lg shadow-md p-4 transition duration-300 ease-in-out hover:shadow-lg'>
                 <div
@@ -37,7 +40,7 @@ const GoalCard = React.memo(
                 </div>
                 <div className='w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 mb-2'>
                     <div
-                        className='bg-blue-600 h-2.5 rounded-full'
+                        className={`${progressBarColor} h-2.5 rounded-full`}
                         style={{ width: `${goal.progress}%` }}
                         role='progressbar'
                         aria-valuenow={goal.progress}
@@ -100,15 +103,10 @@ const GoalCard = React.memo(
     }
 );
 
-const Table = () => {
-    const { user } = useContext(UserContext);
-    const { addDialog, removeDialog } = useDialog();
-    const { addToast } = useToast();
+// Extracted useGoals custom hook
+const useGoals = (user, addToast) => {
     const [goals, setGoals] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [sortField, setSortField] = useState('title');
-    const [sortDirection, setSortDirection] = useState('asc');
-    const [expandedGoals, setExpandedGoals] = useState({});
 
     useEffect(() => {
         if (user) {
@@ -125,6 +123,18 @@ const Table = () => {
                 });
         }
     }, [user, addToast]);
+
+    return { goals, setGoals, loading };
+};
+
+const Table = () => {
+    const { user } = useContext(UserContext);
+    const { addDialog, removeDialog } = useDialog();
+    const { addToast } = useToast();
+    const { goals, setGoals, loading } = useGoals(user, addToast);
+    const [sortField, setSortField] = useState('title');
+    const [sortDirection, setSortDirection] = useState('asc');
+    const [expandedGoals, setExpandedGoals] = useState({});
 
     const handleInputChange = useCallback((updatedGoal) => {
         setGoals((prevState) =>
@@ -165,40 +175,33 @@ const Table = () => {
 
     const handleSaveGoal = useCallback(
         (currentGoal) => {
-            if (currentGoal.id) {
-                axios
-                    .put(`/goals/${currentGoal.id}`, {
-                        userId: user._id,
-                        goal: currentGoal,
-                    })
-                    .then(({ data }) => {
-                        setGoals(data);
-                        addToast('Ziel aktualisiert!', 'success');
-                    })
-                    .catch((error) =>
-                        addToast(
-                            'Fehler beim Aktualisieren des Ziels. Bitte versuchen Sie es erneut.' +
-                                error,
-                            'error'
-                        )
+            const apiCall = currentGoal.id
+                ? axios.put(`/goals/${currentGoal.id}`, {
+                      userId: user._id,
+                      goal: currentGoal,
+                  })
+                : axios.post('/goals', { userId: user._id, goal: currentGoal });
+
+            apiCall
+                .then(({ data }) => {
+                    setGoals(data);
+                    addToast(
+                        currentGoal.id
+                            ? 'Ziel aktualisiert!'
+                            : 'Ziel erstellt!',
+                        'success'
                     );
-            } else {
-                axios
-                    .post('/goals', { userId: user._id, goal: currentGoal })
-                    .then(({ data }) => {
-                        setGoals(data);
-                        addToast('Ziel erstellt!', 'success');
-                    })
-                    .catch((error) =>
-                        addToast(
-                            'Fehler beim Erstellen des Ziels. Bitte versuchen Sie es erneut.' +
-                                error,
-                            'error'
-                        )
-                    );
-            }
+                })
+                .catch((error) =>
+                    addToast(
+                        `Fehler beim ${
+                            currentGoal.id ? 'Aktualisieren' : 'Erstellen'
+                        } des Ziels. Bitte versuchen Sie es erneut.` + error,
+                        'error'
+                    )
+                );
         },
-        [user._id, addToast]
+        [user._id, addToast, setGoals]
     );
 
     const handleDeleteGoal = useCallback(
@@ -219,7 +222,8 @@ const Table = () => {
                             })
                             .catch((error) =>
                                 addToast(
-                                    'Fehler beim Löschen des Ziels. Bitte versuchen Sie es erneut.',
+                                    'Fehler beim Löschen des Ziels. Bitte versuchen Sie es erneut. ' +
+                                        error,
                                     'error'
                                 )
                             );
@@ -228,7 +232,7 @@ const Table = () => {
                 },
             });
         },
-        [addDialog, removeDialog, user._id, addToast]
+        [addDialog, removeDialog, user._id, addToast, setGoals]
     );
 
     const handleSort = useCallback((field) => {
