@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const Friend = require('../models/friend');
 const logger = require('../utils/logger');
 const texts = require('../ressources/texts');
 
@@ -99,26 +100,36 @@ const getPublicGoalsOfFriends = async (req, res) => {
         const userId = req.params.userId;
         logger.info(texts.INFO.FETCHING_PUBLIC_GOALS(userId));
 
-        const user = await User.findById(userId).populate('friends');
+        const friendships = await Friend.find({
+            userId,
+            status: 'accepted',
+        }).populate('friendId');
 
-        if (!user) {
-            logger.warn(texts.WARNINGS.USER_NOT_FOUND);
-            return res.status(404).json({ error: texts.ERRORS.USER_NOT_FOUND });
+        if (!friendships) {
+            logger.warn(texts.WARNINGS.NO_FRIENDS_FOUND);
+            return res.status(200).json([]);
         }
 
-        const publicGoals = user.friends.flatMap((friend) =>
-            friend.goals
-                .filter((goal) => goal.public)
-                .map((goal) => ({
+        const publicGoals = await Promise.all(
+            friendships.map(async (friendship) => {
+                const friend = friendship.friendId;
+                const friendGoals = friend.goals.filter((goal) => goal.public);
+                return friendGoals.map((goal) => ({
                     ...goal.toObject(),
                     friendName: friend.username,
-                }))
+                }));
+            })
         );
 
+        const flattenedPublicGoals = publicGoals.flat();
+
         logger.info(
-            texts.INFO.PUBLIC_GOALS_RETRIEVED(publicGoals.length, userId)
+            texts.INFO.PUBLIC_GOALS_RETRIEVED(
+                flattenedPublicGoals.length,
+                userId
+            )
         );
-        res.status(200).json(publicGoals);
+        res.status(200).json(flattenedPublicGoals);
     } catch (error) {
         logger.error(
             texts.ERRORS.ERROR('retrieving public goals of friends', error)
