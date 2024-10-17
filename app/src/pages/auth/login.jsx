@@ -32,7 +32,7 @@ const Login = () => {
             }
         } catch (error) {
             addToast(
-                'Login fehlgeschlagen. Bitte versuchen Sie es erneut.',
+                'Login fehlgeschlagen. Bitte versuchen Sie es erneut. ' + error,
                 'error'
             );
         }

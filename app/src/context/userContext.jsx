@@ -3,18 +3,26 @@ import axios from 'axios';
 
 export const UserContext = createContext();
 
-export function UserContextProvider({ children }) {
+export const UserContextProvider = ({ children }) => {
     const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         if (!user) {
             axios
                 .get('/profile')
-                .then(({ data }) => {
-                    setUser(data);
+                .then((response) => {
+                    if (response.data.success) {
+                        setUser(response.data.user);
+                    } else {
+                        setUser(null);
+                    }
                 })
-                .catch((error) => {
-                    console.error('Fehler beim Abrufen des Profils:', error);
+                .catch(() => {
+                    setUser(null);
+                })
+                .finally(() => {
+                    setLoading(false);
                 });
         }
     }, [user]);
@@ -25,8 +33,10 @@ export function UserContextProvider({ children }) {
     };
 
     return (
-        <UserContext.Provider value={{ user, setUser, updateUser }}>
+        <UserContext.Provider
+            value={{ user, setUser, loading, setLoading, updateUser }}
+        >
             {children}
         </UserContext.Provider>
     );
-}
+};

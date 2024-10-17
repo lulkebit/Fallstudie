@@ -37,7 +37,7 @@ const Navbar = () => {
                 return addToast(data.error, 'error');
             } else {
                 localStorage.removeItem('token');
-                navigate('/login');
+                window.location.href = '/login';
                 addToast(data.message, 'success');
             }
         } catch (error) {
@@ -49,7 +49,7 @@ const Navbar = () => {
         const baseClass =
             'inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium';
         return location.pathname === path
-            ? `${baseClass} border-indigo-500 text-gray-900`
+            ? `${baseClass} border-[#8c52ff] text-gray-900`
             : `${baseClass} border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700`;
     };
 
@@ -59,7 +59,7 @@ const Navbar = () => {
                 <div className='flex justify-between h-16'>
                     <div className='flex'>
                         <div className='flex-shrink-0 flex items-center'>
-                            <span className='text-2xl font-bold text-indigo-600'>
+                            <span className='text-2xl font-bold text-[#8c52ff]'>
                                 TrackMyGoal
                             </span>
                         </div>
@@ -89,7 +89,7 @@ const Navbar = () => {
                             <div>
                                 <button
                                     type='button'
-                                    className='bg-white rounded-full flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
+                                    className='bg-white rounded-full flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8c52ff]'
                                     id='user-menu-button'
                                     aria-expanded='false'
                                     aria-haspopup='true'

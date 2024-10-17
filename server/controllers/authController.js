@@ -159,7 +159,7 @@ const getProfile = async (req, res) => {
                     }
 
                     logger.info(texts.SUCCESS.USER_LOGGED_IN(user.username));
-                    res.json(user);
+                    res.json({ success: true, user });
                 } catch (error) {
                     logger.error(
                         texts.ERRORS.ERROR('user profile retrieval', error)
