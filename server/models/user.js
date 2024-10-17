@@ -18,7 +18,7 @@ const userSchema = new Schema({
         {
             id: Number,
             title: String,
-            categorie: String,
+            category: String,
             startDate: Date,
             endDate: Date,
             public: Boolean,
