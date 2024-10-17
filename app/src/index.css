@@ -2,8 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
+h1 {
     font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+}
+
+h2 {
+    font-family: 'Roboto', sans-serif;
+    font-weight: normal;
+}
+
+h3 {
+    font-family: 'Roboto', sans-serif;
+    font-weight: normal;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: normal;
 }
 
 @keyframes fadeInUp {
