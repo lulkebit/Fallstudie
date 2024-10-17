@@ -1,4 +1,8 @@
 module.exports = {
+    PIN_GOAL: 'Fehler beim Anpinnen des Ziels',
+    UNPIN_GOAL: 'Fehler beim Loslösen des Ziels',
+    PIN_FRIEND_GOAL: 'Fehler beim Anpinnen des Freundesziels',
+    UNPIN_FRIEND_GOAL: 'Fehler beim Loslösen des Freundesziels',
     ERRORS: {
         ERROR: (typ, fehler) => `Fehler während ${typ}: ${fehler}`,
         TOKEN_CREATION_CLIENT: 'Token-Erstellung fehlgeschlagen',
@@ -49,6 +53,10 @@ module.exports = {
         GOAL_LOADED: 'Ziele erfolgreich geladen',
         NOTIFICATION_MARKED_READ:
             'Benachrichtigung erfolgreich als gelesen markiert',
+        GOAL_PINNED: 'Ziel erfolgreich angepinnt',
+        GOAL_UNPINNED: 'Ziel erfolgreich losgelöst',
+        FRIEND_GOAL_PINNED: 'Freundesziel erfolgreich angepinnt',
+        FRIEND_GOAL_UNPINNED: 'Freundesziel erfolgreich losgelöst',
     },
     INFO: {
         ATTEMPTING_REGISTER_USER:
@@ -92,6 +100,14 @@ module.exports = {
             `Benachrichtigung ${benachrichtigungsId} als gelesen markiert`,
         FETCHING_NOTIFICATIONS: (benutzerId, seite, limit) =>
             `Abrufen von Benachrichtigungen für Benutzer ${benutzerId} mit Seite ${seite} und Limit ${limit}`,
+        PINNING_GOAL: (goalId, userId) =>
+            `Anpinnen des Ziels mit ID ${goalId} für Benutzer ${userId}`,
+        UNPINNING_GOAL: (goalId, userId) =>
+            `Loslösen des Ziels mit ID ${goalId} für Benutzer ${userId}`,
+        PINNING_FRIEND_GOAL: (goalId, friendId, userId) =>
+            `Anpinnen des Freundesziels mit ID ${goalId} von Freund ${friendId} für Benutzer ${userId}`,
+        UNPINNING_FRIEND_GOAL: (goalId, friendId, userId) =>
+            `Loslösen des Freundesziels mit ID ${goalId} von Freund ${friendId} für Benutzer ${userId}`,
     },
     WARNINGS: {
         EMAIL_ALREADY_EXISTS_SERVER: (email) =>

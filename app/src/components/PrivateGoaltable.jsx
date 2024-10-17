@@ -9,22 +9,26 @@ import { UserContext } from '../context/UserContext';
 import axios from 'axios';
 import { useDialog } from '../context/DialogContext';
 import { useToast } from '../context/ToastContext';
-import { Goal, Loader, ChevronDown, ChevronUp } from 'lucide-react';
+import { Goal, Loader, ChevronDown, ChevronUp, Pin } from 'lucide-react';
 import ConfirmationDialog from './dialogs/ConfirmationDialog';
 import EditGoalDialog from './dialogs/EditGoalDialog';
 
 const GoalCard = React.memo(
-    ({ goal, onEdit, onDelete, isExpanded, onToggle }) => {
+    ({ goal, onEdit, onDelete, onPin, isExpanded, onToggle }) => {
         const progressBarColor =
             goal.progress === 100 ? 'bg-yellow-500' : 'bg-blue-500';
 
         return (
-            <div className='goal-card bg-white rounded-lg shadow-md p-4 transition duration-300 ease-in-out hover:shadow-lg'>
-                <div
-                    className='flex items-center justify-between mb-2 cursor-pointer'
-                    onClick={onToggle}
-                >
-                    <div className='flex items-center'>
+            <div
+                className={`goal-card bg-white rounded-lg shadow-md p-4 transition duration-300 ease-in-out hover:shadow-lg ${
+                    goal.isPinned ? 'border-2 border-yellow-500' : ''
+                }`}
+            >
+                <div className='flex items-center justify-between mb-2'>
+                    <div
+                        className='flex items-center flex-grow cursor-pointer'
+                        onClick={onToggle}
+                    >
                         <div className='w-6 h-6 mr-3 flex-shrink-0'>
                             <Goal />
                         </div>
@@ -32,11 +36,28 @@ const GoalCard = React.memo(
                             {goal.title}
                         </h2>
                     </div>
-                    {isExpanded ? (
-                        <ChevronUp size={20} />
-                    ) : (
-                        <ChevronDown size={20} />
-                    )}
+                    <div className='flex items-center'>
+                        <button
+                            onClick={() => onPin(goal)}
+                            className={`mr-2 p-1 rounded-full ${
+                                goal.isPinned ? 'bg-yellow-200' : 'bg-gray-200'
+                            }`}
+                        >
+                            <Pin
+                                size={16}
+                                className={
+                                    goal.isPinned
+                                        ? 'text-yellow-600'
+                                        : 'text-gray-600'
+                                }
+                            />
+                        </button>
+                        {isExpanded ? (
+                            <ChevronUp size={20} />
+                        ) : (
+                            <ChevronDown size={20} />
+                        )}
+                    </div>
                 </div>
                 <div className='w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 mb-2'>
                     <div
@@ -123,14 +144,45 @@ const useGoals = (user, addToast) => {
         }
     }, [user, addToast]);
 
-    return { goals, setGoals, loading };
+    const pinGoal = useCallback(
+        (goalToPin) => {
+            const updatedGoals = goals.map((goal) => ({
+                ...goal,
+                isPinned: goal.id === goalToPin.id ? !goal.isPinned : false,
+            }));
+
+            axios
+                .post(`/goals/pin`, { userId: user._id, goals: updatedGoals })
+                .then(({ data }) => {
+                    setGoals(data);
+                    addToast(
+                        goalToPin.isPinned
+                            ? 'Ziel losgelöst!'
+                            : 'Ziel angepinnt!',
+                        'success'
+                    );
+                })
+                .catch((error) => {
+                    console.error('Error pinning goal:', error);
+                    addToast(
+                        `Fehler beim ${
+                            goalToPin.isPinned ? 'Loslösen' : 'Anpinnen'
+                        } des Ziels. Bitte versuchen Sie es erneut.` + error,
+                        'error'
+                    );
+                });
+        },
+        [goals, user._id, addToast]
+    );
+
+    return { goals, setGoals, loading, pinGoal };
 };
 
 const Table = () => {
     const { user } = useContext(UserContext);
     const { addDialog, removeDialog } = useDialog();
     const { addToast } = useToast();
-    const { goals, setGoals, loading } = useGoals(user, addToast);
+    const { goals, setGoals, loading, pinGoal } = useGoals(user, addToast);
     const [sortField, setSortField] = useState('title');
     const [sortDirection, setSortDirection] = useState('asc');
     const [expandedGoals, setExpandedGoals] = useState({});
@@ -249,6 +301,9 @@ const Table = () => {
 
     const sortedGoals = useMemo(() => {
         return [...goals].sort((a, b) => {
+            if (a.isPinned !== b.isPinned) {
+                return a.isPinned ? -1 : 1;
+            }
             if (a[sortField] < b[sortField])
                 return sortDirection === 'asc' ? -1 : 1;
             if (a[sortField] > b[sortField])
@@ -309,6 +364,7 @@ const Table = () => {
                             goal={goal}
                             onEdit={handleEditGoal}
                             onDelete={handleDeleteGoal}
+                            onPin={pinGoal}
                             isExpanded={expandedGoals[goal.id]}
                             onToggle={() => toggleGoalExpansion(goal.id)}
                         />

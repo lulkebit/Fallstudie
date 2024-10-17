@@ -21,6 +21,8 @@ const {
     updateGoal,
     getPublicGoalsOfFriends,
     getPublicGoalsOfFriend,
+    pinGoal,
+    pinFriendGoal,
 } = require('../controllers/goalController');
 
 const {
@@ -65,6 +67,8 @@ router.get('/goals', getGoals);
 router.delete('/goals/:id', deleteGoal);
 router.put('/goals/:id', updateGoal);
 router.get('/goals/friend/:friendId', getPublicGoalsOfFriend);
+router.post('/goals/pin', pinGoal);
+router.post('/goals/pin-friend', pinFriendGoal);
 
 // Friend routes
 router.post('/friends/send', sendFriendRequest);

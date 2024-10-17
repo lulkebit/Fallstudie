@@ -29,6 +29,7 @@ const userSchema = new Schema({
             reminderType: String,
             progress: Number,
             description: String,
+            isPinned: { type: Boolean, default: false },
         },
     ],
     avatar: {
@@ -38,6 +39,15 @@ const userSchema = new Schema({
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
+        },
+    ],
+    pinnedFriendGoals: [
+        {
+            friendId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'User',
+            },
+            goalId: Number,
         },
     ],
 });

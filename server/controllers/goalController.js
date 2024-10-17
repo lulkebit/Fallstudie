@@ -100,12 +100,18 @@ const getPublicGoalsOfFriends = async (req, res) => {
         const userId = req.params.userId;
         logger.info(texts.INFO.FETCHING_PUBLIC_GOALS(userId));
 
+        const user = await User.findById(userId);
+        if (!user) {
+            logger.warn(texts.WARNINGS.USER_NOT_FOUND);
+            return res.status(404).json({ error: texts.ERRORS.USER_NOT_FOUND });
+        }
+
         const friendships = await Friend.find({
             userId,
             status: 'accepted',
         }).populate('friendId');
 
-        if (!friendships) {
+        if (!friendships || friendships.length === 0) {
             logger.warn(texts.WARNINGS.NO_FRIENDS_FOUND);
             return res.status(200).json([]);
         }
@@ -113,10 +119,26 @@ const getPublicGoalsOfFriends = async (req, res) => {
         const publicGoals = await Promise.all(
             friendships.map(async (friendship) => {
                 const friend = friendship.friendId;
+                if (!friend) {
+                    return [];
+                }
+
                 const friendGoals = friend.goals.filter((goal) => goal.public);
+
+                const pinnedGoals = user.pinnedFriendGoals || [];
+                const pinnedFriendGoals = pinnedGoals.filter(
+                    (pinnedGoal) =>
+                        pinnedGoal.friendId &&
+                        pinnedGoal.friendId.toString() === friend._id.toString()
+                );
+
                 return friendGoals.map((goal) => ({
                     ...goal.toObject(),
                     friendName: friend.username,
+                    friendId: friend._id,
+                    isPinned: pinnedFriendGoals.some(
+                        (pinnedGoal) => pinnedGoal.goalId === goal.id
+                    ),
                 }));
             })
         );
@@ -164,6 +186,58 @@ const getPublicGoalsOfFriend = async (req, res) => {
     }
 };
 
+const pinGoal = async (req, res) => {
+    const { userId, goals } = req.body;
+    try {
+        logger.info(`Received pinGoal request for userId: ${userId}`);
+        logger.info(`Request body: ${JSON.stringify(req.body)}`);
+        logger.info(`Request headers: ${JSON.stringify(req.headers)}`);
+        logger.info(`Request method: ${req.method}`);
+        logger.info(`Request URL: ${req.originalUrl}`);
+
+        const user = await User.findById(userId);
+        if (!user) {
+            logger.warn(`User not found for userId: ${userId}`);
+            return res.status(404).json({ error: texts.ERRORS.USER_NOT_FOUND });
+        }
+
+        user.goals = goals;
+        await user.save();
+
+        logger.info(`Successfully pinned goal for userId: ${userId}`);
+        res.status(200).json(user.goals);
+    } catch (error) {
+        logger.error(`Error pinning goal: ${error.message}`);
+        logger.error(`Error stack: ${error.stack}`);
+        res.status(500).json({ error: texts.ERRORS.PIN_GOAL });
+    }
+};
+
+const pinFriendGoal = async (req, res) => {
+    const { userId, goals } = req.body;
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            logger.warn(texts.WARNINGS.USER_NOT_FOUND);
+            return res.status(404).json({ error: texts.ERRORS.USER_NOT_FOUND });
+        }
+
+        user.pinnedFriendGoals = goals
+            .filter((goal) => goal.isPinned)
+            .map((goal) => ({
+                friendId: goal.friendId,
+                goalId: goal.id,
+            }));
+
+        await user.save();
+        logger.info(texts.SUCCESS.FRIEND_GOAL_PINNED);
+        res.status(200).json(goals);
+    } catch (error) {
+        logger.error(texts.ERRORS.ERROR('pinning friend goal', error));
+        res.status(500).json({ error: texts.ERRORS.PIN_FRIEND_GOAL });
+    }
+};
+
 module.exports = {
     addGoal,
     getGoals,
@@ -171,4 +245,6 @@ module.exports = {
     updateGoal,
     getPublicGoalsOfFriends,
     getPublicGoalsOfFriend,
+    pinGoal,
+    pinFriendGoal,
 };
