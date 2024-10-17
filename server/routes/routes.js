@@ -20,6 +20,7 @@ const {
     deleteGoal,
     updateGoal,
     getPublicGoalsOfFriends,
+    getPublicGoalsOfFriend,
 } = require('../controllers/goalController');
 
 const {
@@ -63,6 +64,7 @@ router.post('/goals', addGoal);
 router.get('/goals', getGoals);
 router.delete('/goals/:id', deleteGoal);
 router.put('/goals/:id', updateGoal);
+router.get('/goals/friend/:friendId', getPublicGoalsOfFriend);
 
 // Friend routes
 router.post('/friends/send', sendFriendRequest);

@@ -20,6 +20,10 @@ const friendSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Notification',
     },
+    createdAt: {
+        type: Date,
+        default: Date.now,
+    },
 });
 
 module.exports = mongoose.model('Friend', friendSchema);

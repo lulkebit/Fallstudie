@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import { UserPlus, UserCheck, UserX, Users, Loader } from 'lucide-react';
+import { UserPlus, UserCheck, UserX, Users, Loader, Globe } from 'lucide-react';
 import Navbar from '../components/navbar';
 import { UserContext } from '../context/userContext';
 import { useToast } from '../context/toastContext';
 import { useDialog } from '../context/dialogContext';
 import ConfirmationDialog from '../components/dialogs/confirmationDialog';
+import FriendGoalsDialog from '../components/dialogs/friendGoalsDialog'; // Importiere den neuen Dialog
 
 const Friends = () => {
     const { user } = useContext(UserContext);
@@ -15,6 +16,7 @@ const Friends = () => {
     const [friendRequests, setFriendRequests] = useState([]);
     const [newFriendUsername, setNewFriendUsername] = useState('');
     const [loading, setLoading] = useState(true);
+    const [selectedFriendId, setSelectedFriendId] = useState(null); // Zustand für den ausgewählten Freund
 
     useEffect(() => {
         if (user) {
@@ -97,6 +99,10 @@ const Friends = () => {
                 onConfirm: () => deleteFriend(friendId),
             },
         });
+    };
+
+    const handleShowGoalsClick = (friendId) => {
+        setSelectedFriendId(friendId);
     };
 
     return (
@@ -227,21 +233,52 @@ const Friends = () => {
                                                 alt={`${friend.friendId.firstname} ${friend.friendId.lastname}`}
                                                 className='h-10 w-10 rounded-full'
                                             />
-                                            <span className='font-medium text-gray-700'>
-                                                {friend.friendId.username}
-                                            </span>
+                                            <div>
+                                                <span className='font-medium text-gray-700'>
+                                                    {friend.friendId.username}
+                                                </span>
+                                                <p className='text-sm text-gray-500'>
+                                                    {friend.friendId.firstname}{' '}
+                                                    {friend.friendId.lastname}
+                                                </p>
+                                                <p className='text-sm text-gray-500'>
+                                                    Freund seit:{' '}
+                                                    {new Date(
+                                                        friend.createdAt
+                                                    ).toLocaleDateString()}
+                                                </p>
+                                            </div>
                                         </div>
-                                        <button
-                                            onClick={() =>
-                                                handleDeleteClick(
-                                                    friend.friendId._id
-                                                )
-                                            }
-                                            className='bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 transition duration-300 flex items-center'
-                                        >
-                                            <UserX size={16} className='mr-2' />
-                                            Entfernen
-                                        </button>
+                                        <div className='flex space-x-2'>
+                                            <button
+                                                onClick={() =>
+                                                    handleShowGoalsClick(
+                                                        friend.friendId._id
+                                                    )
+                                                }
+                                                className='bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition duration-300 flex items-center'
+                                            >
+                                                <Globe
+                                                    size={16}
+                                                    className='mr-2'
+                                                />
+                                                Öffentliche Ziele anzeigen
+                                            </button>
+                                            <button
+                                                onClick={() =>
+                                                    handleDeleteClick(
+                                                        friend.friendId._id
+                                                    )
+                                                }
+                                                className='bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 transition duration-300 flex items-center'
+                                            >
+                                                <UserX
+                                                    size={16}
+                                                    className='mr-2'
+                                                />
+                                                Entfernen
+                                            </button>
+                                        </div>
                                     </li>
                                 ))}
                             </ul>
@@ -249,6 +286,12 @@ const Friends = () => {
                     </div>
                 </div>
             </div>
+            {selectedFriendId && (
+                <FriendGoalsDialog
+                    friendId={selectedFriendId}
+                    onClose={() => setSelectedFriendId(null)}
+                />
+            )}
         </div>
     );
 };

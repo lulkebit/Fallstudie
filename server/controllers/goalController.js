@@ -127,10 +127,37 @@ const getPublicGoalsOfFriends = async (req, res) => {
     }
 };
 
+const getPublicGoalsOfFriend = async (req, res) => {
+    try {
+        const { friendId } = req.params;
+        logger.info(texts.INFO.FETCHING_PUBLIC_GOALS(friendId));
+
+        const friend = await User.findById(friendId);
+
+        if (!friend) {
+            logger.warn(texts.WARNINGS.USER_NOT_FOUND);
+            return res.status(404).json({ error: texts.ERRORS.USER_NOT_FOUND });
+        }
+
+        const publicGoals = friend.goals.filter((goal) => goal.public);
+
+        logger.info(
+            texts.INFO.PUBLIC_GOALS_RETRIEVED(publicGoals.length, friendId)
+        );
+        res.status(200).json(publicGoals);
+    } catch (error) {
+        logger.error(
+            texts.ERRORS.ERROR('retrieving public goals of friend', error)
+        );
+        res.status(500).json({ error: texts.ERRORS.FETCH_PUBLIC_GOALS });
+    }
+};
+
 module.exports = {
     addGoal,
     getGoals,
     deleteGoal,
     updateGoal,
     getPublicGoalsOfFriends,
+    getPublicGoalsOfFriend,
 };

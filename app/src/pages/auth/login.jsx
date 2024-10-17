@@ -115,7 +115,7 @@ const Login = () => {
                     </div>
                     <div className='px-10 py-4 bg-gray-50 border-t border-gray-200 flex justify-center'>
                         <div className='text-sm'>
-                            Noch kein Konto?
+                            Noch kein Konto?{' '}
                             <Link
                                 to='/register'
                                 className='font-medium text-blue-600 hover:text-blue-500'

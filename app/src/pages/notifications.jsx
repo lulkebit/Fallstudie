@@ -63,7 +63,7 @@ const Notifications = () => {
             <div className='container mx-auto p-6'>
                 <div className='max-w-3xl mx-auto'>
                     <h2 className='text-3xl font-bold text-gray-800 mb-6 flex items-center'>
-                        <Bell className='mr-2' /> Notifications
+                        <Bell className='mr-2' /> Benachrichtigungen
                     </h2>
                     <div className='space-y-4'>
                         {notifications.map((notification) => (
