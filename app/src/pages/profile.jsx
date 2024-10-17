@@ -1,11 +1,11 @@
 import React, { useContext, useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/userContext';
 import Navbar from '../components/navbar';
 import { useToast } from '../context/toastContext';
 import { useDialog } from '../context/dialogContext';
 import ChangePasswordDialog from '../components/dialogs/changePasswordDialog';
+import AvatarCropDialog from '../components/dialogs/avatarCropDialog';
 
 const Profile = () => {
     const { user, updateUser } = useContext(UserContext);
@@ -26,11 +26,9 @@ const Profile = () => {
     const { addToast } = useToast();
     const [isModified, setIsModified] = useState(false);
     const { addDialog } = useDialog();
-    const navigate = useNavigate();
-
-    const openChangePasswordDialog = () => {
-        addDialog({ component: ChangePasswordDialog });
-    };
+    const [avatarError, setAvatarError] = useState('');
+    const [showAvatarCropDialog, setShowAvatarCropDialog] = useState(false);
+    const [avatarFile, setAvatarFile] = useState(null);
 
     useEffect(() => {
         if (user) {
@@ -52,20 +50,76 @@ const Profile = () => {
         }
     }, [user]);
 
-    const handleChange = (event) => {
-        const { name, value, files } = event.target;
-        const newValue = files ? files[0] : value;
-        setFormData((prevFormData) => {
-            const updatedFormData = {
-                ...prevFormData,
-                [name]: newValue,
+    const handleAvatarChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            setAvatarFile(file);
+            setShowAvatarCropDialog(true);
+        }
+    };
+
+    const handleAvatarSave = (croppedImageUrl) => {
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            avatar: croppedImageUrl,
+        }));
+        setIsModified(true);
+    };
+
+    const validateImage = (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    if (img.width >= 128 && img.height >= 128) {
+                        resolve(true);
+                    } else {
+                        reject(
+                            'Das Bild muss mindestens 128x128 Pixel groß sein.'
+                        );
+                    }
+                };
+                img.onerror = () => reject('Ungültiges Bildformat.');
+                img.src = e.target.result;
             };
-            setIsModified(
-                JSON.stringify(updatedFormData) !==
-                    JSON.stringify(initialFormData)
-            );
-            return updatedFormData;
+            reader.onerror = () => reject('Fehler beim Lesen der Datei.');
+            reader.readAsDataURL(file);
         });
+    };
+
+    const handleChange = async (event) => {
+        const { name, value, files } = event.target;
+        let newValue = files ? files[0] : value;
+
+        if (name === 'avatar' && files) {
+            try {
+                if (!files[0].type.startsWith('image/')) {
+                    setIsModified(false);
+                    throw new Error('Bitte laden Sie nur Bilddateien hoch.');
+                }
+                await validateImage(files[0]);
+                setAvatarError('');
+            } catch (error) {
+                setAvatarError(error.message || 'Ungültiges Bild.');
+                newValue = null;
+                event.target.value = '';
+            }
+        }
+
+        if (!avatarError) {
+            setFormData((prevFormData) => {
+                const updatedFormData = {
+                    ...prevFormData,
+                    [name]: newValue,
+                };
+                setIsModified(
+                    JSON.stringify(updatedFormData) !==
+                        JSON.stringify(initialFormData)
+                );
+                return updatedFormData;
+            });
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -73,7 +127,18 @@ const Profile = () => {
         const formDataToSend = new FormData();
         formDataToSend.append('userId', user._id);
         for (const key in formData) {
-            formDataToSend.append(key, formData[key]);
+            if (
+                key === 'avatar' &&
+                formData[key] &&
+                formData[key].startsWith('data:image')
+            ) {
+                // Convert base64 to blob
+                const response = await fetch(formData[key]);
+                const blob = await response.blob();
+                formDataToSend.append(key, blob, 'avatar.jpg');
+            } else {
+                formDataToSend.append(key, formData[key]);
+            }
         }
         try {
             const { data } = await axios.put('/profile', formDataToSend, {
@@ -116,7 +181,8 @@ const Profile = () => {
                             type='file'
                             id='avatar'
                             name='avatar'
-                            onChange={handleChange}
+                            onChange={handleAvatarChange}
+                            accept='image/*'
                             className='mt-1 block w-full text-sm text-gray-500
                         file:mr-4 file:py-2 file:px-4
                         file:rounded-full file:border-0
@@ -124,6 +190,11 @@ const Profile = () => {
                         file:bg-blue-50 file:text-blue-700
                         hover:file:bg-blue-100'
                         />
+                        {avatarError && (
+                            <p className='mt-2 text-sm text-red-600'>
+                                {avatarError}
+                            </p>
+                        )}
                     </div>
                     <div>
                         <label
@@ -200,12 +271,21 @@ const Profile = () => {
                     </button>
                 </form>
                 <button
-                    onClick={openChangePasswordDialog}
+                    onClick={() =>
+                        addDialog({ component: ChangePasswordDialog })
+                    }
                     className='w-full mt-2 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
                 >
                     Passwort ändern
                 </button>
             </div>
+            {showAvatarCropDialog && (
+                <AvatarCropDialog
+                    onClose={() => setShowAvatarCropDialog(false)}
+                    onSave={handleAvatarSave}
+                    imageFile={avatarFile}
+                />
+            )}
         </div>
     );
 };
