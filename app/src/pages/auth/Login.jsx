@@ -39,15 +39,44 @@ const Login = () => {
     };
 
     return (
-        <div className='min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-300 via-purple-300 to-red-300'>
-            <div className='absolute inset-0 bg-white opacity-20 backdrop-filter backdrop-blur-sm'></div>
-            <div className='relative w-full max-w-md'>
-                <div className='absolute inset-0 bg-white opacity-75 rounded-xl shadow-2xl transform -rotate-6'></div>
-                <div className='relative bg-white bg-opacity-90 rounded-xl shadow-xl overflow-hidden'>
+        <div className='min-h-screen flex items-center justify-center bg-gray-100 relative overflow-hidden'>
+            <div className='absolute inset-0 overflow-hidden'>
+                <svg
+                    className='absolute bottom-0 left-0 w-full h-full'
+                    xmlns='http://www.w3.org/2000/svg'
+                    viewBox='0 0 1440 320'
+                    preserveAspectRatio='none'
+                >
+                    <path
+                        fill='#4F46E5'
+                        fillOpacity='0.35'
+                        d='M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,213.3C672,192,768,128,864,128C960,128,1056,192,1152,208C1248,224,1344,192,1392,176L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'
+                    ></path>
+                </svg>
+                <svg
+                    className='absolute bottom-0 left-0 w-full h-full'
+                    xmlns='http://www.w3.org/2000/svg'
+                    viewBox='0 0 1440 320'
+                    preserveAspectRatio='none'
+                >
+                    <path
+                        fill='#818CF8'
+                        fillOpacity='0.4'
+                        d='M0,64L48,80C96,96,192,128,288,128C384,128,480,96,576,90.7C672,85,768,107,864,122.7C960,139,1056,149,1152,138.7C1248,128,1344,96,1392,80L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'
+                    ></path>
+                </svg>
+            </div>
+
+            <div className='w-full max-w-md z-10'>
+                <div className='bg-white rounded-lg shadow-lg overflow-hidden'>
                     <div className='px-10 pt-10 pb-8'>
-                        <h2 className='text-center text-4xl font-extrabold text-blue-600 mb-8'>
-                            TrackMyGoal
-                        </h2>
+                        <div className='flex justify-center mb-8'>
+                            <img
+                                src='/Logo.png'
+                                alt='TrackMyGoal Logo'
+                                className='h-32'
+                            />
+                        </div>
                         <form onSubmit={loginUser} className='space-y-6'>
                             <div>
                                 <label
@@ -61,7 +90,7 @@ const Login = () => {
                                     name='emailOrUsername'
                                     type='text'
                                     required
-                                    className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500'
+                                    className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
                                     value={data.emailOrUsername}
                                     onChange={(e) =>
                                         setData({
@@ -83,7 +112,7 @@ const Login = () => {
                                     name='password'
                                     type='password'
                                     required
-                                    className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500'
+                                    className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
                                     value={data.password}
                                     onChange={(e) =>
                                         setData({
@@ -97,7 +126,7 @@ const Login = () => {
                                 <div className='text-sm'>
                                     <Link
                                         to='/forgot-password'
-                                        className='font-medium text-blue-600 hover:text-blue-500'
+                                        className='font-medium text-indigo-600 hover:text-indigo-500'
                                     >
                                         Passwort vergessen?
                                     </Link>
@@ -118,7 +147,7 @@ const Login = () => {
                             Noch kein Konto?{' '}
                             <Link
                                 to='/register'
-                                className='font-medium text-blue-600 hover:text-blue-500'
+                                className='font-medium text-indigo-600 hover:text-indigo-500'
                             >
                                 Jetzt registrieren
                             </Link>
