@@ -17,6 +17,9 @@ import Notifications from './pages/Notifications';
 import PrivateRoute from './components/PrivateRoute';
 import NotFound from './pages/NotFound';
 import LoadingPage from './pages/LoadingPage';
+import AdminRoute from './components/AdminRoute';
+import AdminPanel from './pages/AdminPanel';
+import GlobalGoals from './pages/GlobalGoals';
 
 function MyRoutes() {
     const { user, loading } = useContext(UserContext);
@@ -50,7 +53,13 @@ function MyRoutes() {
                     <Route path='/profile' element={<Profile />} />
                     <Route path='/friends' element={<Friends />} />
                     <Route path='/notifications' element={<Notifications />} />
+                    <Route path='/globalgoals' element={<GlobalGoals />} />
                 </Route>
+
+                <Route element={<AdminRoute />}>
+                    <Route path='/admin' element={<AdminPanel />} />
+                </Route>
+
                 <Route path='*' element={<NotFound />} />
             </Routes>
         </Router>

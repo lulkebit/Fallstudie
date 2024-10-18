@@ -16,7 +16,7 @@ const NotificationCard = () => {
     useEffect(() => {
         fetchNotifications();
 
-        const intervalId = setInterval(fetchNotifications, 100);
+        const intervalId = setInterval(fetchNotifications, 1000);
 
         return () => clearInterval(intervalId);
     }, [user]);
