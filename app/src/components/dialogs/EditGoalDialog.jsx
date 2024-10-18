@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
     X,
     Calendar,
@@ -9,6 +9,8 @@ import {
     Hash,
     ArrowUpDown,
     Eye,
+    ChevronLeft,
+    ChevronRight,
 } from 'lucide-react';
 
 const CATEGORIES = [
@@ -30,8 +32,7 @@ const UNITS = ['Kilogramm', 'Stunden', 'Euro', 'Kilometer', 'Sonstiges'];
 
 const useForm = (initialState, onChangeCallback) => {
     const [formData, setFormData] = useState(initialState);
-    const [error, setError] = useState('');
-    const [missingFields, setMissingFields] = useState([]);
+    const [errors, setErrors] = useState({});
 
     const handleInputChange = useCallback(
         (e) => {
@@ -43,37 +44,41 @@ const useForm = (initialState, onChangeCallback) => {
                 return updatedData;
             });
 
-            if (value.trim() !== '') {
-                setMissingFields((prev) =>
-                    prev.filter((field) => field !== name)
-                );
-            }
+            setErrors((prev) => ({ ...prev, [name]: '' }));
         },
         [onChangeCallback]
     );
 
-    const validateForm = useCallback(() => {
-        const requiredFields = [
-            'title',
-            'description',
-            'category',
-            'unit',
-            'direction',
-            'reminderType',
-        ];
-        const missing = requiredFields.filter((field) => !formData[field]);
-        setMissingFields(missing);
-        return missing.length === 0;
-    }, [formData]);
+    const validateFields = useCallback(
+        (fields) => {
+            const newErrors = {};
+            fields.forEach((field) => {
+                const value = formData[field];
+                if (value === undefined || value === null || value === '') {
+                    newErrors[field] = 'Dieses Feld ist erforderlich';
+                } else if (typeof value === 'string' && value.trim() === '') {
+                    newErrors[field] = 'Dieses Feld darf nicht leer sein';
+                } else if (
+                    field === 'targetValue' &&
+                    isNaN(parseFloat(value))
+                ) {
+                    newErrors[field] = 'Bitte geben Sie eine gültige Zahl ein';
+                }
+                // Add more specific validations as needed
+            });
+            setErrors(newErrors);
+            return Object.keys(newErrors).length === 0;
+        },
+        [formData]
+    );
 
     return {
         formData,
         setFormData,
-        error,
-        setError,
-        missingFields,
+        errors,
+        setErrors,
         handleInputChange,
-        validateForm,
+        validateFields,
     };
 };
 
@@ -142,19 +147,21 @@ const InputField = React.memo(
                     />
                 )}
             </div>
+            {error && <p className='mt-1 text-sm text-red-500'>{error}</p>}
         </div>
     )
 );
 
-const EditGoalDialog = ({ goal, onChange, onSave, onClose }) => {
+const EditGoalDialog = ({ goal, onSave, onClose }) => {
+    const [editedGoal, setEditedGoal] = useState(null);
+
     const {
         formData,
         setFormData,
-        error,
-        setError,
-        missingFields,
+        errors,
+        setErrors,
         handleInputChange,
-        validateForm,
+        validateFields,
     } = useForm(
         {
             id: null,
@@ -164,15 +171,26 @@ const EditGoalDialog = ({ goal, onChange, onSave, onClose }) => {
             targetValue: '',
             unit: '',
             direction: '',
-            reminderInterval: '',
             reminderType: '',
             description: '',
             category: '',
             progress: 0,
             public: false,
         },
-        onChange
+        setEditedGoal
     );
+
+    const [currentStep, setCurrentStep] = useState(0);
+    const steps = [
+        {
+            title: 'Grundinformationen',
+            fields: ['title', 'category', 'description'],
+        },
+        { title: 'Zeitrahmen', fields: ['startDate', 'endDate'] },
+        { title: 'Zieldetails', fields: ['targetValue', 'unit', 'direction'] },
+        { title: 'Erinnerungen', fields: ['reminderType'] },
+        { title: 'Fortschritt und Sichtbarkeit', fields: [] },
+    ];
 
     useEffect(() => {
         if (goal) {
@@ -186,65 +204,39 @@ const EditGoalDialog = ({ goal, onChange, onSave, onClose }) => {
                     : '',
             };
             setFormData(formattedGoal);
-            setError('');
+            setEditedGoal(formattedGoal);
+            setErrors({});
         }
-    }, [goal, setFormData, setError]);
+    }, [goal, setFormData, setErrors]);
 
     const handleSave = useCallback(() => {
-        if (validateForm()) {
-            setError('');
-            onSave(formData);
-            onClose();
-        } else {
-            setError('Bitte füllen Sie alle erforderlichen Felder aus.');
+        onSave(editedGoal);
+        onClose();
+    }, [editedGoal, onSave, onClose]);
+
+    const handleNext = useCallback(() => {
+        const isValid = validateFields(steps[currentStep].fields);
+        if (isValid) {
+            setCurrentStep((prev) => Math.min(steps.length - 1, prev + 1));
         }
-    }, [validateForm, setError, onSave, formData, onClose]);
+    }, [validateFields, currentStep, steps]);
 
-    const renderCustomizableDropdown = useMemo(
-        () => (label, id, value, icon, options) =>
-            (
-                <InputField
-                    key={id}
-                    label={label}
-                    id={id}
-                    value={value}
-                    type={value === 'Benutzerdefiniert' ? 'text' : 'select'}
-                    icon={icon}
-                    options={options}
-                    onChange={handleInputChange}
-                    error={missingFields.includes(id)}
-                />
-            ),
-        [handleInputChange, missingFields]
-    );
+    const handlePrevious = useCallback(() => {
+        setCurrentStep((prev) => Math.max(0, prev - 1));
+    }, []);
 
-    return (
-        <div className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center'>
-            <div className='bg-white p-6 rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto'>
-                <div className='flex justify-between items-center mb-6'>
-                    <h2 className='text-2xl font-bold text-gray-800'>
-                        {goal ? 'Ziel bearbeiten' : 'Neues Ziel erstellen'}
-                    </h2>
-                    <button
-                        onClick={onClose}
-                        className='text-gray-500 hover:text-gray-700'
-                    >
-                        <X size={24} />
-                    </button>
-                </div>
-
-                <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                    <div>
-                        <h3 className='text-lg font-semibold mb-4'>
-                            Grundinformationen
-                        </h3>
+    const renderStepContent = (step) => {
+        switch (step) {
+            case 0:
+                return (
+                    <>
                         <InputField
                             label='Name'
                             id='title'
                             value={formData.title}
                             icon={<Type size={20} />}
                             onChange={handleInputChange}
-                            error={missingFields.includes('title')}
+                            error={errors.title}
                         />
                         <InputField
                             label='Kategorie'
@@ -254,7 +246,7 @@ const EditGoalDialog = ({ goal, onChange, onSave, onClose }) => {
                             icon={<Hash size={20} />}
                             options={CATEGORIES}
                             onChange={handleInputChange}
-                            error={missingFields.includes('category')}
+                            error={errors.category}
                         />
                         <InputField
                             label='Beschreibung'
@@ -263,14 +255,13 @@ const EditGoalDialog = ({ goal, onChange, onSave, onClose }) => {
                             type='textarea'
                             icon={<Info size={20} />}
                             onChange={handleInputChange}
-                            error={missingFields.includes('description')}
+                            error={errors.description}
                         />
-                    </div>
-
-                    <div>
-                        <h3 className='text-lg font-semibold mb-4'>
-                            Zeitrahmen
-                        </h3>
+                    </>
+                );
+            case 1:
+                return (
+                    <>
                         <InputField
                             label='Start Datum'
                             id='startDate'
@@ -278,6 +269,7 @@ const EditGoalDialog = ({ goal, onChange, onSave, onClose }) => {
                             type='date'
                             icon={<Calendar size={20} />}
                             onChange={handleInputChange}
+                            error={errors.startDate}
                         />
                         <InputField
                             label='End Datum'
@@ -286,13 +278,13 @@ const EditGoalDialog = ({ goal, onChange, onSave, onClose }) => {
                             type='date'
                             icon={<Calendar size={20} />}
                             onChange={handleInputChange}
+                            error={errors.endDate}
                         />
-                    </div>
-
-                    <div>
-                        <h3 className='text-lg font-semibold mb-4'>
-                            Zieldetails
-                        </h3>
+                    </>
+                );
+            case 2:
+                return (
+                    <>
                         <InputField
                             label='Zielwert'
                             id='targetValue'
@@ -300,43 +292,46 @@ const EditGoalDialog = ({ goal, onChange, onSave, onClose }) => {
                             type='number'
                             icon={<Target size={20} />}
                             onChange={handleInputChange}
+                            error={errors.targetValue}
                         />
-                        {renderCustomizableDropdown(
-                            'Einheit',
-                            'unit',
-                            formData.unit,
-                            <Hash size={20} />,
-                            UNITS
-                        )}
-                        {renderCustomizableDropdown(
-                            'Richtung',
-                            'direction',
-                            formData.direction,
-                            <ArrowUpDown size={20} />,
-                            DIRECTIONS
-                        )}
-                    </div>
-
-                    <div>
-                        <h3 className='text-lg font-semibold mb-4'>
-                            Erinnerungen
-                        </h3>
                         <InputField
-                            label='Erinnerungsintervall'
-                            id='reminderType'
-                            value={formData.reminderType}
+                            label='Einheit'
+                            id='unit'
+                            value={formData.unit}
                             type='select'
-                            icon={<Bell size={20} />}
-                            options={REMINDER_TYPES}
+                            icon={<Hash size={20} />}
+                            options={UNITS}
                             onChange={handleInputChange}
-                            error={missingFields.includes('reminderType')}
+                            error={errors.unit}
                         />
-                    </div>
-
-                    <div className='md:col-span-2'>
-                        <h3 className='text-lg font-semibold mb-4'>
-                            Fortschritt und Sichtbarkeit
-                        </h3>
+                        <InputField
+                            label='Richtung'
+                            id='direction'
+                            value={formData.direction}
+                            type='select'
+                            icon={<ArrowUpDown size={20} />}
+                            options={DIRECTIONS}
+                            onChange={handleInputChange}
+                            error={errors.direction}
+                        />
+                    </>
+                );
+            case 3:
+                return (
+                    <InputField
+                        label='Erinnerungsintervall'
+                        id='reminderType'
+                        value={formData.reminderType}
+                        type='select'
+                        icon={<Bell size={20} />}
+                        options={REMINDER_TYPES}
+                        onChange={handleInputChange}
+                        error={errors.reminderType}
+                    />
+                );
+            case 4:
+                return (
+                    <>
                         <div className='mb-4'>
                             <label
                                 htmlFor='progress'
@@ -351,7 +346,7 @@ const EditGoalDialog = ({ goal, onChange, onSave, onClose }) => {
                                     name='progress'
                                     value={formData.progress}
                                     onChange={handleInputChange}
-                                    className='w-full mt-6'
+                                    className='w-full mt-2'
                                     min='0'
                                     max='100'
                                 />
@@ -377,24 +372,67 @@ const EditGoalDialog = ({ goal, onChange, onSave, onClose }) => {
                                 Öffentlich
                             </label>
                         </div>
+                    </>
+                );
+            default:
+                return null;
+        }
+    };
+
+    return (
+        <div className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center'>
+            <div className='bg-white rounded-lg shadow-xl w-[500px] h-[600px] flex flex-col'>
+                <div className='sticky top-0 bg-white z-10 px-6 py-4 border-b border-gray-200 rounded-t-2xl'>
+                    <div className='flex justify-between items-center'>
+                        <h2 className='text-2xl font-bold text-gray-800'>
+                            {goal ? 'Ziel bearbeiten' : 'Neues Ziel erstellen'}
+                        </h2>
+                        <button
+                            onClick={onClose}
+                            className='text-gray-500 hover:text-gray-700'
+                        >
+                            <X size={24} />
+                        </button>
+                    </div>
+                    <div className='mt-2 text-sm text-gray-600'>
+                        Schritt {currentStep + 1} von {steps.length}:{' '}
+                        {steps[currentStep].title}
                     </div>
                 </div>
 
-                {error && <div className='text-red-500 mt-4'>{error}</div>}
+                <div className='flex-grow px-6 py-4 overflow-y-auto'>
+                    {renderStepContent(currentStep)}
+                </div>
 
-                <div className='mt-8 flex justify-end space-x-4'>
-                    <button
-                        onClick={onClose}
-                        className='px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
-                    >
-                        Abbrechen
-                    </button>
-                    <button
-                        onClick={handleSave}
-                        className='px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
-                    >
-                        Speichern
-                    </button>
+                <div className='sticky bottom-0 bg-white z-10 px-6 py-4 border-t border-gray-200 rounded-b-2xl'>
+                    <div className='flex justify-between'>
+                        <button
+                            onClick={handlePrevious}
+                            disabled={currentStep === 0}
+                            className={`px-4 py-2 border border-gray-300 rounded-md text-gray-700 ${
+                                currentStep === 0
+                                    ? 'opacity-50 cursor-not-allowed'
+                                    : 'hover:bg-gray-50'
+                            } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
+                        >
+                            <ChevronLeft size={20} />
+                        </button>
+                        {currentStep === steps.length - 1 ? (
+                            <button
+                                onClick={handleSave}
+                                className='px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+                            >
+                                Speichern
+                            </button>
+                        ) : (
+                            <button
+                                onClick={handleNext}
+                                className='px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+                            >
+                                <ChevronRight size={20} />
+                            </button>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
