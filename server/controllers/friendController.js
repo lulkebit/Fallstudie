@@ -5,6 +5,17 @@ const logger = require('../utils/logger');
 const { sendNotification } = require('../helpers/notification');
 const texts = require('../ressources/texts');
 
+/**
+ * Sendet eine Freundschaftsanfrage von einem Benutzer an einen anderen.
+ *
+ * @param {Object} req - Das Express-Request-Objekt.
+ * @param {Object} req.body - Der Körper der Anfrage.
+ * @param {string} req.body.userId - Die ID des Benutzers, der die Anfrage sendet.
+ * @param {string} req.body.friendUsername - Der Benutzername des Freundes, an den die Anfrage gesendet wird.
+ * @param {Object} res - Das Express-Response-Objekt.
+ * @returns {Promise<Object>} Ein Promise, das bei erfolgreicher Anfrage das Freundschaftsanfrage-Objekt zurückgibt.
+ * @throws {Object} Bei Fehlern während des Sendens der Anfrage wird ein Fehler-Objekt zurückgegeben.
+ */
 const sendFriendRequest = async (req, res) => {
     const { userId, friendUsername } = req.body;
 
@@ -64,6 +75,16 @@ const sendFriendRequest = async (req, res) => {
     }
 };
 
+/**
+ * Akzeptiert eine Freundschaftsanfrage.
+ *
+ * @param {Object} req - Das Express-Request-Objekt.
+ * @param {Object} req.params - Die Parameter der Anfrage.
+ * @param {string} req.params.requestId - Die ID der Freundschaftsanfrage.
+ * @param {Object} res - Das Express-Response-Objekt.
+ * @returns {Promise<Object>} Ein Promise, das bei erfolgreicher Akzeptierung das aktualisierte Freundschaftsanfrage-Objekt zurückgibt.
+ * @throws {Object} Bei Fehlern während der Akzeptierung wird ein Fehler-Objekt zurückgegeben.
+ */
 const acceptFriendRequest = async (req, res) => {
     const { requestId } = req.params;
     try {
@@ -118,6 +139,16 @@ const acceptFriendRequest = async (req, res) => {
     }
 };
 
+/**
+ * Lehnt eine Freundschaftsanfrage ab.
+ *
+ * @param {Object} req - Das Express-Request-Objekt.
+ * @param {Object} req.params - Die Parameter der Anfrage.
+ * @param {string} req.params.requestId - Die ID der Freundschaftsanfrage.
+ * @param {Object} res - Das Express-Response-Objekt.
+ * @returns {Promise<Object>} Ein Promise, das bei erfolgreicher Ablehnung das aktualisierte Freundschaftsanfrage-Objekt zurückgibt.
+ * @throws {Object} Bei Fehlern während der Ablehnung wird ein Fehler-Objekt zurückgegeben.
+ */
 const declineFriendRequest = async (req, res) => {
     const { requestId } = req.params;
     try {
@@ -140,6 +171,16 @@ const declineFriendRequest = async (req, res) => {
     }
 };
 
+/**
+ * Ruft die Freunde eines Benutzers ab.
+ *
+ * @param {Object} req - Das Express-Request-Objekt.
+ * @param {Object} req.params - Die Parameter der Anfrage.
+ * @param {string} req.params.userId - Die ID des Benutzers.
+ * @param {Object} res - Das Express-Response-Objekt.
+ * @returns {Promise<Array>} Ein Promise, das bei Erfolg ein Array von Freunden zurückgibt.
+ * @throws {Object} Bei Fehlern während des Abrufens wird ein Fehler-Objekt zurückgegeben.
+ */
 const getFriends = async (req, res) => {
     const { userId } = req.params;
     try {
@@ -156,6 +197,16 @@ const getFriends = async (req, res) => {
     }
 };
 
+/**
+ * Ruft die ausstehenden Freundschaftsanfragen eines Benutzers ab.
+ *
+ * @param {Object} req - Das Express-Request-Objekt.
+ * @param {Object} req.params - Die Parameter der Anfrage.
+ * @param {string} req.params.userId - Die ID des Benutzers.
+ * @param {Object} res - Das Express-Response-Objekt.
+ * @returns {Promise<Array>} Ein Promise, das bei Erfolg ein Array von ausstehenden Freundschaftsanfragen zurückgibt.
+ * @throws {Object} Bei Fehlern während des Abrufens wird ein Fehler-Objekt zurückgegeben.
+ */
 const getFriendRequests = async (req, res) => {
     const { userId } = req.params;
     try {
@@ -172,6 +223,17 @@ const getFriendRequests = async (req, res) => {
     }
 };
 
+/**
+ * Löscht eine Freundschaft zwischen zwei Benutzern.
+ *
+ * @param {Object} req - Das Express-Request-Objekt.
+ * @param {Object} req.params - Die Parameter der Anfrage.
+ * @param {string} req.params.userId - Die ID des ersten Benutzers.
+ * @param {string} req.params.friendId - Die ID des zweiten Benutzers (Freund).
+ * @param {Object} res - Das Express-Response-Objekt.
+ * @returns {Promise<Object>} Ein Promise, das bei erfolgreicher Löschung eine Erfolgsmeldung zurückgibt.
+ * @throws {Object} Bei Fehlern während der Löschung wird ein Fehler-Objekt zurückgegeben.
+ */
 const deleteFriend = async (req, res) => {
     const { userId, friendId } = req.params;
     try {

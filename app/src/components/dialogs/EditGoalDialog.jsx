@@ -64,7 +64,6 @@ const useForm = (initialState, onChangeCallback) => {
                 ) {
                     newErrors[field] = 'Bitte geben Sie eine gültige Zahl ein';
                 }
-                // Add more specific validations as needed
             });
             setErrors(newErrors);
             return Object.keys(newErrors).length === 0;

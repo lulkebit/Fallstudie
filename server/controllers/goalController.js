@@ -3,6 +3,17 @@ const Friend = require('../models/friend');
 const logger = require('../utils/logger');
 const texts = require('../ressources/texts');
 
+/**
+ * Fügt ein neues Ziel für einen Benutzer hinzu.
+ *
+ * @param {Object} req - Das Express-Request-Objekt.
+ * @param {Object} req.body - Der Körper der Anfrage.
+ * @param {string} req.body.userId - Die ID des Benutzers.
+ * @param {Object} req.body.goal - Das hinzuzufügende Ziel.
+ * @param {Object} res - Das Express-Response-Objekt.
+ * @returns {Promise<Array>} Ein Promise, das bei Erfolg ein Array aller Ziele des Benutzers zurückgibt.
+ * @throws {Object} Bei Fehlern während des Hinzufügens wird ein Fehler-Objekt zurückgegeben.
+ */
 const addGoal = async (req, res) => {
     const { userId, goal } = req.body;
     try {
@@ -33,6 +44,16 @@ const addGoal = async (req, res) => {
     }
 };
 
+/**
+ * Ruft alle Ziele eines Benutzers ab.
+ *
+ * @param {Object} req - Das Express-Request-Objekt.
+ * @param {Object} req.query - Die Query-Parameter der Anfrage.
+ * @param {string} req.query.userId - Die ID des Benutzers.
+ * @param {Object} res - Das Express-Response-Objekt.
+ * @returns {Promise<Array>} Ein Promise, das bei Erfolg ein Array aller Ziele des Benutzers zurückgibt.
+ * @throws {Object} Bei Fehlern während des Abrufens wird ein Fehler-Objekt zurückgegeben.
+ */
 const getGoals = async (req, res) => {
     const { userId } = req.query;
     try {
@@ -50,6 +71,18 @@ const getGoals = async (req, res) => {
     }
 };
 
+/**
+ * Löscht ein Ziel eines Benutzers.
+ *
+ * @param {Object} req - Das Express-Request-Objekt.
+ * @param {Object} req.body - Der Körper der Anfrage.
+ * @param {string} req.body.userId - Die ID des Benutzers.
+ * @param {Object} req.params - Die Parameter der Anfrage.
+ * @param {string} req.params.id - Die ID des zu löschenden Ziels.
+ * @param {Object} res - Das Express-Response-Objekt.
+ * @returns {Promise<Array>} Ein Promise, das bei Erfolg ein aktualisiertes Array aller Ziele des Benutzers zurückgibt.
+ * @throws {Object} Bei Fehlern während des Löschens wird ein Fehler-Objekt zurückgegeben.
+ */
 const deleteGoal = async (req, res) => {
     const { userId } = req.body;
     const { id } = req.params;
@@ -70,6 +103,19 @@ const deleteGoal = async (req, res) => {
     }
 };
 
+/**
+ * Aktualisiert ein Ziel eines Benutzers.
+ *
+ * @param {Object} req - Das Express-Request-Objekt.
+ * @param {Object} req.body - Der Körper der Anfrage.
+ * @param {string} req.body.userId - Die ID des Benutzers.
+ * @param {Object} req.body.goal - Das aktualisierte Ziel.
+ * @param {Object} req.params - Die Parameter der Anfrage.
+ * @param {string} req.params.id - Die ID des zu aktualisierenden Ziels.
+ * @param {Object} res - Das Express-Response-Objekt.
+ * @returns {Promise<Array>} Ein Promise, das bei Erfolg ein aktualisiertes Array aller Ziele des Benutzers zurückgibt.
+ * @throws {Object} Bei Fehlern während der Aktualisierung wird ein Fehler-Objekt zurückgegeben.
+ */
 const updateGoal = async (req, res) => {
     const { userId, goal } = req.body;
     const { id } = req.params;
@@ -95,6 +141,16 @@ const updateGoal = async (req, res) => {
     }
 };
 
+/**
+ * Ruft die öffentlichen Ziele aller Freunde eines Benutzers ab.
+ *
+ * @param {Object} req - Das Express-Request-Objekt.
+ * @param {Object} req.params - Die Parameter der Anfrage.
+ * @param {string} req.params.userId - Die ID des Benutzers.
+ * @param {Object} res - Das Express-Response-Objekt.
+ * @returns {Promise<Array>} Ein Promise, das bei Erfolg ein Array aller öffentlichen Ziele der Freunde zurückgibt.
+ * @throws {Object} Bei Fehlern während des Abrufens wird ein Fehler-Objekt zurückgegeben.
+ */
 const getPublicGoalsOfFriends = async (req, res) => {
     try {
         const userId = req.params.userId;
@@ -160,6 +216,16 @@ const getPublicGoalsOfFriends = async (req, res) => {
     }
 };
 
+/**
+ * Ruft die öffentlichen Ziele eines bestimmten Freundes ab.
+ *
+ * @param {Object} req - Das Express-Request-Objekt.
+ * @param {Object} req.params - Die Parameter der Anfrage.
+ * @param {string} req.params.friendId - Die ID des Freundes.
+ * @param {Object} res - Das Express-Response-Objekt.
+ * @returns {Promise<Array>} Ein Promise, das bei Erfolg ein Array aller öffentlichen Ziele des Freundes zurückgibt.
+ * @throws {Object} Bei Fehlern während des Abrufens wird ein Fehler-Objekt zurückgegeben.
+ */
 const getPublicGoalsOfFriend = async (req, res) => {
     try {
         const { friendId } = req.params;
@@ -186,6 +252,17 @@ const getPublicGoalsOfFriend = async (req, res) => {
     }
 };
 
+/**
+ * Pinnt ein Ziel für einen Benutzer an.
+ *
+ * @param {Object} req - Das Express-Request-Objekt.
+ * @param {Object} req.body - Der Körper der Anfrage.
+ * @param {string} req.body.userId - Die ID des Benutzers.
+ * @param {Array} req.body.goals - Die aktualisierten Ziele des Benutzers.
+ * @param {Object} res - Das Express-Response-Objekt.
+ * @returns {Promise<Array>} Ein Promise, das bei Erfolg ein aktualisiertes Array aller Ziele des Benutzers zurückgibt.
+ * @throws {Object} Bei Fehlern während des Pinnens wird ein Fehler-Objekt zurückgegeben.
+ */
 const pinGoal = async (req, res) => {
     const { userId, goals } = req.body;
     try {
@@ -213,6 +290,17 @@ const pinGoal = async (req, res) => {
     }
 };
 
+/**
+ * Pinnt ein Ziel eines Freundes für einen Benutzer an.
+ *
+ * @param {Object} req - Das Express-Request-Objekt.
+ * @param {Object} req.body - Der Körper der Anfrage.
+ * @param {string} req.body.userId - Die ID des Benutzers.
+ * @param {Array} req.body.goals - Die aktualisierten Ziele, einschließlich der angepinnten Freundesziele.
+ * @param {Object} res - Das Express-Response-Objekt.
+ * @returns {Promise<Array>} Ein Promise, das bei Erfolg ein aktualisiertes Array aller Ziele zurückgibt.
+ * @throws {Object} Bei Fehlern während des Pinnens wird ein Fehler-Objekt zurückgegeben.
+ */
 const pinFriendGoal = async (req, res) => {
     const { userId, goals } = req.body;
     try {
