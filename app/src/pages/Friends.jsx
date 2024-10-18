@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import { UserPlus, UserCheck, UserX, Users, Loader, Globe } from 'lucide-react';
+import { UserPlus, UserCheck, UserX, Users, Globe } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import { UserContext } from '../context/UserContext';
 import { useToast } from '../context/ToastContext';
 import { useDialog } from '../context/DialogContext';
 import ConfirmationDialog from '../components/dialogs/ConfirmationDialog';
 import FriendGoalsDialog from '../components/dialogs/FriendGoalsDialog';
+import Loader from '../components/Loader';
 
 const Friends = () => {
     const { user } = useContext(UserContext);
@@ -146,8 +147,7 @@ const Friends = () => {
                         </h2>
                         {loading ? (
                             <div className='flex items-center justify-center py-4'>
-                                <Loader className='animate-spin mr-2' />
-                                <span>Lädt Anfragen...</span>
+                                <Loader />
                             </div>
                         ) : friendRequests.length === 0 ? (
                             <p className='text-gray-500'>
@@ -213,8 +213,7 @@ const Friends = () => {
                         </h2>
                         {loading ? (
                             <div className='flex items-center justify-center py-4'>
-                                <Loader className='animate-spin mr-2' />
-                                <span>Lädt Freunde...</span>
+                                <Loader />
                             </div>
                         ) : friends.length === 0 ? (
                             <p className='text-gray-500'>

@@ -8,7 +8,8 @@ import React, {
 import axios from 'axios';
 import { UserContext } from '../context/UserContext';
 import { useToast } from '../context/ToastContext';
-import { Loader, ChevronDown, ChevronUp, Pin } from 'lucide-react';
+import { ChevronDown, ChevronUp, Pin } from 'lucide-react';
+import Loader from './Loader';
 
 const GoalCard = React.memo(({ goal, isExpanded, onToggle, onPin }) => {
     const progressBarColor =
@@ -171,8 +172,7 @@ const PublicGoalTable = () => {
             <div className='space-y-4'>
                 {loading ? (
                     <div className='flex items-center justify-center py-4'>
-                        <Loader className='animate-spin mr-2' />
-                        <span>Lädt Ziele...</span>
+                        <Loader />
                     </div>
                 ) : sortedGoals.length > 0 ? (
                     sortedGoals.map((goal) => (

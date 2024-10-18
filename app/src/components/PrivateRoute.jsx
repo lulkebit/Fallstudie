@@ -1,12 +1,13 @@
 import React, { useContext } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
+import LoadingPage from '../pages/LoadingPage';
 
 const PrivateRoute = () => {
     const { user, loading } = useContext(UserContext);
 
     if (loading) {
-        return <div>Lädt...</div>;
+        return <LoadingPage />;
     }
 
     if (!user) {

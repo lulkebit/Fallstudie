@@ -1,5 +1,5 @@
 import React from 'react';
-import { Loader } from 'lucide-react';
+import Loader from '../components/Loader';
 
 const LoadingPage = () => {
     return (
@@ -39,7 +39,7 @@ const LoadingPage = () => {
                             alt='TrackMyGoal Logo'
                             className='h-24 mb-8 animate-pulse'
                         />
-                        <Loader className='animate-spin text-indigo-600 w-12 h-12 mb-4' />
+                        <Loader />
                         <h2 className='text-2xl font-semibold text-gray-800 mb-2'>
                             Lädt...
                         </h2>

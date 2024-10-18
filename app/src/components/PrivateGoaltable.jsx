@@ -9,9 +9,10 @@ import { UserContext } from '../context/UserContext';
 import axios from 'axios';
 import { useDialog } from '../context/DialogContext';
 import { useToast } from '../context/ToastContext';
-import { Goal, Loader, ChevronDown, ChevronUp, Pin } from 'lucide-react';
+import { Goal, ChevronDown, ChevronUp, Pin } from 'lucide-react';
 import ConfirmationDialog from './dialogs/ConfirmationDialog';
 import EditGoalDialog from './dialogs/EditGoalDialog';
+import Loader from './Loader';
 
 const GoalCard = React.memo(
     ({ goal, onEdit, onDelete, onPin, isExpanded, onToggle }) => {
@@ -331,8 +332,7 @@ const Table = () => {
             </div>
             {loading ? (
                 <div className='flex items-center justify-center py-4'>
-                    <Loader className='animate-spin mr-2' />
-                    <span>Lädt Ziele...</span>
+                    <Loader />
                 </div>
             ) : goals.length === 0 ? (
                 <p className='text-gray-600 text-center py-8'>
