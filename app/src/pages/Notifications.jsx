@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { UserContext } from '../context/UserContext';
 import { useToast } from '../context/ToastContext';
-import { Bell, ChevronDown, Check, X } from 'lucide-react';
+import { Bell, ChevronDown, Check } from 'lucide-react';
 import Navbar from '../components/Navbar';
 
 const Notifications = () => {
@@ -60,21 +60,21 @@ const Notifications = () => {
     return (
         <div className='min-h-screen bg-gray-100'>
             <Navbar />
-            <div className='container mx-auto p-6'>
+            <div className='container mx-auto px-4 sm:px-6 lg:px-8 py-8'>
                 <div className='max-w-3xl mx-auto'>
-                    <h2 className='text-3xl font-bold text-gray-800 mb-6 flex items-center'>
+                    <h2 className='text-2xl sm:text-3xl font-bold text-gray-800 mb-6 flex items-center'>
                         <Bell className='mr-2' /> Benachrichtigungen
                     </h2>
                     <div className='space-y-4'>
                         {notifications.map((notification) => (
                             <div
                                 key={notification._id}
-                                className={`bg-white rounded-lg shadow-md p-6 transition duration-300 ease-in-out hover:shadow-lg ${
+                                className={`bg-white rounded-lg shadow-md p-4 sm:p-6 transition duration-300 ease-in-out hover:shadow-lg ${
                                     notification.read ? 'opacity-75' : ''
                                 }`}
                             >
-                                <div className='flex items-center justify-between mb-2'>
-                                    <h3 className='text-xl font-semibold text-gray-800'>
+                                <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2'>
+                                    <h3 className='text-lg sm:text-xl font-semibold text-gray-800 mb-2 sm:mb-0'>
                                         {notification.title}
                                     </h3>
                                     <div className='flex space-x-2'>
@@ -105,7 +105,7 @@ const Notifications = () => {
                     <div className='text-center mt-8'>
                         <button
                             onClick={loadMoreNotifications}
-                            className={`mt-6 px-6 py-3 rounded-full shadow-md transition duration-300 flex items-center justify-center mx-auto ${
+                            className={`mt-6 px-4 sm:px-6 py-2 sm:py-3 rounded-full shadow-md transition duration-300 flex items-center justify-center mx-auto ${
                                 loading || page >= totalPages
                                     ? 'bg-gray-400 cursor-not-allowed'
                                     : 'bg-blue-600 text-white hover:bg-blue-700'
@@ -134,11 +134,11 @@ const Notifications = () => {
                                             d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
                                         ></path>
                                     </svg>
-                                    Loading...
+                                    Lädt...
                                 </span>
                             ) : (
                                 <span className='flex items-center'>
-                                    Load More
+                                    Mehr anzeigen
                                     <ChevronDown className='ml-2' size={20} />
                                 </span>
                             )}

@@ -113,12 +113,12 @@ const Friends = () => {
                     Freunde
                 </h1>
 
-                <div className='bg-white shadow-lg rounded-lg p-6 mb-8'>
-                    <h2 className='text-2xl font-semibold mb-4 flex items-center'>
+                <div className='bg-white shadow-lg rounded-lg p-4 sm:p-6 mb-8'>
+                    <h2 className='text-xl sm:text-2xl font-semibold mb-4 flex items-center'>
                         <UserPlus className='mr-2' />
                         Freund hinzufügen
                     </h2>
-                    <div className='flex'>
+                    <div className='flex flex-col sm:flex-row'>
                         <input
                             type='text'
                             value={newFriendUsername}
@@ -126,11 +126,11 @@ const Friends = () => {
                                 setNewFriendUsername(e.target.value)
                             }
                             placeholder='Freund Username'
-                            className='flex-grow px-4 py-2 border rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+                            className='flex-grow px-4 py-2 border rounded-md sm:rounded-l-md sm:rounded-r-none mb-2 sm:mb-0 focus:outline-none focus:ring-2 focus:ring-blue-500'
                         />
                         <button
                             onClick={sendFriendRequest}
-                            className='bg-blue-500 text-white px-4 py-2 rounded-r-md hover:bg-blue-600 transition duration-300 flex items-center'
+                            className='bg-blue-500 text-white px-4 py-2 rounded-md sm:rounded-l-none sm:rounded-r-md hover:bg-blue-600 transition duration-300 flex items-center justify-center'
                         >
                             <UserPlus size={18} className='mr-2' />
                             Anfrage senden
@@ -138,9 +138,9 @@ const Friends = () => {
                     </div>
                 </div>
 
-                <div className='grid md:grid-cols-2 gap-8'>
-                    <div className='bg-white shadow-lg rounded-lg p-6'>
-                        <h2 className='text-2xl font-semibold mb-4 flex items-center'>
+                <div className='grid gap-8 md:grid-cols-2'>
+                    <div className='bg-white shadow-lg rounded-lg p-4 sm:p-6'>
+                        <h2 className='text-xl sm:text-2xl font-semibold mb-4 flex items-center'>
                             <Users className='mr-2' />
                             Freundschaftsanfragen
                         </h2>
@@ -158,9 +158,9 @@ const Friends = () => {
                                 {friendRequests.map((request) => (
                                     <li
                                         key={request._id}
-                                        className='flex items-center justify-between bg-gray-50 p-4 rounded-lg shadow transition duration-300 hover:shadow-md'
+                                        className='flex flex-col sm:flex-row items-center justify-between bg-gray-50 p-4 rounded-lg shadow transition duration-300 hover:shadow-md'
                                     >
-                                        <div className='flex items-center space-x-4'>
+                                        <div className='flex items-center space-x-4 mb-2 sm:mb-0'>
                                             <img
                                                 src={`data:image/jpeg;base64,${request.userId.avatar}`}
                                                 alt={`${request.userId.firstname} ${request.userId.lastname}`}
@@ -206,8 +206,8 @@ const Friends = () => {
                         )}
                     </div>
 
-                    <div className='bg-white shadow-lg rounded-lg p-6'>
-                        <h2 className='text-2xl font-semibold mb-6 flex items-center'>
+                    <div className='bg-white shadow-lg rounded-lg p-4 sm:p-6'>
+                        <h2 className='text-xl sm:text-2xl font-semibold mb-6 flex items-center'>
                             <Users className='mr-2' />
                             Meine Freunde
                         </h2>
@@ -221,63 +221,74 @@ const Friends = () => {
                                 Du hast noch keine Freunde hinzugefügt.
                             </p>
                         ) : (
-                            <ul className='space-y-3'>
+                            <ul className='space-y-4'>
                                 {friends.map((friend) => (
                                     <li
                                         key={friend._id}
-                                        className='flex items-center justify-between bg-gray-50 p-4 rounded-lg shadow transition duration-300 hover:shadow-md'
+                                        className='bg-gray-50 p-4 rounded-lg shadow transition duration-300 hover:shadow-md'
                                     >
-                                        <div className='flex items-center space-x-4'>
-                                            <img
-                                                src={`data:image/jpeg;base64,${friend.friendId.avatar}`}
-                                                alt={`${friend.friendId.firstname} ${friend.friendId.lastname}`}
-                                                className='h-10 w-10 rounded-full'
-                                            />
-                                            <div>
-                                                <span className='font-medium text-gray-700'>
-                                                    {friend.friendId.username}
-                                                </span>
-                                                <p className='text-sm text-gray-500'>
-                                                    {friend.friendId.firstname}{' '}
-                                                    {friend.friendId.lastname}
-                                                </p>
-                                                <p className='text-sm text-gray-500'>
-                                                    Freund seit:{' '}
-                                                    {new Date(
-                                                        friend.createdAt
-                                                    ).toLocaleDateString()}
-                                                </p>
+                                        <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between'>
+                                            <div className='flex items-center space-x-4 mb-4 sm:mb-0'>
+                                                <img
+                                                    src={`data:image/jpeg;base64,${friend.friendId.avatar}`}
+                                                    alt={`${friend.friendId.firstname} ${friend.friendId.lastname}`}
+                                                    className='h-12 w-12 rounded-full'
+                                                />
+                                                <div>
+                                                    <span className='font-medium text-gray-700 block'>
+                                                        {
+                                                            friend.friendId
+                                                                .username
+                                                        }
+                                                    </span>
+                                                    <p className='text-sm text-gray-500'>
+                                                        {
+                                                            friend.friendId
+                                                                .firstname
+                                                        }{' '}
+                                                        {
+                                                            friend.friendId
+                                                                .lastname
+                                                        }
+                                                    </p>
+                                                    <p className='text-xs text-gray-400'>
+                                                        Freund seit:{' '}
+                                                        {new Date(
+                                                            friend.createdAt
+                                                        ).toLocaleDateString()}
+                                                    </p>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div className='flex space-x-2'>
-                                            <button
-                                                onClick={() =>
-                                                    handleShowGoalsClick(
-                                                        friend.friendId._id
-                                                    )
-                                                }
-                                                className='bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition duration-300 flex items-center'
-                                            >
-                                                <Globe
-                                                    size={16}
-                                                    className='mr-2'
-                                                />
-                                                Öffentliche Ziele anzeigen
-                                            </button>
-                                            <button
-                                                onClick={() =>
-                                                    handleDeleteClick(
-                                                        friend.friendId._id
-                                                    )
-                                                }
-                                                className='bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 transition duration-300 flex items-center'
-                                            >
-                                                <UserX
-                                                    size={16}
-                                                    className='mr-2'
-                                                />
-                                                Entfernen
-                                            </button>
+                                            <div className='flex flex-wrap gap-2 w-full sm:w-auto'>
+                                                <button
+                                                    onClick={() =>
+                                                        handleShowGoalsClick(
+                                                            friend.friendId._id
+                                                        )
+                                                    }
+                                                    className='bg-blue-500 text-white px-3 py-1 rounded-full text-sm hover:bg-blue-600 transition duration-300 flex items-center justify-center flex-1 sm:flex-none'
+                                                >
+                                                    <Globe
+                                                        size={14}
+                                                        className='mr-1'
+                                                    />
+                                                    Öffentliche Ziele
+                                                </button>
+                                                <button
+                                                    onClick={() =>
+                                                        handleDeleteClick(
+                                                            friend.friendId._id
+                                                        )
+                                                    }
+                                                    className='bg-red-500 text-white px-3 py-1 rounded-full text-sm hover:bg-red-600 transition duration-300 flex items-center justify-center flex-1 sm:flex-none'
+                                                >
+                                                    <UserX
+                                                        size={14}
+                                                        className='mr-1'
+                                                    />
+                                                    Entfernen
+                                                </button>
+                                            </div>
                                         </div>
                                     </li>
                                 ))}

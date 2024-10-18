@@ -156,127 +156,127 @@ const Profile = () => {
     return (
         <div className='bg-gray-100 min-h-screen'>
             <Navbar />
-            <div className='max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-xl'>
-                <h2 className='text-2xl font-bold mb-6 text-center text-blue-600'>
-                    Profil bearbeiten
-                </h2>
+            <div className='container mx-auto px-4 py-8'>
+                <div className='max-w-lg mx-auto bg-white rounded-lg shadow-xl overflow-hidden'>
+                    <div className='p-6 sm:p-8'>
+                        <h2 className='text-2xl font-bold mb-6 text-center text-blue-600'>
+                            Profil bearbeiten
+                        </h2>
 
-                <form onSubmit={handleSubmit} className='space-y-4'>
-                    <div>
-                        <label
-                            htmlFor='avatar'
-                            className='block text-sm font-medium text-gray-700'
+                        <form onSubmit={handleSubmit} className='space-y-4'>
+                            <div className='flex flex-col items-center'>
+                                {formData.avatar && (
+                                    <img
+                                        src={`data:image/jpeg;base64,${formData.avatar}`}
+                                        alt='Avatar'
+                                        className='w-24 h-24 rounded-full object-cover mb-2'
+                                    />
+                                )}
+                                <input
+                                    type='file'
+                                    id='avatar'
+                                    name='avatar'
+                                    onChange={handleAvatarChange}
+                                    accept='image/*'
+                                    className='text-sm text-gray-500
+                                    file:mr-4 file:py-2 file:px-4
+                                    file:rounded-full file:border-0
+                                    file:text-sm file:font-semibold
+                                    file:bg-blue-50 file:text-blue-700
+                                    hover:file:bg-blue-100'
+                                />
+                                {avatarError && (
+                                    <p className='mt-2 text-sm text-red-600'>
+                                        {avatarError}
+                                    </p>
+                                )}
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor='username'
+                                    className='block text-sm font-medium text-gray-700'
+                                >
+                                    Benutzername
+                                </label>
+                                <input
+                                    type='text'
+                                    id='username'
+                                    name='username'
+                                    value={formData.username}
+                                    onChange={handleChange}
+                                    className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50'
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor='email'
+                                    className='block text-sm font-medium text-gray-700'
+                                >
+                                    E-Mail
+                                </label>
+                                <input
+                                    type='email'
+                                    id='email'
+                                    name='email'
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50'
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor='firstname'
+                                    className='block text-sm font-medium text-gray-700'
+                                >
+                                    Vorname
+                                </label>
+                                <input
+                                    type='text'
+                                    id='firstname'
+                                    name='firstname'
+                                    value={formData.firstname}
+                                    onChange={handleChange}
+                                    className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50'
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor='lastname'
+                                    className='block text-sm font-medium text-gray-700'
+                                >
+                                    Nachname
+                                </label>
+                                <input
+                                    type='text'
+                                    id='lastname'
+                                    name='lastname'
+                                    value={formData.lastname}
+                                    onChange={handleChange}
+                                    className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50'
+                                />
+                            </div>
+                            <button
+                                type='submit'
+                                disabled={!isModified}
+                                className={`w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
+                                    !isModified
+                                        ? 'opacity-50 cursor-not-allowed'
+                                        : ''
+                                }`}
+                            >
+                                Speichern
+                            </button>
+                        </form>
+                        <button
+                            onClick={() =>
+                                addDialog({ component: ChangePasswordDialog })
+                            }
+                            className='w-full mt-4 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
                         >
-                            Avatar
-                        </label>
-                        {formData.avatar && (
-                            <img
-                                src={`data:image/jpeg;base64,${formData.avatar}`}
-                                alt='Avatar'
-                                className='mt-2 w-24 h-24 rounded-full object-cover'
-                            />
-                        )}
-                        <input
-                            type='file'
-                            id='avatar'
-                            name='avatar'
-                            onChange={handleAvatarChange}
-                            accept='image/*'
-                            className='mt-1 block w-full text-sm text-gray-500
-                        file:mr-4 file:py-2 file:px-4
-                        file:rounded-full file:border-0
-                        file:text-sm file:font-semibold
-                        file:bg-blue-50 file:text-blue-700
-                        hover:file:bg-blue-100'
-                        />
-                        {avatarError && (
-                            <p className='mt-2 text-sm text-red-600'>
-                                {avatarError}
-                            </p>
-                        )}
+                            Passwort ändern
+                        </button>
                     </div>
-                    <div>
-                        <label
-                            htmlFor='username'
-                            className='block text-sm font-medium text-gray-700'
-                        >
-                            Benutzername
-                        </label>
-                        <input
-                            type='text'
-                            id='username'
-                            name='username'
-                            value={formData.username}
-                            onChange={handleChange}
-                            className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50'
-                        />
-                    </div>
-                    <div>
-                        <label
-                            htmlFor='email'
-                            className='block text-sm font-medium text-gray-700'
-                        >
-                            E-Mail
-                        </label>
-                        <input
-                            type='email'
-                            id='email'
-                            name='email'
-                            value={formData.email}
-                            onChange={handleChange}
-                            className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50'
-                        />
-                    </div>
-                    <div>
-                        <label
-                            htmlFor='firstname'
-                            className='block text-sm font-medium text-gray-700'
-                        >
-                            Vorname
-                        </label>
-                        <input
-                            type='text'
-                            id='firstname'
-                            name='firstname'
-                            value={formData.firstname}
-                            onChange={handleChange}
-                            className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50'
-                        />
-                    </div>
-                    <div>
-                        <label
-                            htmlFor='lastname'
-                            className='block text-sm font-medium text-gray-700'
-                        >
-                            Nachname
-                        </label>
-                        <input
-                            type='text'
-                            id='lastname'
-                            name='lastname'
-                            value={formData.lastname}
-                            onChange={handleChange}
-                            className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50'
-                        />
-                    </div>
-                    <button
-                        type='submit'
-                        disabled={!isModified}
-                        className={`w-full py-2 px-4 mb-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
-                            !isModified ? 'opacity-50 cursor-not-allowed' : ''
-                        }`}
-                    >
-                        Speichern
-                    </button>
-                </form>
-                <button
-                    onClick={() =>
-                        addDialog({ component: ChangePasswordDialog })
-                    }
-                    className='w-full mt-2 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
-                >
-                    Passwort ändern
-                </button>
+                </div>
             </div>
             {showAvatarCropDialog && (
                 <AvatarCropDialog

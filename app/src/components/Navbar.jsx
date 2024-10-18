@@ -1,9 +1,10 @@
 import React, { useState, useContext, useRef, useEffect } from 'react';
-import axios from 'axios';
-import { useToast } from '../context/ToastContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
 import NotificationCard from './NotificationCard';
+import { LayoutDashboard, LogOut, Settings, User, Users } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
+import axios from 'axios';
 
 const Navbar = () => {
     const [showProfileCard, setShowProfileCard] = useState(false);
@@ -14,20 +15,20 @@ const Navbar = () => {
     const profileRef = useRef(null);
 
     useEffect(() => {
-        function handleClickOutside(event) {
+        const handleClickOutside = (event) => {
             if (
                 profileRef.current &&
                 !profileRef.current.contains(event.target)
             ) {
                 setShowProfileCard(false);
             }
-        }
+        };
 
         document.addEventListener('mousedown', handleClickOutside);
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, [profileRef]);
+    }, []);
 
     const handleLogout = async () => {
         try {
@@ -47,17 +48,23 @@ const Navbar = () => {
 
     const getNavItemClass = (path) => {
         const baseClass =
-            'inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium';
+            'flex items-center px-1 pt-1 border-b-2 text-sm font-medium';
         return location.pathname === path
             ? `${baseClass} border-[#8c52ff] text-gray-900`
             : `${baseClass} border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700`;
     };
 
+    const getMobileNavItemClass = (path) => {
+        return location.pathname === path
+            ? 'text-[#8c52ff]'
+            : 'text-gray-500 hover:text-gray-700';
+    };
+
     return (
         <nav className='bg-white shadow-md relative z-10'>
-            <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+            <div className='max-w-7xl mx-auto px-2 sm:px-4 lg:px-8'>
                 <div className='flex justify-between h-16'>
-                    <div className='flex'>
+                    <div className='flex px-2 lg:px-0'>
                         <div className='flex-shrink-0 flex items-center'>
                             <img
                                 src='/Logo.png'
@@ -65,7 +72,7 @@ const Navbar = () => {
                                 className='h-12 w-auto'
                             />
                         </div>
-                        <div className='hidden sm:ml-6 sm:flex sm:space-x-8'>
+                        <div className='hidden lg:ml-6 lg:flex lg:space-x-8'>
                             <button
                                 onClick={() => navigate('/Dashboard')}
                                 className={getNavItemClass('/Dashboard')}
@@ -80,7 +87,27 @@ const Navbar = () => {
                             </button>
                         </div>
                     </div>
-                    <div className='hidden sm:ml-6 sm:flex sm:items-center'>
+                    <div className='flex items-center space-x-4 lg:hidden'>
+                        <button
+                            onClick={() => navigate('/Dashboard')}
+                            className={`p-1 rounded-full ${getMobileNavItemClass(
+                                '/Dashboard'
+                            )}`}
+                            aria-label='Dashboard'
+                        >
+                            <LayoutDashboard className='h-6 w-6' />
+                        </button>
+                        <button
+                            onClick={() => navigate('/friends')}
+                            className={`p-1 rounded-full ${getMobileNavItemClass(
+                                '/friends'
+                            )}`}
+                            aria-label='Freunde'
+                        >
+                            <Users className='h-6 w-6' />
+                        </button>
+                    </div>
+                    <div className='flex items-center'>
                         <NotificationCard />
                         <div
                             className='ml-3 relative'
@@ -128,20 +155,23 @@ const Navbar = () => {
                                     </div>
                                     <button
                                         onClick={() => navigate('/profile')}
-                                        className='block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+                                        className='inline-flex w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
                                     >
+                                        <User className='mr-3 h-5 w-5' />
                                         Profil anzeigen
                                     </button>
                                     <a
                                         href='#settings'
-                                        className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+                                        className='inline-flex w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
                                     >
+                                        <Settings className='mr-3 h-5 w-5' />
                                         Einstellungen
                                     </a>
                                     <a
                                         onClick={handleLogout}
-                                        className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer'
+                                        className='inline-flex w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer'
                                     >
+                                        <LogOut className='mr-3 h-5 w-5' />
                                         Abmelden
                                     </a>
                                 </div>

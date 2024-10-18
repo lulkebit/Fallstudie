@@ -380,11 +380,11 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
     };
 
     return (
-        <div className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center'>
-            <div className='bg-white rounded-lg shadow-xl w-[500px] h-[600px] flex flex-col'>
-                <div className='sticky top-0 bg-white z-10 px-6 py-4 border-b border-gray-200 rounded-t-2xl'>
+        <div className='fixed inset-0 bg-black z-50 bg-opacity-50 flex justify-center items-center p-4'>
+            <div className='bg-white rounded-lg shadow-xl w-full max-w-[500px] h-full max-h-[600px] flex flex-col'>
+                <div className='sticky top-0 bg-white z-10 px-4 sm:px-6 py-4 border-b border-gray-200 rounded-t-2xl'>
                     <div className='flex justify-between items-center'>
-                        <h2 className='text-2xl font-bold text-gray-800'>
+                        <h2 className='text-xl sm:text-2xl font-bold text-gray-800'>
                             {goal ? 'Ziel bearbeiten' : 'Neues Ziel erstellen'}
                         </h2>
                         <button
@@ -400,16 +400,16 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                     </div>
                 </div>
 
-                <div className='flex-grow px-6 py-4 overflow-y-auto'>
+                <div className='flex-grow px-4 sm:px-6 py-4 overflow-y-auto'>
                     {renderStepContent(currentStep)}
                 </div>
 
-                <div className='sticky bottom-0 bg-white z-10 px-6 py-4 border-t border-gray-200 rounded-b-2xl'>
+                <div className='sticky bottom-0 bg-white z-10 px-4 sm:px-6 py-4 border-t border-gray-200 rounded-b-2xl'>
                     <div className='flex justify-between'>
                         <button
                             onClick={handlePrevious}
                             disabled={currentStep === 0}
-                            className={`px-4 py-2 border border-gray-300 rounded-md text-gray-700 ${
+                            className={`px-3 sm:px-4 py-2 border border-gray-300 rounded-md text-gray-700 ${
                                 currentStep === 0
                                     ? 'opacity-50 cursor-not-allowed'
                                     : 'hover:bg-gray-50'
@@ -439,4 +439,4 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
     );
 };
 
-export default React.memo(EditGoalDialog);
+export default EditGoalDialog;
