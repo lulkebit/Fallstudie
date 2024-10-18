@@ -16,7 +16,7 @@ const GoalCard = React.memo(({ goal, isExpanded, onToggle, onPin }) => {
 
     return (
         <div
-            className={`bg-white rounded-lg shadow-md p-4 transition duration-300 ease-in-out hover:shadow-lg ${
+            className={`bg-gray-50 rounded-lg shadow-md p-4 transition duration-300 ease-in-out hover:shadow-lg ${
                 goal.isPinned ? 'border-2 border-yellow-500' : ''
             }`}
         >

@@ -20,7 +20,7 @@ const GoalCard = React.memo(
 
         return (
             <div
-                className={`goal-card bg-white rounded-lg shadow-md p-4 transition duration-300 ease-in-out hover:shadow-lg ${
+                className={`goal-card bg-gray-50 rounded-lg shadow-md p-4 transition duration-300 ease-in-out hover:shadow-lg ${
                     goal.isPinned ? 'border-2 border-yellow-500' : ''
                 }`}
             >
