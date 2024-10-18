@@ -14,20 +14,15 @@ import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import Friends from './pages/Friends';
 import Notifications from './pages/Notifications';
-import { Loader } from 'lucide-react';
 import PrivateRoute from './components/PrivateRoute';
 import NotFound from './pages/NotFound';
+import LoadingPage from './pages/LoadingPage';
 
 function MyRoutes() {
     const { user, loading } = useContext(UserContext);
 
     if (loading) {
-        return (
-            <div className='flex items-center justify-center py-4'>
-                <Loader className='animate-spin mr-2' />
-                <span>Lädt...</span>
-            </div>
-        );
+        return <LoadingPage />;
     }
 
     return (
