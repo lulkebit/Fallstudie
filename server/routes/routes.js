@@ -49,6 +49,13 @@ const {
     participateInGlobalGoal,
 } = require('../controllers/globalGoalController');
 
+// Import der User-Management-Funktionen
+const {
+    getAllUsers,
+    deleteUser,
+    updateUser,
+} = require('../controllers/userController');
+
 /**
  * CORS-Konfiguration
  * Erlaubt Anfragen nur von http://localhost:3000
@@ -135,5 +142,15 @@ router.get('/friends/:userId', getFriends);
 router.get('/friends/requests/:userId', getFriendRequests);
 // Löschen einer Freundschaft
 router.delete('/friends/:userId/:friendId', deleteFriend);
+
+/**
+ * User-Management-Routen (nur für Admins)
+ */
+// Abrufen aller Benutzer
+router.get('/users', getAllUsers);
+// Löschen eines Benutzers
+router.delete('/users/:id', deleteUser);
+// Aktualisieren eines Benutzers
+router.put('/users/:id', updateUser);
 
 module.exports = router;

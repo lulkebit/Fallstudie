@@ -32,6 +32,9 @@ module.exports = {
         MARK_NOTIFICATION_READ:
             'Fehler beim Markieren der Benachrichtigung als gelesen',
         NOTIFICATION_NOT_FOUND: 'Benachrichtigung nicht gefunden',
+        USERS_FETCH: 'Fehler beim Abrufen der Benutzer',
+        USER_DELETE: 'Fehler beim Löschen des Benutzers',
+        USER_UPDATE: 'Fehler beim Aktualisieren des Benutzers',
     },
     SUCCESS: {
         SERVER_RUNNING: (port) => `Server läuft auf Port ${port}`,
@@ -57,6 +60,9 @@ module.exports = {
         GOAL_UNPINNED: 'Ziel erfolgreich losgelöst',
         FRIEND_GOAL_PINNED: 'Freundesziel erfolgreich angepinnt',
         FRIEND_GOAL_UNPINNED: 'Freundesziel erfolgreich losgelöst',
+        USERS_FETCHED: (anzahl) => `${anzahl} Benutzer erfolgreich abgerufen`,
+        USER_DELETED: (userId) => `Benutzer ${userId} erfolgreich gelöscht`,
+        USER_UPDATED: (userId) => `Benutzer ${userId} erfolgreich aktualisiert`,
     },
     INFO: {
         ATTEMPTING_REGISTER_USER:
@@ -108,6 +114,11 @@ module.exports = {
             `Anpinnen des Freundesziels mit ID ${goalId} von Freund ${friendId} für Benutzer ${userId}`,
         UNPINNING_FRIEND_GOAL: (goalId, friendId, userId) =>
             `Loslösen des Freundesziels mit ID ${goalId} von Freund ${friendId} für Benutzer ${userId}`,
+        ATTEMPTING_FETCH_ALL_USERS: 'Versuch, alle Benutzer abzurufen',
+        ATTEMPTING_DELETE_USER: (userId) =>
+            `Versuch, Benutzer ${userId} zu löschen`,
+        ATTEMPTING_UPDATE_USER: (userId) =>
+            `Versuch, Benutzer ${userId} zu aktualisieren`,
     },
     WARNINGS: {
         EMAIL_ALREADY_EXISTS_SERVER: (email) =>
@@ -134,6 +145,8 @@ module.exports = {
             `Freundschaftsanfrage von ${benutzerId} an ${freundId} existiert bereits`,
         NOTIFICATION_NOT_FOUND: (anfrageId) =>
             `Benachrichtigung für Freundschaftsanfrage ${anfrageId} nicht gefunden`,
+        USER_ALREADY_EXISTS:
+            'Benutzer mit dieser E-Mail oder diesem Benutzernamen existiert bereits',
     },
     MESSAGES: {
         LOGOUT_SUCCESS: 'Erfolgreich abgemeldet',

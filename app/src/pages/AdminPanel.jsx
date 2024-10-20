@@ -1,5 +1,5 @@
-import React from 'react';
 import GlobalGoalTable from '../components/GlobalGoaltable';
+import UserManagement from '../components/UserManagement';
 import Navbar from '../components/Navbar';
 
 const AdminPanel = () => {
@@ -16,6 +16,11 @@ const AdminPanel = () => {
                         <div className='w-full md:w-1/2 space-y-6'>
                             <div className='bg-white rounded-lg shadow-md p-4 md:p-6'>
                                 <GlobalGoalTable />
+                            </div>
+                        </div>
+                        <div className='flex-grow space-y-6'>
+                            <div className='bg-white rounded-lg shadow-md p-4 md:p-6'>
+                                <UserManagement />
                             </div>
                         </div>
                     </div>

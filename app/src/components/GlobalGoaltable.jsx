@@ -150,27 +150,22 @@ const GlobalGoalTable = () => {
             try {
                 let response;
                 if (formData.id) {
-                    // Updating an existing goal
                     response = await axios.put(
                         `/global-goals/${formData.id}`,
                         formData
                     );
                     addToast('Globales Ziel aktualisiert!', 'success');
                 } else {
-                    // Creating a new goal
                     response = await axios.post('/global-goals', formData);
                     addToast('Globales Ziel erstellt!', 'success');
                 }
 
-                // Update the local state with the new/updated goal
                 setGlobalGoals((prevGoals) => {
                     if (formData.id) {
-                        // Update existing goal
                         return prevGoals.map((goal) =>
                             goal._id === formData.id ? response.data : goal
                         );
                     } else {
-                        // Add new goal
                         return [...prevGoals, response.data];
                     }
                 });
