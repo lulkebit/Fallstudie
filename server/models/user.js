@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-
 const { Schema } = mongoose;
 
 /**
@@ -43,6 +42,13 @@ const { Schema } = mongoose;
  */
 
 const userSchema = new Schema({
+    /**
+     * Ist der Benutzer ein Administrator?
+     * @type {boolean}
+     * @default false
+     */
+    isAdmin: { type: Boolean, default: false },
+
     /**
      * Der eindeutige Benutzername.
      * @type {string}

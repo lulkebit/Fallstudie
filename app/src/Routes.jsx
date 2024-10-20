@@ -54,10 +54,9 @@ function MyRoutes() {
                     <Route path='/friends' element={<Friends />} />
                     <Route path='/notifications' element={<Notifications />} />
                     <Route path='/globalgoals' element={<GlobalGoals />} />
-                </Route>
-
-                <Route element={<AdminRoute />}>
-                    <Route path='/admin' element={<AdminPanel />} />
+                    <Route element={<AdminRoute />}>
+                        <Route path='/admin' element={<AdminPanel />} />
+                    </Route>
                 </Route>
 
                 <Route path='*' element={<NotFound />} />

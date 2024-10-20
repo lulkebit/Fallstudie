@@ -41,6 +41,14 @@ const {
     getAllNotifications,
 } = require('../controllers/notificationController');
 
+const {
+    addGlobalGoal,
+    getGlobalGoals,
+    updateGlobalGoal,
+    deleteGlobalGoal,
+    participateInGlobalGoal,
+} = require('../controllers/globalGoalController');
+
 /**
  * CORS-Konfiguration
  * Erlaubt Anfragen nur von http://localhost:3000
@@ -97,6 +105,20 @@ router.get('/goals/friend/:friendId', getPublicGoalsOfFriend);
 router.post('/goals/pin', pinGoal);
 // Anpinnen eines Freundes-Ziels
 router.post('/goals/pin-friend', pinFriendGoal);
+
+/**
+ * Globale Ziel-Routen
+ */
+// Hinzufügen eines neuen globalen Ziels (nur für Admins)
+router.post('/global-goals', addGlobalGoal);
+// Abrufen aller globalen Ziele
+router.get('/global-goals', getGlobalGoals);
+// Aktualisieren eines globalen Ziels (nur für Admins)
+router.put('/global-goals/:id', updateGlobalGoal);
+// Löschen eines globalen Ziels (nur für Admins)
+router.delete('/global-goals/:id', deleteGlobalGoal);
+// Teilnahme an einem globalen Ziel
+router.post('/global-goals/participate/:goalId', participateInGlobalGoal);
 
 /**
  * Freundschafts-Routen

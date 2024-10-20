@@ -17,7 +17,7 @@ import Loader from './Loader';
 const GoalCard = React.memo(
     ({ goal, onEdit, onDelete, onPin, isExpanded, onToggle }) => {
         const progressBarColor =
-            goal.progress === 100 ? 'bg-yellow-500' : 'bg-blue-500';
+            goal.progress === 100 ? 'bg-green-500' : 'bg-blue-500';
 
         return (
             <div
