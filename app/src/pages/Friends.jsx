@@ -8,6 +8,7 @@ import { useDialog } from '../context/DialogContext';
 import ConfirmationDialog from '../components/dialogs/ConfirmationDialog';
 import FriendGoalsDialog from '../components/dialogs/FriendGoalsDialog';
 import Loader from '../components/Loader';
+import Waves from '../components/Waves';
 
 const Friends = () => {
     const { user } = useContext(UserContext);
@@ -110,7 +111,8 @@ const Friends = () => {
         <>
             <Navbar />
             <div className='bg-gray-100 min-h-screen pt-24'>
-                <div className='container mx-auto px-4'>
+                <Waves />
+                <div className='container mx-auto px-4 relative z-10'>
                     <h1 className='text-3xl font-bold mb-8 text-center text-blue-600'>
                         Freunde
                     </h1>
@@ -162,13 +164,30 @@ const Friends = () => {
                                             className='flex flex-col sm:flex-row items-center justify-between bg-gray-50 p-4 rounded-lg shadow transition duration-300 hover:shadow-md'
                                         >
                                             <div className='flex items-center space-x-4 mb-2 sm:mb-0'>
-                                                <img
-                                                    src={`data:image/jpeg;base64,${request.userId.avatar}`}
-                                                    alt={`${request.userId.firstname} ${request.userId.lastname}`}
-                                                    className='h-10 w-10 rounded-full'
-                                                />
+                                                {request.userId &&
+                                                request.userId.avatar ? (
+                                                    <img
+                                                        src={`data:image/jpeg;base64,${request.userId.avatar}`}
+                                                        alt={`${request.userId.firstname} ${request.userId.lastname}`}
+                                                        className='h-10 w-10 rounded-full'
+                                                    />
+                                                ) : (
+                                                    <div className='h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center'>
+                                                        <span className='text-gray-600 font-bold'>
+                                                            {request.userId &&
+                                                            request.userId
+                                                                .firstname
+                                                                ? request.userId
+                                                                      .firstname[0]
+                                                                : '?'}
+                                                        </span>
+                                                    </div>
+                                                )}
                                                 <span className='font-medium text-gray-700'>
-                                                    {request.userId.username}
+                                                    {request.userId
+                                                        ? request.userId
+                                                              .username
+                                                        : 'Unknown User'}
                                                 </span>
                                             </div>
                                             <div className='flex space-x-2'>
@@ -229,27 +248,38 @@ const Friends = () => {
                                         >
                                             <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between'>
                                                 <div className='flex items-center space-x-4 mb-4 sm:mb-0'>
-                                                    <img
-                                                        src={`data:image/jpeg;base64,${friend.friendId.avatar}`}
-                                                        alt={`${friend.friendId.firstname} ${friend.friendId.lastname}`}
-                                                        className='h-12 w-12 rounded-full'
-                                                    />
-                                                    <div>
-                                                        <span className='font-medium text-gray-700 block'>
-                                                            {
-                                                                friend.friendId
-                                                                    .username
-                                                            }
-                                                        </span>
-                                                        <p className='text-sm text-gray-500'>
-                                                            {
+                                                    {friend.friendId &&
+                                                    friend.friendId.avatar ? (
+                                                        <img
+                                                            src={`data:image/jpeg;base64,${friend.friendId.avatar}`}
+                                                            alt={`${friend.friendId.firstname} ${friend.friendId.lastname}`}
+                                                            className='h-12 w-12 rounded-full'
+                                                        />
+                                                    ) : (
+                                                        <div className='h-12 w-12 rounded-full bg-gray-300 flex items-center justify-center'>
+                                                            <span className='text-gray-600 font-bold'>
+                                                                {friend.friendId &&
                                                                 friend.friendId
                                                                     .firstname
-                                                            }{' '}
-                                                            {
-                                                                friend.friendId
-                                                                    .lastname
-                                                            }
+                                                                    ? friend
+                                                                          .friendId
+                                                                          .firstname[0]
+                                                                    : '?'}
+                                                            </span>
+                                                        </div>
+                                                    )}
+                                                    <div>
+                                                        <span className='font-medium text-gray-700 block'>
+                                                            {friend.friendId
+                                                                ? friend
+                                                                      .friendId
+                                                                      .username
+                                                                : 'Unknown User'}
+                                                        </span>
+                                                        <p className='text-sm text-gray-500'>
+                                                            {friend.friendId
+                                                                ? `${friend.friendId.firstname} ${friend.friendId.lastname}`
+                                                                : 'N/A'}
                                                         </p>
                                                         <p className='text-xs text-gray-400'>
                                                             Freund seit:{' '}

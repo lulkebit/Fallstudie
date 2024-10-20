@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useToast } from '../context/ToastContext';
 import Loader from '../components/Loader';
 import Navbar from '../components/Navbar';
+import Waves from '../components/Waves';
 
 const GlobalGoalCard = React.memo(({ goal, onParticipate }) => {
     const progressPercentage = (goal.currentValue / goal.targetValue) * 100;
@@ -97,7 +98,8 @@ const GlobalGoals = () => {
         <>
             <Navbar />
             <div className='flex flex-col min-h-screen bg-gray-100 pt-24'>
-                <div className='container mx-auto px-4'>
+                <Waves />
+                <div className='container mx-auto px-4 relative z-10'>
                     <h1 className='text-3xl font-bold mb-8 text-center text-blue-600'>
                         Globale Ziele
                     </h1>

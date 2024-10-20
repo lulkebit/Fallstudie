@@ -61,7 +61,7 @@ const Navbar = () => {
     };
 
     return (
-        <nav className='bg-white shadow-md fixed top-0 w-full z-10'>
+        <nav className='bg-white shadow-md fixed top-0 w-full z-40'>
             <div className='max-w-7xl mx-auto px-2 sm:px-4 lg:px-8'>
                 <div className='flex justify-between h-16'>
                     <div className='flex px-2 lg:px-0'>
