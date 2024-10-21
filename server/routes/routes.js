@@ -57,6 +57,13 @@ const {
     resetUserPassword,
 } = require('../controllers/userController');
 
+// Import der Admin-Goal-Management-Funktionen
+const {
+    getAllUserGoals,
+    updateUserGoal,
+    deleteUserGoal,
+} = require('../controllers/adminGoalController');
+
 /**
  * CORS-Konfiguration
  * Erlaubt Anfragen nur von http://localhost:3000
@@ -155,5 +162,11 @@ router.delete('/users/:id', deleteUser);
 router.put('/users/:id', updateUser);
 // Zurücksetzen des Passworts eines Benutzers
 router.put('/users/:id/reset-password', resetUserPassword);
+
+router.get('/admin/goals', getAllUserGoals);
+// Update a user goal
+router.put('/admin/goals/:goalId', updateUserGoal);
+// Delete a user goal
+router.delete('/admin/goals/:goalId', deleteUserGoal);
 
 module.exports = router;
