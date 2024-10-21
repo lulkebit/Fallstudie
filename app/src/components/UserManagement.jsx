@@ -4,8 +4,9 @@ import { useToast } from '../context/ToastContext';
 import { useDialog } from '../context/DialogContext';
 import ConfirmationDialog from './dialogs/ConfirmationDialog';
 import EditUserDialog from './dialogs/EditUserDialog';
+import ResetPasswordDialog from './dialogs/ResetPasswordDialog';
 import Loader from './Loader';
-import { Pencil, Trash2 } from 'lucide-react';
+import { Pencil, Trash2, Key } from 'lucide-react';
 
 const UserManagement = () => {
     const [users, setUsers] = useState([]);
@@ -80,6 +81,33 @@ const UserManagement = () => {
                     } catch (err) {
                         addToast(
                             'Fehler beim Aktualisieren des Benutzers ' + err,
+                            'error'
+                        );
+                    }
+                    removeDialog();
+                },
+                onClose: removeDialog,
+            },
+        });
+    };
+
+    const handleResetPassword = (userId, username) => {
+        addDialog({
+            component: ResetPasswordDialog,
+            props: {
+                userId,
+                onResetPassword: async (userId, newPassword) => {
+                    try {
+                        await axios.put(`/users/${userId}/reset-password`, {
+                            newPassword,
+                        });
+                        addToast(
+                            `Passwort für Benutzer "${username}" erfolgreich zurückgesetzt`,
+                            'success'
+                        );
+                    } catch (err) {
+                        addToast(
+                            `Fehler beim Zurücksetzen des Passworts für Benutzer "${username}"`,
                             'error'
                         );
                     }
@@ -186,6 +214,18 @@ const UserManagement = () => {
                                                         title='Löschen'
                                                     >
                                                         <Trash2 className='h-5 w-5 text-red-500' />
+                                                    </button>
+                                                    <button
+                                                        onClick={() =>
+                                                            handleResetPassword(
+                                                                user._id,
+                                                                user.username
+                                                            )
+                                                        }
+                                                        className='p-1 rounded-full hover:bg-gray-200 transition-colors duration-200'
+                                                        title='Passwort zurücksetzen'
+                                                    >
+                                                        <Key className='h-5 w-5 text-green-500' />
                                                     </button>
                                                 </div>
                                             </td>

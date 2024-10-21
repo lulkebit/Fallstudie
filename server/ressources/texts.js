@@ -35,6 +35,7 @@ module.exports = {
         USERS_FETCH: 'Fehler beim Abrufen der Benutzer',
         USER_DELETE: 'Fehler beim Löschen des Benutzers',
         USER_UPDATE: 'Fehler beim Aktualisieren des Benutzers',
+        USER_PASSWORD_RESET: 'Fehler beim Zurücksetzen des Benutzerpassworts',
     },
     SUCCESS: {
         SERVER_RUNNING: (port) => `Server läuft auf Port ${port}`,
@@ -63,6 +64,8 @@ module.exports = {
         USERS_FETCHED: (anzahl) => `${anzahl} Benutzer erfolgreich abgerufen`,
         USER_DELETED: (userId) => `Benutzer ${userId} erfolgreich gelöscht`,
         USER_UPDATED: (userId) => `Benutzer ${userId} erfolgreich aktualisiert`,
+        USER_PASSWORD_RESET: (userId) =>
+            `Passwort für Benutzer ${userId} erfolgreich zurückgesetzt`,
     },
     INFO: {
         ATTEMPTING_REGISTER_USER:
@@ -119,6 +122,8 @@ module.exports = {
             `Versuch, Benutzer ${userId} zu löschen`,
         ATTEMPTING_UPDATE_USER: (userId) =>
             `Versuch, Benutzer ${userId} zu aktualisieren`,
+        ATTEMPTING_RESET_USER_PASSWORD: (userId) =>
+            `Versuch, das Passwort für Benutzer ${userId} zurückzusetzen`,
     },
     WARNINGS: {
         EMAIL_ALREADY_EXISTS_SERVER: (email) =>

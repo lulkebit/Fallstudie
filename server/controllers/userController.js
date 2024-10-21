@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const logger = require('../utils/logger');
 const texts = require('../ressources/texts');
+const { hashPassword } = require('../helpers/auth');
 
 /**
  * Ruft Benutzer aus der Datenbank ab mit Unterstützung für Paginierung und Suche.
@@ -144,8 +145,47 @@ const updateUser = async (req, res) => {
     }
 };
 
+/**
+ * Setzt das Passwort eines Benutzers zurück.
+ *
+ * @param {Object} req - Das Express-Request-Objekt.
+ * @param {Object} req.params - Die Parameter der Anfrage.
+ * @param {string} req.params.id - Die ID des Benutzers, dessen Passwort zurückgesetzt werden soll.
+ * @param {Object} req.body - Der Körper der Anfrage.
+ * @param {string} req.body.newPassword - Das neue Passwort für den Benutzer.
+ * @param {Object} res - Das Express-Response-Objekt.
+ * @returns {Promise<Object>} Ein Promise, das bei erfolgreicher Zurücksetzung eine Erfolgsmeldung zurückgibt.
+ * @throws {Object} Bei Fehlern während der Passwort-Zurücksetzung wird ein Fehler-Objekt zurückgegeben.
+ */
+const resetUserPassword = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const { newPassword } = req.body;
+
+        logger.info(texts.INFO.ATTEMPTING_RESET_USER_PASSWORD(userId));
+
+        const user = await User.findById(userId);
+        if (!user) {
+            logger.warn(texts.WARNINGS.USER_NOT_FOUND);
+            return res
+                .status(404)
+                .json({ error: texts.WARNINGS.USER_NOT_FOUND });
+        }
+
+        user.password = await hashPassword(newPassword);
+        await user.save();
+
+        logger.info(texts.SUCCESS.USER_PASSWORD_RESET(userId));
+        res.json({ message: texts.SUCCESS.USER_PASSWORD_RESET(userId) });
+    } catch (error) {
+        logger.error(texts.ERRORS.ERROR('resetting user password', error));
+        res.status(500).json({ message: texts.ERRORS.USER_PASSWORD_RESET });
+    }
+};
+
 module.exports = {
     getAllUsers,
     deleteUser,
     updateUser,
+    resetUserPassword,
 };

@@ -54,6 +54,7 @@ const {
     getAllUsers,
     deleteUser,
     updateUser,
+    resetUserPassword,
 } = require('../controllers/userController');
 
 /**
@@ -152,5 +153,7 @@ router.get('/users', getAllUsers);
 router.delete('/users/:id', deleteUser);
 // Aktualisieren eines Benutzers
 router.put('/users/:id', updateUser);
+// Zurücksetzen des Passworts eines Benutzers
+router.put('/users/:id/reset-password', resetUserPassword);
 
 module.exports = router;
