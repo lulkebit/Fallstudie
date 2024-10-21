@@ -1,13 +1,15 @@
 import GlobalGoalTable from '../components/GlobalGoaltable';
 import UserManagement from '../components/UserManagement';
 import Navbar from '../components/Navbar';
+import Waves from '../components/Waves';
 
 const AdminPanel = () => {
     return (
         <>
             <Navbar />
             <div className='bg-gray-100 min-h-screen pt-24'>
-                <div className='container mx-auto px-4'>
+                <Waves />
+                <div className='container mx-auto px-4 relative z-10'>
                     <h1 className='text-3xl font-bold mb-4 text-center text-blue-600'>
                         Admin Panel
                     </h1>

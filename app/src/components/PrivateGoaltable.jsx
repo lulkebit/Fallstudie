@@ -78,11 +78,11 @@ const GoalCard = React.memo(
                                 <strong>Kategorie:</strong> {goal.category}
                             </p>
                             <p>
-                                <strong>Start Datum:</strong>{' '}
+                                <strong>Start:</strong>{' '}
                                 {new Date(goal.startDate).toLocaleDateString()}
                             </p>
                             <p>
-                                <strong>End Datum:</strong>{' '}
+                                <strong>Ende:</strong>{' '}
                                 {new Date(goal.endDate).toLocaleDateString()}
                             </p>
                             <p>

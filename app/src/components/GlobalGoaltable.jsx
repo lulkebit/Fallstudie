@@ -46,11 +46,11 @@ const GlobalGoalCard = React.memo(
                         <p className='text-gray-600 mb-4'>{goal.description}</p>
                         <div className='grid grid-cols-2 gap-4 mb-4'>
                             <p>
-                                <strong>Start Datum:</strong>{' '}
+                                <strong>Start:</strong>{' '}
                                 {new Date(goal.startDate).toLocaleDateString()}
                             </p>
                             <p>
-                                <strong>End Datum:</strong>{' '}
+                                <strong>Ende:</strong>{' '}
                                 {new Date(goal.endDate).toLocaleDateString()}
                             </p>
                             <p>

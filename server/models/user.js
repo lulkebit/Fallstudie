@@ -99,7 +99,7 @@ const userSchema = new Schema({
             startDate: Date,
             endDate: Date,
             public: Boolean,
-            targetValue: Number,
+            targetValue: String,
             unit: String,
             direction: String,
             reminderInterval: Number,

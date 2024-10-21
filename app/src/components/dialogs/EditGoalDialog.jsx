@@ -27,8 +27,21 @@ const CATEGORIES = [
 ];
 
 const REMINDER_TYPES = ['Täglich', 'Wöchentlich', 'Monatlich'];
-const DIRECTIONS = ['Erhöhen', 'Reduzieren', 'Beibehalten', 'Sonstiges'];
-const UNITS = ['Kilogramm', 'Stunden', 'Euro', 'Kilometer', 'Sonstiges'];
+const DIRECTIONS = [
+    'Erhöhen',
+    'Reduzieren',
+    'Beibehalten',
+    'Erreichen',
+    'Sonstiges',
+];
+const UNITS = [
+    'Kilogramm',
+    'Stunden',
+    'Euro',
+    'Kilometer',
+    'Prozent',
+    'Sonstiges',
+];
 
 const useForm = (initialState, onChangeCallback) => {
     const [formData, setFormData] = useState(initialState);
@@ -58,11 +71,6 @@ const useForm = (initialState, onChangeCallback) => {
                     newErrors[field] = 'Dieses Feld ist erforderlich';
                 } else if (typeof value === 'string' && value.trim() === '') {
                     newErrors[field] = 'Dieses Feld darf nicht leer sein';
-                } else if (
-                    field === 'targetValue' &&
-                    isNaN(parseFloat(value))
-                ) {
-                    newErrors[field] = 'Bitte geben Sie eine gültige Zahl ein';
                 }
             });
             setErrors(newErrors);
@@ -262,7 +270,7 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                 return (
                     <>
                         <InputField
-                            label='Start Datum'
+                            label='Start'
                             id='startDate'
                             value={formData.startDate}
                             type='date'
@@ -271,7 +279,7 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                             error={errors.startDate}
                         />
                         <InputField
-                            label='End Datum'
+                            label='Ende'
                             id='endDate'
                             value={formData.endDate}
                             type='date'
@@ -288,7 +296,7 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                             label='Zielwert'
                             id='targetValue'
                             value={formData.targetValue}
-                            type='number'
+                            type='text'
                             icon={<Target size={20} />}
                             onChange={handleInputChange}
                             error={errors.targetValue}
