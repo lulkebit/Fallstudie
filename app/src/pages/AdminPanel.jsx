@@ -1,15 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Bar } from 'react-chartjs-2';
-import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend,
-} from 'chart.js';
+import { Doughnut, Pie } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import GlobalGoalTable from '../components/GlobalGoaltable';
 import UserManagement from '../components/UserManagement';
 import UserGoalsManagement from '../components/UserGoalsManagement';
@@ -17,14 +9,7 @@ import Navbar from '../components/Navbar';
 import Waves from '../components/Waves';
 import Loader from '../components/Loader';
 
-ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend
-);
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 const AdminPanel = () => {
     const [activeTab, setActiveTab] = useState('dashboard');
@@ -39,12 +24,11 @@ const AdminPanel = () => {
     const fetchStats = async () => {
         try {
             setLoading(true);
-            // TODO: Fetch statistics from the server
             const response = await axios.get('/admin/stats');
             setStats(response.data);
             setLoading(false);
         } catch (err) {
-            setError('Error fetching statistics');
+            setError('Fehler beim Laden der Statistiken: ' + err.message);
             setLoading(false);
         }
     };
@@ -69,60 +53,128 @@ const AdminPanel = () => {
         if (error) return <div className='text-red-500'>{error}</div>;
         if (!stats) return null;
 
-        const chartData = {
-            labels: ['Users', 'Global Goals', 'User Goals'],
+        const goalCompletionData = {
+            labels: ['Abgeschlossene Ziele', 'Laufende Ziele'],
             datasets: [
                 {
-                    label: 'Total Count',
                     data: [
-                        stats.totalUsers,
-                        stats.totalGlobalGoals,
-                        stats.totalUserGoals,
+                        stats.completedUserGoals,
+                        stats.totalUserGoals - stats.completedUserGoals,
                     ],
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.6)',
-                        'rgba(54, 162, 235, 0.6)',
-                        'rgba(75, 192, 192, 0.6)',
+                    backgroundColor: ['#4785FF', '#9EB9FF'],
+                    hoverBackgroundColor: ['#3B75E6', '#8AA3E6'],
+                },
+            ],
+        };
+
+        const mostPopularGoalData = {
+            labels: [stats.mostPopularGlobalGoal.unit, 'Zielwert'],
+            datasets: [
+                {
+                    data: [
+                        stats.mostPopularGlobalGoal.currentValue,
+                        stats.mostPopularGlobalGoal.targetValue -
+                            stats.mostPopularGlobalGoal.currentValue,
                     ],
+                    backgroundColor: ['#4785FF', '#E6ECF8'],
+                    hoverBackgroundColor: ['#3B75E6', '#D1D9E6'],
                 },
             ],
         };
 
         const chartOptions = {
             responsive: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    position: 'top',
+                    position: 'bottom',
                 },
                 title: {
                     display: true,
-                    text: 'Admin Dashboard Overview',
+                    font: {
+                        size: 16,
+                    },
                 },
             },
         };
 
         return (
             <div className='dashboard'>
-                <div className='grid grid-cols-1 md:grid-cols-3 gap-4 mb-6'>
-                    <div className='bg-white p-4 rounded-lg shadow text-center'>
-                        <h3 className='font-bold'>Total Users</h3>
-                        <p className='text-2xl'>{stats.totalUsers}</p>
+                <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6'>
+                    <StatCard title='Gesamtnutzer' value={stats.totalUsers} />
+                    <StatCard title='Aktive Nutzer' value={stats.activeUsers} />
+                    <StatCard
+                        title='Gesamte Ziele'
+                        value={stats.totalUserGoals}
+                    />
+                    <StatCard
+                        title='Globale Ziele'
+                        value={stats.totalGlobalGoals}
+                    />
+                    <StatCard
+                        title='Durchschn. Ziele/Nutzer'
+                        value={stats.averageGoalsPerUser}
+                    />
+                    <StatCard
+                        title='Abschlussrate'
+                        value={`${stats.completionRate}%`}
+                    />
+                    <StatCard
+                        title='Beliebtestes globales Ziel'
+                        value={stats.mostPopularGlobalGoal.title}
+                        subvalue={`${stats.mostPopularGlobalGoal.participationCount} Teilnahmen`}
+                        chartData={mostPopularGoalData}
+                        chartOptions={chartOptions}
+                    />
+                    <div className='bg-white p-4 rounded-lg shadow'>
+                        <h3 className='font-bold text-center mb-2'>
+                            Zielerfüllung
+                        </h3>
+                        <div style={{ height: '150px' }}>
+                            <Doughnut
+                                data={goalCompletionData}
+                                options={{
+                                    ...chartOptions,
+                                    plugins: {
+                                        ...chartOptions.plugins,
+                                        title: {
+                                            ...chartOptions.plugins.title,
+                                            text: 'Zielerfüllung',
+                                        },
+                                    },
+                                }}
+                            />
+                        </div>
                     </div>
-                    <div className='bg-white p-4 rounded-lg shadow text-center'>
-                        <h3 className='font-bold'>Total Global Goals</h3>
-                        <p className='text-2xl'>{stats.totalGlobalGoals}</p>
-                    </div>
-                    <div className='bg-white p-4 rounded-lg shadow text-center'>
-                        <h3 className='font-bold'>Total User Goals</h3>
-                        <p className='text-2xl'>{stats.totalUserGoals}</p>
-                    </div>
-                </div>
-                <div className='bg-white p-4 rounded-lg shadow'>
-                    <Bar data={chartData} options={chartOptions} />
                 </div>
             </div>
         );
     };
+
+    const StatCard = ({ title, value, subvalue, chartData, chartOptions }) => (
+        <div className='bg-white p-4 rounded-lg shadow text-center'>
+            <h3 className='font-bold text-sm text-gray-600'>{title}</h3>
+            <p className='text-2xl font-semibold text-blue-600'>{value}</p>
+            {subvalue && <p className='text-sm text-gray-500'>{subvalue}</p>}
+            {chartData && (
+                <div style={{ height: '150px', marginTop: '10px' }}>
+                    <Pie
+                        data={chartData}
+                        options={{
+                            ...chartOptions,
+                            plugins: {
+                                ...chartOptions.plugins,
+                                title: {
+                                    ...chartOptions.plugins.title,
+                                    text: 'Teilnahme',
+                                },
+                            },
+                        }}
+                    />
+                </div>
+            )}
+        </div>
+    );
 
     return (
         <>
@@ -137,25 +189,21 @@ const AdminPanel = () => {
                     <div className='bg-white rounded-lg shadow-md p-6'>
                         <div className='flex mb-6 overflow-x-auto'>
                             {[
-                                'dashboard',
-                                'globaleZiele',
-                                'benutzerVerwaltung',
-                                'benutzerZiele',
-                            ].map((tab) => (
+                                ['dashboard', 'Dashboard'],
+                                ['globaleZiele', 'Globale Ziele'],
+                                ['benutzerVerwaltung', 'Benutzerverwaltung'],
+                                ['benutzerZiele', 'Benutzerziele'],
+                            ].map(([key, label]) => (
                                 <button
-                                    key={tab}
+                                    key={key}
                                     className={`mr-4 px-4 py-2 rounded-md whitespace-nowrap ${
-                                        activeTab === tab
-                                            ? 'bg-blue-500 text-white'
+                                        activeTab === key
+                                            ? 'bg-[#4785FF] text-white'
                                             : 'bg-gray-200'
                                     }`}
-                                    onClick={() => setActiveTab(tab)}
+                                    onClick={() => setActiveTab(key)}
                                 >
-                                    {tab.charAt(0).toUpperCase() +
-                                        tab
-                                            .slice(1)
-                                            .replace(/([A-Z])/g, ' $1')
-                                            .trim()}
+                                    {label}
                                 </button>
                             ))}
                         </div>
