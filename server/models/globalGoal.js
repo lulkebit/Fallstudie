@@ -24,6 +24,7 @@ const globalGoalSchema = new Schema({
     currentValue: { type: Number, default: 0 },
     unit: { type: String, required: true },
     participationCount: { type: Number, default: 0 },
+    stepSize: { type: Number, default: 1 }
 });
 
 const GlobalGoalModel = mongoose.model('GlobalGoal', globalGoalSchema);

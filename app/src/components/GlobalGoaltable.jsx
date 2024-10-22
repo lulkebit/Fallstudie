@@ -113,7 +113,7 @@ const GlobalGoalTable = () => {
         } catch (error) {
             console.error('Error fetching global goals:', error);
             addToast(
-                'Fehler beim Abrufen der globalen Ziele.' + error,
+                'Fehler beim Abrufen der globalen Ziele.' + error, 
                 'error'
             );
             setLoading(false);
@@ -133,56 +133,56 @@ const GlobalGoalTable = () => {
 
     const handleEditGoal = useCallback(
         (goal) => {
-            addDialog({
-                component: EditGlobalGoalDialog,
-                props: {
-                    goal,
-                    onSave: handleSaveGoal,
-                    onClose: removeDialog,
-                },
-            });
-        },
-        [addDialog, removeDialog]
-    );
+        addDialog({
+            component: EditGlobalGoalDialog,
+            props: {
+                goal,
+                onSave: handleSaveGoal,
+                onClose: removeDialog,
+            },
+        });
+    }, 
+    [addDialog, removeDialog]
+);
 
     const handleSaveGoal = useCallback(
         async (formData) => {
-            try {
-                let response;
-                if (formData.id) {
-                    response = await axios.put(
-                        `/global-goals/${formData.id}`,
-                        formData
+        try {
+            let response;
+            if (formData.id) {
+                response = await axios.put(
+                    `/global-goals/${formData.id}`,
+                     formData
                     );
-                    addToast('Globales Ziel aktualisiert!', 'success');
-                } else {
-                    response = await axios.post('/global-goals', formData);
-                    addToast('Globales Ziel erstellt!', 'success');
-                }
-
-                setGlobalGoals((prevGoals) => {
-                    if (formData.id) {
-                        return prevGoals.map((goal) =>
-                            goal._id === formData.id ? response.data : goal
-                        );
-                    } else {
-                        return [...prevGoals, response.data];
-                    }
-                });
-
-                removeDialog();
-            } catch (error) {
-                console.error('Error saving global goal:', error);
-                addToast(
-                    `Fehler beim ${
-                        formData.id ? 'Aktualisieren' : 'Erstellen'
-                    } des globalen Ziels. Bitte versuchen Sie es erneut.`,
-                    'error'
-                );
+                addToast('Globales Ziel aktualisiert!', 'success');
+            } else {
+                response = await axios.post('/global-goals', formData);
+                addToast('Globales Ziel erstellt!', 'success');
             }
-        },
-        [addToast, removeDialog]
-    );
+
+            setGlobalGoals((prevGoals) => {
+                if (formData.id) {
+                    return prevGoals.map((goal) =>
+                         goal._id === formData.id ? response.data : goal
+                );
+                } else {
+                    return [...prevGoals, response.data];
+                }
+            });
+
+            removeDialog();
+        } catch (error) {
+            console.error('Error saving global goal:', error);
+            addToast(
+                `Fehler beim ${
+                    formData.id ? 'Aktualisieren' : 'Erstellen'
+                } des globalen Ziels. Bitte versuchen Sie es erneut.`,
+                 'error'
+                );
+        }
+    }, 
+    [addToast, removeDialog]
+);
 
     const handleDeleteGoal = useCallback(
         (id) => {
@@ -246,7 +246,7 @@ const GlobalGoalTable = () => {
             <div className='flex justify-between items-center mb-6'>
                 <h2 className='text-2xl font-semibold text-gray-900'>
                     Globale Ziele
-                </h2>
+                    </h2>
                 <button
                     onClick={handleAddGoal}
                     className='bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105'
@@ -261,10 +261,11 @@ const GlobalGoalTable = () => {
             ) : globalGoals.length === 0 ? (
                 <p className='text-gray-600 text-center py-8'>
                     Noch keine globalen Ziele erstellt.
-                </p>
-            ) : (
+                    </p>
+            ) : 
                 <div className='space-y-4'>
-                    <div className='flex space-x-4 mb-4'>
+                   
+                            <div className='flex space-x-4 mb-4'>
                         <button
                             onClick={() => handleSort('title')}
                             className='font-medium'
@@ -289,21 +290,25 @@ const GlobalGoalTable = () => {
                             {sortField === 'participationCount' &&
                                 (sortDirection === 'asc' ? '↑' : '↓')}
                         </button>
-                    </div>
-                    {sortedGoals.map((goal) => (
-                        <GlobalGoalCard
-                            key={goal._id}
-                            goal={goal}
-                            onEdit={handleEditGoal}
-                            onDelete={handleDeleteGoal}
-                            isExpanded={expandedGoals[goal._id]}
-                            onToggle={() => toggleGoalExpansion(goal._id)}
-                        />
+                        </div>
+                         {sortedGoals.map((goal) => (
+                            <GlobalGoalCard
+                                key={goal._id}
+                                goal={goal}
+                                onEdit={handleEditGoal}
+                                onDelete={handleDeleteGoal}
+                                isExpanded={expandedGoals[goal._id]}
+                                onToggle={() => toggleGoalExpansion(goal._id)}
+                            />
                     ))}
-                </div>
-            )}
+                        </div>
+             
+                
+           } 
         </div>
-    );
-};
+        );
+}
 
 export default GlobalGoalTable;
+
+

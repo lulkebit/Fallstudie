@@ -69,7 +69,8 @@ const Navbar = () => {
                             <img
                                 src='/Logo.png'
                                 alt='TrackMyGoal Logo'
-                                className='h-12 w-auto'
+                                className='h-12 w-auto cursor-pointer'
+                                onClick={() => navigate('/dashboard')}
                             />
                         </div>
                         <div className='hidden lg:ml-6 lg:flex lg:space-x-8'>
