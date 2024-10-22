@@ -98,26 +98,45 @@ const AdminPanel = () => {
             },
         };
 
+        const cardStyle = {
+            bg: 'bg-[#F0F4FF]',
+            titleText: 'text-gray-600',
+            valueText: 'text-[#4785FF]',
+            subText: 'text-gray-500',
+        };
+
         return (
             <div className='dashboard'>
                 <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6'>
-                    <StatCard title='Gesamtnutzer' value={stats.totalUsers} />
-                    <StatCard title='Aktive Nutzer' value={stats.activeUsers} />
+                    <StatCard
+                        title='Gesamtnutzer'
+                        value={stats.totalUsers}
+                        style={cardStyle}
+                    />
+                    <StatCard
+                        title='Aktive Nutzer'
+                        value={stats.activeUsers}
+                        style={cardStyle}
+                    />
                     <StatCard
                         title='Gesamte Ziele'
                         value={stats.totalUserGoals}
+                        style={cardStyle}
                     />
                     <StatCard
                         title='Globale Ziele'
                         value={stats.totalGlobalGoals}
+                        style={cardStyle}
                     />
                     <StatCard
                         title='Durchschn. Ziele/Nutzer'
                         value={stats.averageGoalsPerUser}
+                        style={cardStyle}
                     />
                     <StatCard
                         title='Abschlussrate'
                         value={`${stats.completionRate}%`}
+                        style={cardStyle}
                     />
                     <StatCard
                         title='Beliebtestes globales Ziel'
@@ -125,9 +144,10 @@ const AdminPanel = () => {
                         subvalue={`${stats.mostPopularGlobalGoal.participationCount} Teilnahmen`}
                         chartData={mostPopularGoalData}
                         chartOptions={chartOptions}
+                        style={cardStyle}
                     />
-                    <div className='bg-white p-4 rounded-lg shadow'>
-                        <h3 className='font-bold text-center mb-2'>
+                    <div className='bg-[#F0F4FF] p-4 rounded-lg shadow'>
+                        <h3 className='font-bold text-center mb-2 text-gray-600'>
                             Zielerfüllung
                         </h3>
                         <div style={{ height: '150px' }}>
@@ -151,11 +171,22 @@ const AdminPanel = () => {
         );
     };
 
-    const StatCard = ({ title, value, subvalue, chartData, chartOptions }) => (
-        <div className='bg-white p-4 rounded-lg shadow text-center'>
-            <h3 className='font-bold text-sm text-gray-600'>{title}</h3>
-            <p className='text-2xl font-semibold text-blue-600'>{value}</p>
-            {subvalue && <p className='text-sm text-gray-500'>{subvalue}</p>}
+    const StatCard = ({
+        title,
+        value,
+        subvalue,
+        chartData,
+        chartOptions,
+        style,
+    }) => (
+        <div className={`${style.bg} p-4 rounded-lg shadow text-center`}>
+            <h3 className={`font-bold text-sm ${style.titleText}`}>{title}</h3>
+            <p className={`text-2xl font-semibold ${style.valueText}`}>
+                {value}
+            </p>
+            {subvalue && (
+                <p className={`text-sm ${style.subText}`}>{subvalue}</p>
+            )}
             {chartData && (
                 <div style={{ height: '150px', marginTop: '10px' }}>
                     <Pie
@@ -182,7 +213,7 @@ const AdminPanel = () => {
             <div className='bg-gray-100 min-h-screen pt-16'>
                 <Waves />
                 <div className='container mx-auto px-4 py-8 relative z-10'>
-                    <h1 className='text-3xl font-bold mb-6 text-center text-blue-600'>
+                    <h1 className='text-3xl font-bold mb-6 text-center text-[#4785FF]'>
                         Admin Panel
                     </h1>
 
