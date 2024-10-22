@@ -62,6 +62,7 @@ const {
     getAllUserGoals,
     updateUserGoal,
     deleteUserGoal,
+    getAdminStats,
 } = require('../controllers/adminGoalController');
 
 /**
@@ -163,10 +164,16 @@ router.put('/users/:id', updateUser);
 // Zurücksetzen des Passworts eines Benutzers
 router.put('/users/:id/reset-password', resetUserPassword);
 
+/**
+ * Admin-Routen
+ */
+// Abrufen aller Benutzerziele
 router.get('/admin/goals', getAllUserGoals);
-// Update a user goal
+// Aktualisieren eines Benutzerziels
 router.put('/admin/goals/:goalId', updateUserGoal);
-// Delete a user goal
+// Löschen eines Benutzerziels
 router.delete('/admin/goals/:goalId', deleteUserGoal);
+// Abrufen der Admin-Statistiken
+router.get('/admin/stats', getAdminStats);
 
 module.exports = router;
