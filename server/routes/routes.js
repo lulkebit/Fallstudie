@@ -63,6 +63,7 @@ const {
     updateUserGoal,
     deleteUserGoal,
     getAdminStats,
+    getUserGrowthStats,
 } = require('../controllers/adminGoalController');
 
 /**
@@ -175,5 +176,9 @@ router.put('/admin/goals/:goalId', updateUserGoal);
 router.delete('/admin/goals/:goalId', deleteUserGoal);
 // Abrufen der Admin-Statistiken
 router.get('/admin/stats', getAdminStats);
+
+router.get('/user-growth', getUserGrowthStats);
+
+module.exports = router;
 
 module.exports = router;

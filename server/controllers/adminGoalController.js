@@ -155,16 +155,6 @@ exports.getAdminStats = async (req, res) => {
         }
         console.log('Most popular global goal:', mostPopularGlobalGoal.title);
 
-        // Calculate user growth
-        const oneMonthAgo = new Date();
-        oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-        const newUsersLastMonth = users.filter(
-            (user) => user.createdAt >= oneMonthAgo
-        ).length;
-        const userGrowthRate =
-            totalUsers > 0 ? (newUsersLastMonth / totalUsers) * 100 : 0;
-        console.log('User growth rate:', userGrowthRate);
-
         // Get upcoming goals with details
         const now = new Date();
         const oneWeekFromNow = new Date(
@@ -213,7 +203,6 @@ exports.getAdminStats = async (req, res) => {
                 currentValue: mostPopularGlobalGoal.currentValue || 0,
                 unit: mostPopularGlobalGoal.unit || 'Fortschritt',
             },
-            userGrowthRate: userGrowthRate.toFixed(2),
             upcomingGoals, // Jetzt senden wir das Array mit detaillierten Informationen
         };
 
@@ -222,6 +211,143 @@ exports.getAdminStats = async (req, res) => {
         console.error('Error in getAdminStats:', error);
         res.status(500).json({
             message: 'Error fetching admin statistics',
+            error: error.message,
+        });
+    }
+};
+
+exports.getUserGrowthStats = async (req, res) => {
+    try {
+        const { interval = 'month', range = 6 } = req.query;
+        const stats = [];
+
+        // Current date in UTC
+        const now = new Date();
+
+        const intervalConfigs = {
+            hour: {
+                unit: 'hour',
+                format: { hour: '2-digit', minute: '2-digit' },
+                getStart: (date, offset = 0) => {
+                    const start = new Date(date);
+                    start.setUTCHours(date.getUTCHours() - offset, 0, 0, 0);
+                    return start;
+                },
+                getEnd: (date, offset = 0) => {
+                    const end = new Date(date);
+                    end.setUTCHours(date.getUTCHours() - offset + 1, 0, 0, -1);
+                    return end;
+                },
+            },
+            day: {
+                unit: 'day',
+                format: { day: '2-digit', month: '2-digit' },
+                getStart: (date, offset = 0) => {
+                    const start = new Date(date);
+                    start.setUTCDate(date.getUTCDate() - offset);
+                    start.setUTCHours(0, 0, 0, 0);
+                    return start;
+                },
+                getEnd: (date, offset = 0) => {
+                    const end = new Date(date);
+                    end.setUTCDate(date.getUTCDate() - offset);
+                    end.setUTCHours(23, 59, 59, 999);
+                    return end;
+                },
+            },
+            week: {
+                unit: 'week',
+                format: { day: '2-digit', month: '2-digit' },
+                getStart: (date, offset = 0) => {
+                    const start = new Date(date);
+                    start.setUTCDate(date.getUTCDate() - offset * 7);
+                    start.setUTCHours(0, 0, 0, 0);
+                    return start;
+                },
+                getEnd: (date, offset = 0) => {
+                    const end = new Date(date);
+                    end.setUTCDate(date.getUTCDate() - offset * 7);
+                    end.setUTCHours(23, 59, 59, 999);
+                    return end;
+                },
+            },
+            month: {
+                unit: 'month',
+                format: { month: 'short', year: '2-digit' },
+                getStart: (date, offset = 0) => {
+                    const start = new Date(date);
+                    start.setUTCMonth(date.getUTCMonth() - offset);
+                    start.setUTCDate(1);
+                    start.setUTCHours(0, 0, 0, 0);
+                    return start;
+                },
+                getEnd: (date, offset = 0) => {
+                    const end = new Date(date);
+                    end.setUTCMonth(date.getUTCMonth() - offset + 1);
+                    end.setUTCDate(0);
+                    end.setUTCHours(23, 59, 59, 999);
+                    return end;
+                },
+            },
+        };
+
+        const config = intervalConfigs[interval];
+        if (!config) {
+            return res.status(400).json({ error: 'Invalid interval' });
+        }
+
+        // Generate time periods for the requested number of periods
+        for (let i = range - 1; i >= 0; i--) {
+            const periodStart = config.getStart(now, i);
+            const periodEnd = config.getEnd(now, i);
+
+            // Debug output
+            console.log(`Period ${range - i}/${range}:`);
+            console.log('Start:', periodStart.toISOString());
+            console.log('End:', periodEnd.toISOString());
+
+            // Count new users in this period
+            const newUsers = await User.countDocuments({
+                createdAt: {
+                    $gte: periodStart,
+                    $lte: periodEnd,
+                },
+            });
+
+            // Count total users up to this point
+            const totalUsers = await User.countDocuments({
+                createdAt: {
+                    $lte: periodEnd,
+                },
+            });
+
+            // Debug output
+            console.log('New users:', newUsers);
+            console.log('Total users:', totalUsers);
+
+            stats.push({
+                period: periodEnd.toLocaleString('de-DE', {
+                    ...config.format,
+                    timeZone: 'UTC',
+                }),
+                newUsers,
+                totalUsers,
+                timestamp: periodEnd.getTime(),
+            });
+        }
+
+        // Sort stats by timestamp
+        stats.sort((a, b) => a.timestamp - b.timestamp);
+
+        res.json({
+            interval,
+            stats,
+        });
+    } catch (error) {
+        console.error('Error in getUserGrowthStats:', error);
+        console.error('Stack:', error.stack);
+        res.status(500).json({
+            message: 'Error fetching user growth statistics',
             error: error.message,
         });
     }

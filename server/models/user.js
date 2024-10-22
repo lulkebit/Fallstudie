@@ -13,6 +13,7 @@ const { Schema } = mongoose;
  * @property {string} avatar - Der Avatar des Benutzers (z.B. ein Bild-URL oder Base64-kodiertes Bild).
  * @property {Array<mongoose.Schema.Types.ObjectId>} friends - Die Liste der Freunde des Benutzers.
  * @property {Array<PinnedFriendGoal>} pinnedFriendGoals - Die Liste der angepinnten Ziele von Freunden.
+ * @property {Date} createdAt - Das Datum, an dem der Benutzer erstellt wurde.
  */
 
 /**
@@ -142,6 +143,15 @@ const userSchema = new Schema({
             goalId: Number,
         },
     ],
+
+    /**
+     * Das Datum, an dem der Benutzer erstellt wurde.
+     * @type {Date}
+     */
+    createdAt: {
+        type: Date,
+        default: Date.now,
+    },
 });
 
 const UserModel = mongoose.model('User', userSchema);
