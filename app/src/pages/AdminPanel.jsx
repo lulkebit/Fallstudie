@@ -48,6 +48,14 @@ const AdminPanel = () => {
         }
     };
 
+    const formatDate = (dateString) => {
+        return new Date(dateString).toLocaleDateString('de-DE', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+        });
+    };
+
     const renderDashboard = () => {
         if (loading) return <Loader />;
         if (error) return <div className='text-red-500'>{error}</div>;
@@ -138,6 +146,76 @@ const AdminPanel = () => {
                         value={`${stats.completionRate}%`}
                         style={cardStyle}
                     />
+                    <StatCard
+                        title='Nutzerwachstum'
+                        value={`${stats.userGrowthRate}%`}
+                        subvalue='Letzte 30 Tage'
+                        style={cardStyle}
+                    />
+
+                    {/* Erweiterte Darstellung der kommenden Ziele */}
+                    <div
+                        className={`${cardStyle.bg} p-4 rounded-lg shadow col-span-2`}
+                    >
+                        <h3
+                            className={`font-bold text-center mb-3 ${cardStyle.titleText}`}
+                        >
+                            Kommende Ziel-Endtermine
+                            <span
+                                className={`block text-sm ${cardStyle.subText}`}
+                            >
+                                Nächste 7 Tage
+                            </span>
+                        </h3>
+                        {stats.upcomingGoals &&
+                        stats.upcomingGoals.length > 0 ? (
+                            <div className='overflow-auto max-h-60'>
+                                <table className='w-full'>
+                                    <thead>
+                                        <tr className='text-left'>
+                                            <th className='pb-2'>Nutzer</th>
+                                            <th className='pb-2'>Ziel</th>
+                                            <th className='pb-2'>Enddatum</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {stats.upcomingGoals.map(
+                                            (goal, index) => (
+                                                <tr
+                                                    key={index}
+                                                    className='border-t border-gray-200'
+                                                >
+                                                    <td className='py-2 flex items-center gap-2'>
+                                                        <img
+                                                            src={`data:image/jpeg;base64,${goal.avatar}`}
+                                                            alt='Avatar'
+                                                            className='w-8 h-8 rounded-full'
+                                                        />
+                                                        <span>
+                                                            {goal.username}
+                                                        </span>
+                                                    </td>
+                                                    <td className='py-2'>
+                                                        {goal.title}
+                                                    </td>
+                                                    <td className='py-2'>
+                                                        {formatDate(
+                                                            goal.endDate
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                            )
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        ) : (
+                            <p className={`text-center ${cardStyle.subText}`}>
+                                Keine anstehenden Ziele in den nächsten 7 Tagen
+                            </p>
+                        )}
+                    </div>
+
                     <StatCard
                         title='Beliebtestes globales Ziel'
                         value={stats.mostPopularGlobalGoal.title}

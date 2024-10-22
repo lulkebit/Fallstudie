@@ -92,7 +92,7 @@ exports.getAdminStats = async (req, res) => {
         }
 
         try {
-            users = await User.find();
+            users = await User.find().sort({ createdAt: -1 });
             console.log('Users found:', users.length);
         } catch (error) {
             console.error('Error finding users:', error);
@@ -155,6 +155,48 @@ exports.getAdminStats = async (req, res) => {
         }
         console.log('Most popular global goal:', mostPopularGlobalGoal.title);
 
+        // Calculate user growth
+        const oneMonthAgo = new Date();
+        oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+        const newUsersLastMonth = users.filter(
+            (user) => user.createdAt >= oneMonthAgo
+        ).length;
+        const userGrowthRate =
+            totalUsers > 0 ? (newUsersLastMonth / totalUsers) * 100 : 0;
+        console.log('User growth rate:', userGrowthRate);
+
+        // Get upcoming goals with details
+        const now = new Date();
+        const oneWeekFromNow = new Date(
+            now.getTime() + 7 * 24 * 60 * 60 * 1000
+        );
+
+        // Collect all upcoming goals with user information
+        const upcomingGoals = users.reduce((goals, user) => {
+            if (user.goals) {
+                const userUpcomingGoals = user.goals
+                    .filter(
+                        (goal) =>
+                            goal.endDate &&
+                            goal.endDate > now &&
+                            goal.endDate <= oneWeekFromNow
+                    )
+                    .map((goal) => ({
+                        avatar: user.avatar,
+                        username: user.username,
+                        title: goal.title,
+                        endDate: goal.endDate,
+                    }));
+                return [...goals, ...userUpcomingGoals];
+            }
+            return goals;
+        }, []);
+
+        // Sort upcoming goals by endDate
+        upcomingGoals.sort((a, b) => a.endDate - b.endDate);
+
+        console.log('Upcoming goals:', upcomingGoals.length);
+
         const stats = {
             totalUsers,
             totalGlobalGoals,
@@ -171,6 +213,8 @@ exports.getAdminStats = async (req, res) => {
                 currentValue: mostPopularGlobalGoal.currentValue || 0,
                 unit: mostPopularGlobalGoal.unit || 'Fortschritt',
             },
+            userGrowthRate: userGrowthRate.toFixed(2),
+            upcomingGoals, // Jetzt senden wir das Array mit detaillierten Informationen
         };
 
         res.json(stats);
