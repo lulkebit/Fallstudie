@@ -3,94 +3,129 @@ import { UserContext } from '../../context/UserContext';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useToast } from '../../context/ToastContext';
+import {
+    Mail,
+    Lock,
+    LogIn,
+    User,
+    Eye,
+    EyeOff,
+    Github,
+    ArrowRight,
+} from 'lucide-react';
+import Waves from '../../components/Waves';
+
+const InputField = ({
+    label,
+    id,
+    type = 'text',
+    value,
+    onChange,
+    icon: Icon,
+    placeholder,
+    error,
+    showPassword,
+    onTogglePassword,
+}) => (
+    <div className='space-y-1.5'>
+        <label htmlFor={id} className='block text-sm font-medium text-gray-700'>
+            {label}
+        </label>
+        <div className='relative'>
+            <div className='absolute inset-y-0 left-0 flex items-center pl-3'>
+                <Icon className='h-5 w-5 text-gray-400' />
+            </div>
+            <input
+                id={id}
+                name={id}
+                type={type}
+                value={value}
+                onChange={onChange}
+                placeholder={placeholder}
+                required
+                className='w-full pl-10 pr-12 py-2.5 bg-white border border-gray-300 rounded-lg
+                         text-gray-900 text-sm placeholder:text-gray-400
+                         focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                         transition-all duration-200'
+            />
+            {type === 'password' && (
+                <button
+                    type='button'
+                    onClick={onTogglePassword}
+                    className='absolute inset-y-0 right-0 flex items-center pr-3'
+                >
+                    {showPassword ? (
+                        <EyeOff className='h-5 w-5 text-gray-400 hover:text-gray-600' />
+                    ) : (
+                        <Eye className='h-5 w-5 text-gray-400 hover:text-gray-600' />
+                    )}
+                </button>
+            )}
+        </div>
+        {error && <p className='text-sm text-red-500 mt-1'>{error}</p>}
+    </div>
+);
 
 const Login = () => {
     const [data, setData] = useState({
         emailOrUsername: '',
         password: '',
     });
+    const [showPassword, setShowPassword] = useState(false);
+    const [loading, setLoading] = useState(false);
     const { setUser } = useContext(UserContext);
     const navigate = useNavigate();
     const { addToast } = useToast();
 
     const loginUser = async (event) => {
         event.preventDefault();
-        const { emailOrUsername, password } = data;
+        setLoading(true);
         try {
-            const { data } = await axios.post('/login', {
-                emailOrUsername,
-                password,
-            });
+            const { data: responseData } = await axios.post('/login', data);
 
-            if (data.error) {
-                addToast(data.error, 'error');
+            if (responseData.error) {
+                addToast(responseData.error, 'error');
             } else {
-                setUser(data.user);
+                setUser(responseData.user);
                 setData({});
                 navigate('/dashboard');
                 addToast('Login erfolgreich!', 'success');
             }
         } catch (error) {
             addToast(
-                'Login fehlgeschlagen. Bitte versuchen Sie es erneut. ' + error,
+                'Login fehlgeschlagen. Bitte versuchen Sie es erneut.',
                 'error'
             );
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
-        <div className='min-h-screen flex items-center justify-center bg-gray-100 relative overflow-hidden'>
-            <div className='absolute inset-0 overflow-hidden'>
-                <svg
-                    className='absolute bottom-0 left-0 w-full h-full'
-                    xmlns='http://www.w3.org/2000/svg'
-                    viewBox='0 0 1440 320'
-                    preserveAspectRatio='none'
-                >
-                    <path
-                        fill='#4F46E5'
-                        fillOpacity='0.35'
-                        d='M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,213.3C672,192,768,128,864,128C960,128,1056,192,1152,208C1248,224,1344,192,1392,176L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'
-                    ></path>
-                </svg>
-                <svg
-                    className='absolute bottom-0 left-0 w-full h-full'
-                    xmlns='http://www.w3.org/2000/svg'
-                    viewBox='0 0 1440 320'
-                    preserveAspectRatio='none'
-                >
-                    <path
-                        fill='#818CF8'
-                        fillOpacity='0.4'
-                        d='M0,64L48,80C96,96,192,128,288,128C384,128,480,96,576,90.7C672,85,768,107,864,122.7C960,139,1056,149,1152,138.7C1248,128,1344,96,1392,80L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'
-                    ></path>
-                </svg>
-            </div>
+        <div className='min-h-screen bg-gradient-to-br from-blue-50 to-gray-100'>
+            <Waves />
+            <div className='flex min-h-screen items-center justify-center px-4 py-12 relative z-50'>
+                <div className='w-full max-w-md'>
+                    <div className='bg-white rounded-2xl shadow-xl'>
+                        <div className='px-8 pt-8 pb-6'>
+                            <div className='flex flex-col items-center space-y-2 mb-8'>
+                                <img
+                                    src='/Logo.png'
+                                    alt='TrackMyGoal Logo'
+                                    className='h-24 w-24 object-contain'
+                                />
+                                <h2 className='text-2xl font-bold text-gray-900'>
+                                    Willkommen zurück
+                                </h2>
+                                <p className='text-gray-500'>
+                                    Melde dich an um fortzufahren
+                                </p>
+                            </div>
 
-            <div className='w-full max-w-md z-10'>
-                <div className='bg-white rounded-lg shadow-lg overflow-hidden'>
-                    <div className='px-10 pt-10 pb-8'>
-                        <div className='flex justify-center mb-8'>
-                            <img
-                                src='/Logo.png'
-                                alt='TrackMyGoal Logo'
-                                className='h-32'
-                            />
-                        </div>
-                        <form onSubmit={loginUser} className='space-y-6'>
-                            <div>
-                                <label
-                                    htmlFor='emailOrUsername'
-                                    className='block text-sm font-medium text-gray-700'
-                                >
-                                    E-Mail-Adresse oder Benutzername
-                                </label>
-                                <input
+                            <form onSubmit={loginUser} className='space-y-5'>
+                                <InputField
+                                    label='E-Mail oder Benutzername'
                                     id='emailOrUsername'
-                                    name='emailOrUsername'
-                                    type='text'
-                                    required
-                                    className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
                                     value={data.emailOrUsername}
                                     onChange={(e) =>
                                         setData({
@@ -98,21 +133,14 @@ const Login = () => {
                                             emailOrUsername: e.target.value,
                                         })
                                     }
+                                    icon={User}
+                                    placeholder='max.mustermann@beispiel.de'
                                 />
-                            </div>
-                            <div>
-                                <label
-                                    htmlFor='password'
-                                    className='block text-sm font-medium text-gray-700'
-                                >
-                                    Passwort
-                                </label>
-                                <input
+
+                                <InputField
+                                    label='Passwort'
                                     id='password'
-                                    name='password'
-                                    type='password'
-                                    required
-                                    className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+                                    type={showPassword ? 'text' : 'password'}
                                     value={data.password}
                                     onChange={(e) =>
                                         setData({
@@ -120,37 +148,64 @@ const Login = () => {
                                             password: e.target.value,
                                         })
                                     }
+                                    icon={Lock}
+                                    placeholder='••••••••'
+                                    showPassword={showPassword}
+                                    onTogglePassword={() =>
+                                        setShowPassword(!showPassword)
+                                    }
                                 />
-                            </div>
-                            <div className='flex items-center justify-between'>
-                                <div className='text-sm'>
+
+                                <div className='flex items-center justify-between'>
+                                    <label className='flex items-center'>
+                                        <input
+                                            type='checkbox'
+                                            className='h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500'
+                                        />
+                                        <span className='ml-2 text-sm text-gray-600'>
+                                            Angemeldet bleiben
+                                        </span>
+                                    </label>
                                     <Link
                                         to='/forgot-password'
-                                        className='font-medium text-indigo-600 hover:text-indigo-500'
+                                        className='text-sm text-blue-600 hover:text-blue-700'
                                     >
                                         Passwort vergessen?
                                     </Link>
                                 </div>
-                            </div>
-                            <div>
+
                                 <button
                                     type='submit'
-                                    className='w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
+                                    disabled={loading}
+                                    className='w-full flex items-center justify-center gap-2 bg-blue-600 text-white py-2.5 rounded-lg
+                                             font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+                                             transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed'
                                 >
-                                    Einloggen
+                                    {loading ? (
+                                        <div className='h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin' />
+                                    ) : (
+                                        <>
+                                            <LogIn className='h-5 w-5' />
+                                            Einloggen
+                                        </>
+                                    )}
                                 </button>
+                            </form>
+                        </div>
+
+                        <div className='px-8 py-6 bg-gray-50 rounded-b-2xl border-t border-gray-100'>
+                            <div className='flex items-center justify-between'>
+                                <span className='text-sm text-gray-600'>
+                                    Noch kein Konto?
+                                </span>
+                                <Link
+                                    to='/register'
+                                    className='flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700'
+                                >
+                                    Jetzt registrieren
+                                    <ArrowRight className='h-4 w-4' />
+                                </Link>
                             </div>
-                        </form>
-                    </div>
-                    <div className='px-10 py-4 bg-gray-50 border-t border-gray-200 flex justify-center'>
-                        <div className='text-sm'>
-                            Noch kein Konto?{' '}
-                            <Link
-                                to='/register'
-                                className='font-medium text-indigo-600 hover:text-indigo-500'
-                            >
-                                Jetzt registrieren
-                            </Link>
                         </div>
                     </div>
                 </div>

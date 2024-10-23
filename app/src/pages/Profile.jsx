@@ -7,6 +7,37 @@ import { useDialog } from '../context/DialogContext';
 import ChangePasswordDialog from '../components/dialogs/ChangePasswordDialog';
 import AvatarCropDialog from '../components/dialogs/AvatarCropDialog';
 import Waves from '../components/Waves';
+import { Camera, Lock, Mail, Save, User } from 'lucide-react';
+
+const InputField = ({
+    label,
+    id,
+    type = 'text',
+    value,
+    onChange,
+    icon: Icon,
+}) => (
+    <div>
+        <label className='block text-sm font-medium text-gray-600 mb-1.5'>
+            {label}
+        </label>
+        <div className='relative'>
+            <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
+                <Icon className='h-5 w-5 text-gray-400' />
+            </div>
+            <input
+                type={type}
+                id={id}
+                name={id}
+                value={value}
+                onChange={onChange}
+                className='w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 
+                         focus:border-blue-500 focus:ring-2 focus:ring-blue-200 
+                         transition-all duration-200 outline-none'
+            />
+        </div>
+    </div>
+);
 
 const Profile = () => {
     const { user, updateUser } = useContext(UserContext);
@@ -157,133 +188,128 @@ const Profile = () => {
     return (
         <>
             <Navbar />
-            <div className='bg-gray-100 min-h-screen pt-24 relative overflow-hidden'>
+            <div className='min-h-screen bg-gray-50 pt-16'>
                 <Waves />
-
                 <div className='container mx-auto px-4 py-8 relative z-10'>
-                    <div className='max-w-lg mx-auto bg-white rounded-lg shadow-xl overflow-hidden'>
-                        <div className='p-6 sm:p-8'>
-                            <h2 className='text-2xl font-bold mb-6 text-center text-blue-600'>
+                    <div className='max-w-2xl mx-auto'>
+                        <div className='flex items-center gap-3 mb-8'>
+                            <div className='w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center'>
+                                <User className='w-6 h-6 text-blue-600' />
+                            </div>
+                            <h1 className='text-2xl font-bold text-gray-800'>
                                 Profil bearbeiten
-                            </h2>
+                            </h1>
+                        </div>
 
-                            <form onSubmit={handleSubmit} className='space-y-4'>
-                                <div className='flex flex-col items-center'>
-                                    {formData.avatar && (
+                        <div className='bg-white rounded-xl shadow-lg p-6 space-y-8'>
+                            <div className='flex flex-col items-center'>
+                                <div className='relative group'>
+                                    {formData.avatar ? (
                                         <img
                                             src={`data:image/jpeg;base64,${formData.avatar}`}
                                             alt='Avatar'
-                                            className='w-24 h-24 rounded-full object-cover mb-2'
+                                            className='w-24 h-24 rounded-xl object-cover'
                                         />
+                                    ) : (
+                                        <div className='w-24 h-24 bg-blue-50 rounded-xl flex items-center justify-center'>
+                                            <User className='w-8 h-8 text-blue-500' />
+                                        </div>
                                     )}
-                                    <input
-                                        type='file'
-                                        id='avatar'
-                                        name='avatar'
-                                        onChange={handleAvatarChange}
-                                        accept='image/*'
-                                        className='text-sm text-gray-500
-                                    file:mr-4 file:py-2 file:px-4
-                                    file:rounded-full file:border-0
-                                    file:text-sm file:font-semibold
-                                    file:bg-blue-50 file:text-blue-700
-                                    hover:file:bg-blue-100'
-                                    />
-                                    {avatarError && (
-                                        <p className='mt-2 text-sm text-red-600'>
-                                            {avatarError}
-                                        </p>
-                                    )}
-                                </div>
-                                <div>
                                     <label
-                                        htmlFor='username'
-                                        className='block text-sm font-medium text-gray-700'
+                                        htmlFor='avatar'
+                                        className='absolute inset-0 flex items-center justify-center 
+                                                 bg-black/50 opacity-0 group-hover:opacity-100 
+                                                 transition-opacity duration-200 rounded-xl 
+                                                 cursor-pointer'
                                     >
-                                        Benutzername
+                                        <Camera className='w-6 h-6 text-white' />
+                                        <input
+                                            type='file'
+                                            id='avatar'
+                                            name='avatar'
+                                            onChange={handleAvatarChange}
+                                            accept='image/*'
+                                            className='hidden'
+                                        />
                                     </label>
-                                    <input
-                                        type='text'
+                                </div>
+                                {avatarError && (
+                                    <p className='mt-2 text-sm text-red-500'>
+                                        {avatarError}
+                                    </p>
+                                )}
+                            </div>
+
+                            <form onSubmit={handleSubmit} className='space-y-6'>
+                                <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                                    <InputField
+                                        label='Benutzername'
                                         id='username'
-                                        name='username'
                                         value={formData.username}
                                         onChange={handleChange}
-                                        className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50'
+                                        icon={User}
                                     />
-                                </div>
-                                <div>
-                                    <label
-                                        htmlFor='email'
-                                        className='block text-sm font-medium text-gray-700'
-                                    >
-                                        E-Mail
-                                    </label>
-                                    <input
-                                        type='email'
+                                    <InputField
+                                        label='E-Mail'
                                         id='email'
-                                        name='email'
+                                        type='email'
                                         value={formData.email}
                                         onChange={handleChange}
-                                        className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50'
+                                        icon={Mail}
                                     />
-                                </div>
-                                <div>
-                                    <label
-                                        htmlFor='firstname'
-                                        className='block text-sm font-medium text-gray-700'
-                                    >
-                                        Vorname
-                                    </label>
-                                    <input
-                                        type='text'
+                                    <InputField
+                                        label='Vorname'
                                         id='firstname'
-                                        name='firstname'
                                         value={formData.firstname}
                                         onChange={handleChange}
-                                        className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50'
+                                        icon={User}
                                     />
-                                </div>
-                                <div>
-                                    <label
-                                        htmlFor='lastname'
-                                        className='block text-sm font-medium text-gray-700'
-                                    >
-                                        Nachname
-                                    </label>
-                                    <input
-                                        type='text'
+                                    <InputField
+                                        label='Nachname'
                                         id='lastname'
-                                        name='lastname'
                                         value={formData.lastname}
                                         onChange={handleChange}
-                                        className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50'
+                                        icon={User}
                                     />
                                 </div>
-                                <button
-                                    type='submit'
-                                    disabled={!isModified}
-                                    className={`w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
-                                        !isModified
-                                            ? 'opacity-50 cursor-not-allowed'
-                                            : ''
-                                    }`}
-                                >
-                                    Speichern
-                                </button>
+
+                                <div className='flex flex-col sm:flex-row gap-3 pt-6 border-t border-gray-100'>
+                                    <button
+                                        type='submit'
+                                        disabled={!isModified}
+                                        className={`
+                                            flex-1 py-2.5 rounded-lg font-medium flex items-center justify-center gap-2
+                                            ${
+                                                !isModified
+                                                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                                    : 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl hover:scale-105'
+                                            }
+                                            transition-all duration-200
+                                        `}
+                                    >
+                                        <Save className='w-5 h-5' />
+                                        Speichern
+                                    </button>
+                                    <button
+                                        type='button'
+                                        onClick={() =>
+                                            addDialog({
+                                                component: ChangePasswordDialog,
+                                            })
+                                        }
+                                        className='flex-1 py-2.5 bg-blue-50 text-blue-600 rounded-lg font-medium 
+                                                 hover:bg-blue-100 transition-colors duration-200 
+                                                 flex items-center justify-center gap-2'
+                                    >
+                                        <Lock className='w-5 h-5' />
+                                        Passwort ändern
+                                    </button>
+                                </div>
                             </form>
-                            <button
-                                onClick={() =>
-                                    addDialog({
-                                        component: ChangePasswordDialog,
-                                    })
-                                }
-                                className='w-full mt-4 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
-                            >
-                                Passwort ändern
-                            </button>
                         </div>
                     </div>
                 </div>
+
                 {showAvatarCropDialog && (
                     <AvatarCropDialog
                         onClose={() => setShowAvatarCropDialog(false)}

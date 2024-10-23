@@ -3,31 +3,8 @@ import axios from 'axios';
 import { UserContext } from '../../context/UserContext';
 import { useToast } from '../../context/ToastContext';
 import { X, Lock } from 'lucide-react';
-
-const InputField = ({ id, label, value, onChange, placeholder }) => (
-    <div className='relative'>
-        <label
-            htmlFor={id}
-            className='absolute left-2 -top-2.5 bg-white px-1 text-xs font-medium text-gray-600 z-10'
-        >
-            {label}
-        </label>
-        <div className='mt-1 relative rounded-md shadow-sm'>
-            <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-                <Lock className='h-5 w-5 text-gray-400' />
-            </div>
-            <input
-                type='password'
-                id={id}
-                value={value}
-                onChange={onChange}
-                required
-                className='block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out'
-                placeholder={placeholder}
-            />
-        </div>
-    </div>
-);
+import DialogContainer from '../containers/DialogContainer';
+import CustomInput from '../CustomInput';
 
 const ChangePasswordDialog = ({ onClose }) => {
     const [oldPassword, setOldPassword] = useState('');
@@ -57,64 +34,61 @@ const ChangePasswordDialog = ({ onClose }) => {
     };
 
     return (
-        <div className='fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none bg-gray-600 bg-opacity-75'>
-            <div className='relative w-full max-w-md mx-auto my-6'>
-                <div className='relative flex flex-col w-full bg-white border-0 rounded-lg shadow-lg outline-none focus:outline-none'>
-                    <div className='flex items-start justify-between p-5 border-b border-solid border-gray-300 rounded-t'>
-                        <h2 className='text-2xl font-semibold text-gray-700'>
-                            Passwort ändern
-                        </h2>
-                        <button
-                            className='p-1 ml-auto bg-transparent border-0 text-gray-400 float-right text-3xl leading-none font-semibold outline-none focus:outline-none transition-colors duration-200 ease-in-out hover:text-gray-600'
-                            onClick={onClose}
-                        >
-                            <X size={24} />
-                        </button>
-                    </div>
-                    <form
-                        onSubmit={handleSubmit}
-                        className='px-6 py-4 space-y-6'
-                    >
-                        <InputField
-                            id='oldPassword'
-                            label='Altes Passwort'
-                            value={oldPassword}
-                            onChange={(e) => setOldPassword(e.target.value)}
-                            placeholder='Geben Sie Ihr aktuelles Passwort ein'
-                        />
-                        <InputField
-                            id='newPassword'
-                            label='Neues Passwort'
-                            value={newPassword}
-                            onChange={(e) => setNewPassword(e.target.value)}
-                            placeholder='Geben Sie Ihr neues Passwort ein'
-                        />
-                        <InputField
-                            id='confirmPassword'
-                            label='Neues Passwort bestätigen'
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            placeholder='Bestätigen Sie Ihr neues Passwort'
-                        />
-                        <div className='flex items-center justify-end pt-4 border-t border-solid border-gray-300'>
-                            <button
-                                type='button'
-                                onClick={onClose}
-                                className='text-gray-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150 hover:bg-gray-100 rounded'
-                            >
-                                Abbrechen
-                            </button>
-                            <button
-                                type='submit'
-                                className='bg-blue-600 text-white active:bg-blue-700 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150 transform hover:scale-105'
-                            >
-                                Ändern
-                            </button>
-                        </div>
-                    </form>
-                </div>
+        <DialogContainer onClose={onClose}>
+            <div className='p-6 border-b border-gray-100 flex justify-between items-center'>
+                <h3 className='text-xl font-bold text-gray-800'>
+                    Passwort ändern
+                </h3>
+                <button
+                    onClick={onClose}
+                    className='p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200'
+                >
+                    <X className='h-5 w-5 text-gray-400' />
+                </button>
             </div>
-        </div>
+
+            <form onSubmit={handleSubmit} className='p-6 space-y-6'>
+                <CustomInput
+                    id='oldPassword'
+                    label='Altes Passwort'
+                    value={oldPassword}
+                    onChange={(e) => setOldPassword(e.target.value)}
+                    icon={Lock}
+                />
+                <CustomInput
+                    id='newPassword'
+                    label='Neues Passwort'
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    icon={Lock}
+                />
+                <CustomInput
+                    id='confirmPassword'
+                    label='Neues Passwort bestätigen'
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    icon={Lock}
+                />
+
+                <div className='pt-4 border-t border-gray-100 flex justify-end gap-3'>
+                    <button
+                        type='button'
+                        onClick={onClose}
+                        className='px-6 py-2.5 border border-gray-200 rounded-lg font-medium text-gray-600 
+                                hover:bg-gray-50 transition-colors duration-200'
+                    >
+                        Abbrechen
+                    </button>
+                    <button
+                        type='submit'
+                        className='px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium shadow-lg 
+                                hover:bg-blue-700 transition-all duration-200 hover:shadow-xl hover:scale-105'
+                    >
+                        Ändern
+                    </button>
+                </div>
+            </form>
+        </DialogContainer>
     );
 };
 

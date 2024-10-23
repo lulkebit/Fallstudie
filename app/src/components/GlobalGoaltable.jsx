@@ -10,82 +10,110 @@ import Loader from './Loader';
 const GlobalGoalCard = React.memo(
     ({ goal, onEdit, onDelete, isExpanded, onToggle }) => {
         const progressPercentage = (goal.currentValue / goal.targetValue) * 100;
-        const progressBarColor =
-            progressPercentage === 100 ? 'bg-green-500' : 'bg-blue-500';
+        const getProgressColor = (percentage) => {
+            if (percentage === 100) return 'bg-green-500';
+            if (percentage >= 75) return 'bg-blue-500';
+            if (percentage >= 50) return 'bg-blue-400';
+            if (percentage >= 25) return 'bg-blue-300';
+            return 'bg-blue-200';
+        };
 
         return (
-            <div className='goal-card bg-gray-50 rounded-lg shadow-md p-4 transition duration-300 ease-in-out hover:shadow-lg'>
-                <div className='flex items-center justify-between mb-2'>
-                    <div
-                        className='flex items-center flex-grow cursor-pointer'
-                        onClick={onToggle}
-                    >
-                        <div className='w-6 h-6 mr-3 flex-shrink-0'>
-                            <Goal />
+            <div className='bg-white rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl'>
+                <div className='p-6 cursor-pointer' onClick={onToggle}>
+                    <div className='flex items-center justify-between mb-4'>
+                        <div className='flex items-center gap-4'>
+                            <div className='w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600'>
+                                <Goal className='w-6 h-6' />
+                            </div>
+                            <h2 className='text-xl font-bold text-gray-800'>
+                                {goal.title}
+                            </h2>
                         </div>
-                        <h2 className='text-xl font-semibold text-gray-800'>
-                            {goal.title}
-                        </h2>
+                        <div className='flex items-center gap-3'>
+                            <span className='text-sm font-semibold text-gray-500'>
+                                {progressPercentage.toFixed(0)}%
+                            </span>
+                            {isExpanded ? (
+                                <ChevronUp className='w-5 h-5 text-gray-400' />
+                            ) : (
+                                <ChevronDown className='w-5 h-5 text-gray-400' />
+                            )}
+                        </div>
                     </div>
-                    <div>
-                        {isExpanded ? (
-                            <ChevronUp size={20} />
-                        ) : (
-                            <ChevronDown size={20} />
-                        )}
+
+                    <div className='relative w-full h-3 bg-gray-100 rounded-full overflow-hidden mb-4'>
+                        <div
+                            className={`absolute left-0 top-0 h-full transition-all duration-500 ${getProgressColor(
+                                progressPercentage
+                            )}`}
+                            style={{ width: `${progressPercentage}%` }}
+                        />
                     </div>
-                </div>
-                <div className='w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 mb-2'>
-                    <div
-                        className={`${progressBarColor} h-2.5 rounded-full`}
-                        style={{ width: `${progressPercentage}%` }}
-                    ></div>
-                </div>
-                {isExpanded && (
-                    <>
-                        <p className='text-gray-600 mb-4'>{goal.description}</p>
-                        <div className='grid grid-cols-2 gap-4 mb-4'>
-                            <p>
-                                <strong>Start:</strong>{' '}
-                                {new Date(goal.startDate).toLocaleDateString()}
-                            </p>
-                            <p>
-                                <strong>Ende:</strong>{' '}
-                                {new Date(goal.endDate).toLocaleDateString()}
-                            </p>
-                            <p>
-                                <strong>Zielwert:</strong> {goal.targetValue}{' '}
-                                {goal.unit}
-                            </p>
-                            <p>
-                                <strong>Aktueller Wert:</strong>{' '}
-                                {goal.currentValue} {goal.unit}
-                            </p>
-                            <p>
-                                <strong>Fortschritt:</strong>{' '}
-                                {progressPercentage.toFixed(2)}%
-                            </p>
-                            <p>
-                                <strong>Teilnahmen:</strong>{' '}
-                                {goal.participationCount}
-                            </p>
+
+                    {isExpanded && (
+                        <div className='mt-6 space-y-6'>
+                            <p className='text-gray-600'>{goal.description}</p>
+
+                            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+                                <div className='bg-gray-50 p-4 rounded-lg'>
+                                    <div className='text-sm text-gray-500 mb-1'>
+                                        Zeitraum
+                                    </div>
+                                    <div className='font-medium'>
+                                        {new Date(
+                                            goal.startDate
+                                        ).toLocaleDateString()}{' '}
+                                        -
+                                        {new Date(
+                                            goal.endDate
+                                        ).toLocaleDateString()}
+                                    </div>
+                                </div>
+
+                                <div className='bg-gray-50 p-4 rounded-lg'>
+                                    <div className='text-sm text-gray-500 mb-1'>
+                                        Fortschritt
+                                    </div>
+                                    <div className='font-medium'>
+                                        {goal.currentValue} / {goal.targetValue}{' '}
+                                        {goal.unit}
+                                    </div>
+                                </div>
+
+                                <div className='bg-gray-50 p-4 rounded-lg'>
+                                    <div className='text-sm text-gray-500 mb-1'>
+                                        Teilnahmen
+                                    </div>
+                                    <div className='font-medium'>
+                                        {goal.participationCount} Teilnehmer
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className='flex justify-end gap-3 pt-4'>
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onEdit(goal);
+                                    }}
+                                    className='px-4 py-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors duration-200 font-medium'
+                                >
+                                    Bearbeiten
+                                </button>
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onDelete(goal._id);
+                                    }}
+                                    className='px-4 py-2 text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors duration-200 font-medium'
+                                >
+                                    Löschen
+                                </button>
+                            </div>
                         </div>
-                        <div className='flex justify-end items-center space-x-2 mt-4'>
-                            <button
-                                onClick={() => onEdit(goal)}
-                                className='bg-blue-100 text-blue-600 hover:bg-blue-200 font-medium py-1 px-3 rounded transition duration-300 ease-in-out'
-                            >
-                                Bearbeiten
-                            </button>
-                            <button
-                                onClick={() => onDelete(goal._id)}
-                                className='bg-red-100 text-red-600 hover:bg-red-200 font-medium py-1 px-3 rounded transition duration-300 ease-in-out'
-                            >
-                                Löschen
-                            </button>
-                        </div>
-                    </>
-                )}
+                    )}
+                </div>
             </div>
         );
     }
@@ -241,66 +269,80 @@ const GlobalGoalTable = () => {
         setExpandedGoals((prev) => ({ ...prev, [goalId]: !prev[goalId] }));
     }, []);
 
+    const SortButton = ({ field, children }) => (
+        <button
+            onClick={() => handleSort(field)}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors duration-200
+                ${
+                    sortField === field
+                        ? 'bg-blue-100 text-blue-600'
+                        : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+                }`}
+        >
+            {children}
+            {sortField === field && (
+                <span className='ml-2'>
+                    {sortDirection === 'asc' ? '↑' : '↓'}
+                </span>
+            )}
+        </button>
+    );
+
     return (
-        <div>
-            <div className='flex justify-between items-center mb-6'>
-                <h2 className='text-2xl font-semibold text-gray-900'>
+        <div className='bg-gray-50 p-6 rounded-xl'>
+            <div className='flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8'>
+                <h2 className='text-2xl font-bold text-gray-800'>
                     Globale Ziele
                 </h2>
                 <button
                     onClick={handleAddGoal}
-                    className='bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105'
+                    className='px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-lg 
+                             transition-all duration-200 hover:shadow-xl hover:scale-105'
                 >
                     + Neues globales Ziel
                 </button>
             </div>
+
             {loading ? (
-                <div className='flex items-center justify-center py-4'>
+                <div className='flex items-center justify-center py-12'>
                     <Loader />
                 </div>
             ) : globalGoals.length === 0 ? (
-                <p className='text-gray-600 text-center py-8'>
-                    Noch keine globalen Ziele erstellt.
-                </p>
-            ) : (
-                <div className='space-y-4'>
-                    <div className='flex space-x-4 mb-4'>
-                        <button
-                            onClick={() => handleSort('title')}
-                            className='font-medium'
-                        >
-                            Sortieren nach Titel
-                            {sortField === 'title' &&
-                                (sortDirection === 'asc' ? '↑' : '↓')}
-                        </button>
-                        <button
-                            onClick={() => handleSort('currentValue')}
-                            className='font-medium'
-                        >
-                            Sortieren nach Fortschritt
-                            {sortField === 'currentValue' &&
-                                (sortDirection === 'asc' ? '↑' : '↓')}
-                        </button>
-                        <button
-                            onClick={() => handleSort('participationCount')}
-                            className='font-medium'
-                        >
-                            Sortieren nach Teilnahmen
-                            {sortField === 'participationCount' &&
-                                (sortDirection === 'asc' ? '↑' : '↓')}
-                        </button>
+                <div className='text-center py-12'>
+                    <div className='w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4'>
+                        <Goal className='w-8 h-8 text-gray-400' />
                     </div>
-                    {sortedGoals.map((goal) => (
-                        <GlobalGoalCard
-                            key={goal._id}
-                            goal={goal}
-                            onEdit={handleEditGoal}
-                            onDelete={handleDeleteGoal}
-                            isExpanded={expandedGoals[goal._id]}
-                            onToggle={() => toggleGoalExpansion(goal._id)}
-                        />
-                    ))}
+                    <p className='text-gray-500 text-lg'>
+                        Noch keine globalen Ziele erstellt.
+                    </p>
                 </div>
+            ) : (
+                <>
+                    <div className='flex flex-wrap gap-3 mb-6'>
+                        <SortButton field='title'>
+                            Nach Titel sortieren
+                        </SortButton>
+                        <SortButton field='currentValue'>
+                            Nach Fortschritt sortieren
+                        </SortButton>
+                        <SortButton field='participationCount'>
+                            Nach Teilnahmen sortieren
+                        </SortButton>
+                    </div>
+
+                    <div className='space-y-4'>
+                        {sortedGoals.map((goal) => (
+                            <GlobalGoalCard
+                                key={goal._id}
+                                goal={goal}
+                                onEdit={handleEditGoal}
+                                onDelete={handleDeleteGoal}
+                                isExpanded={expandedGoals[goal._id]}
+                                onToggle={() => toggleGoalExpansion(goal._id)}
+                            />
+                        ))}
+                    </div>
+                </>
             )}
         </div>
     );

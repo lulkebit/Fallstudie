@@ -95,31 +95,31 @@ const InputField = React.memo(
         id,
         value,
         type = 'text',
-        icon,
+        icon: Icon,
         options = null,
         onChange,
         error,
     }) => (
-        <div className='mb-4'>
+        <div className='space-y-1.5'>
             <label
                 htmlFor={id}
-                className='block text-sm font-medium text-gray-700 mb-1'
+                className='block text-sm font-medium text-gray-600'
             >
                 {label}
             </label>
             <div className='relative'>
-                <span className='absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500'>
-                    {icon}
-                </span>
+                <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
+                    <Icon className='h-5 w-5 text-gray-400' />
+                </div>
                 {type === 'textarea' ? (
                     <textarea
                         id={id}
                         name={id}
                         value={value}
                         onChange={onChange}
-                        className={`w-full px-3 py-2 pl-10 border ${
-                            error ? 'border-red-500' : 'border-gray-300'
-                        } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                        className={`w-full pl-10 pr-4 py-3 rounded-lg border ${
+                            error ? 'border-red-500' : 'border-gray-200'
+                        } focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 outline-none`}
                         placeholder={`${label} eingeben`}
                         rows={3}
                     />
@@ -129,9 +129,10 @@ const InputField = React.memo(
                         name={id}
                         value={value}
                         onChange={onChange}
-                        className={`w-full px-3 py-2 pl-10 border ${
-                            error ? 'border-red-500' : 'border-gray-300'
-                        } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                        className={`w-full pl-10 pr-4 py-3 rounded-lg border ${
+                            error ? 'border-red-500' : 'border-gray-200'
+                        } focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 outline-none
+                    appearance-none bg-white`}
                     >
                         <option value=''>Bitte auswählen</option>
                         {options.map((option) => (
@@ -147,20 +148,78 @@ const InputField = React.memo(
                         name={id}
                         value={value}
                         onChange={onChange}
-                        className={`w-full px-3 py-2 pl-10 border ${
-                            error ? 'border-red-500' : 'border-gray-300'
-                        } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                        className={`w-full pl-10 pr-4 py-3 rounded-lg border ${
+                            error ? 'border-red-500' : 'border-gray-200'
+                        } focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 outline-none`}
                         placeholder={`${label} eingeben`}
                     />
                 )}
             </div>
-            {error && <p className='mt-1 text-sm text-red-500'>{error}</p>}
+            {error && <p className='text-sm text-red-500'>{error}</p>}
         </div>
     )
 );
 
+const ProgressInput = ({ value, onChange }) => (
+    <div className='space-y-4'>
+        <div className='flex justify-between items-center'>
+            <label className='block text-sm font-medium text-gray-600'>
+                Fortschritt
+            </label>
+            <span className='text-blue-600 font-medium'>{value}%</span>
+        </div>
+        <input
+            type='range'
+            id='progress'
+            name='progress'
+            value={value}
+            onChange={onChange}
+            className='w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer
+                     [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 
+                     [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-blue-600 
+                     [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:cursor-pointer'
+            min='0'
+            max='100'
+        />
+    </div>
+);
+
+const PublicSwitch = ({ checked, onChange }) => (
+    <div className='flex items-center gap-3 p-4 bg-gray-50 rounded-lg'>
+        <input
+            type='checkbox'
+            id='public'
+            name='public'
+            checked={checked}
+            onChange={onChange}
+            className='w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500'
+        />
+        <div className='flex items-center gap-2'>
+            <Eye className='h-5 w-5 text-gray-400' />
+            <label
+                htmlFor='public'
+                className='text-sm font-medium text-gray-600'
+            >
+                Öffentlich machen
+            </label>
+        </div>
+    </div>
+);
+
 const EditGoalDialog = ({ goal, onSave, onClose }) => {
     const [editedGoal, setEditedGoal] = useState(null);
+    const [currentStep, setCurrentStep] = useState(0);
+
+    const steps = [
+        {
+            title: 'Grundinformationen',
+            fields: ['title', 'category', 'description'],
+        },
+        { title: 'Zeitrahmen', fields: ['startDate', 'endDate'] },
+        { title: 'Zieldetails', fields: ['targetValue', 'unit', 'direction'] },
+        { title: 'Erinnerungen', fields: ['reminderType'] },
+        { title: 'Fortschritt und Sichtbarkeit', fields: [] },
+    ];
 
     const {
         formData,
@@ -186,18 +245,6 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
         },
         setEditedGoal
     );
-
-    const [currentStep, setCurrentStep] = useState(0);
-    const steps = [
-        {
-            title: 'Grundinformationen',
-            fields: ['title', 'category', 'description'],
-        },
-        { title: 'Zeitrahmen', fields: ['startDate', 'endDate'] },
-        { title: 'Zieldetails', fields: ['targetValue', 'unit', 'direction'] },
-        { title: 'Erinnerungen', fields: ['reminderType'] },
-        { title: 'Fortschritt und Sichtbarkeit', fields: [] },
-    ];
 
     useEffect(() => {
         if (goal) {
@@ -236,12 +283,12 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
         switch (step) {
             case 0:
                 return (
-                    <>
+                    <div className='space-y-6'>
                         <InputField
                             label='Name'
                             id='title'
                             value={formData.title}
-                            icon={<Type size={20} />}
+                            icon={Type}
                             onChange={handleInputChange}
                             error={errors.title}
                         />
@@ -250,7 +297,7 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                             id='category'
                             value={formData.category}
                             type='select'
-                            icon={<Hash size={20} />}
+                            icon={Hash}
                             options={CATEGORIES}
                             onChange={handleInputChange}
                             error={errors.category}
@@ -260,21 +307,21 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                             id='description'
                             value={formData.description}
                             type='textarea'
-                            icon={<Info size={20} />}
+                            icon={Info}
                             onChange={handleInputChange}
                             error={errors.description}
                         />
-                    </>
+                    </div>
                 );
             case 1:
                 return (
-                    <>
+                    <div className='space-y-6'>
                         <InputField
                             label='Start'
                             id='startDate'
                             value={formData.startDate}
                             type='date'
-                            icon={<Calendar size={20} />}
+                            icon={Calendar}
                             onChange={handleInputChange}
                             error={errors.startDate}
                         />
@@ -283,21 +330,21 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                             id='endDate'
                             value={formData.endDate}
                             type='date'
-                            icon={<Calendar size={20} />}
+                            icon={Calendar}
                             onChange={handleInputChange}
                             error={errors.endDate}
                         />
-                    </>
+                    </div>
                 );
             case 2:
                 return (
-                    <>
+                    <div className='space-y-6'>
                         <InputField
                             label='Zielwert'
                             id='targetValue'
                             value={formData.targetValue}
                             type='text'
-                            icon={<Target size={20} />}
+                            icon={Target}
                             onChange={handleInputChange}
                             error={errors.targetValue}
                         />
@@ -306,7 +353,7 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                             id='unit'
                             value={formData.unit}
                             type='select'
-                            icon={<Hash size={20} />}
+                            icon={Hash}
                             options={UNITS}
                             onChange={handleInputChange}
                             error={errors.unit}
@@ -316,70 +363,40 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                             id='direction'
                             value={formData.direction}
                             type='select'
-                            icon={<ArrowUpDown size={20} />}
+                            icon={ArrowUpDown}
                             options={DIRECTIONS}
                             onChange={handleInputChange}
                             error={errors.direction}
                         />
-                    </>
+                    </div>
                 );
             case 3:
                 return (
-                    <InputField
-                        label='Erinnerungsintervall'
-                        id='reminderType'
-                        value={formData.reminderType}
-                        type='select'
-                        icon={<Bell size={20} />}
-                        options={REMINDER_TYPES}
-                        onChange={handleInputChange}
-                        error={errors.reminderType}
-                    />
+                    <div className='space-y-6'>
+                        <InputField
+                            label='Erinnerungsintervall'
+                            id='reminderType'
+                            value={formData.reminderType}
+                            type='select'
+                            icon={Bell}
+                            options={REMINDER_TYPES}
+                            onChange={handleInputChange}
+                            error={errors.reminderType}
+                        />
+                    </div>
                 );
             case 4:
                 return (
-                    <>
-                        <div className='mb-4'>
-                            <label
-                                htmlFor='progress'
-                                className='block text-sm font-medium text-gray-700 mb-1'
-                            >
-                                Fortschritt
-                            </label>
-                            <div className='relative'>
-                                <input
-                                    type='range'
-                                    id='progress'
-                                    name='progress'
-                                    value={formData.progress}
-                                    onChange={handleInputChange}
-                                    className='w-full mt-2'
-                                    min='0'
-                                    max='100'
-                                />
-                            </div>
-                            <div className='text-center mt-1'>
-                                {formData.progress}%
-                            </div>
-                        </div>
-                        <div className='flex items-center'>
-                            <input
-                                type='checkbox'
-                                id='public'
-                                name='public'
-                                checked={formData.public}
-                                onChange={handleInputChange}
-                                className='mr-2'
-                            />
-                            <Eye size={20} className='mr-2 text-gray-500' />
-                            <label
-                                htmlFor='public'
-                                className='text-sm font-medium text-gray-700'
-                            >
-                                Öffentlich
-                            </label>
-                        </div>
-                    </>
+                    <div className='space-y-6'>
+                        <ProgressInput
+                            value={formData.progress}
+                            onChange={handleInputChange}
+                        />
+                        <PublicSwitch
+                            checked={formData.public}
+                            onChange={handleInputChange}
+                        />
+                    </div>
                 );
             default:
                 return null;
@@ -387,56 +404,98 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
     };
 
     return (
-        <div className='fixed inset-0 bg-black z-50 bg-opacity-50 flex justify-center items-center p-4'>
-            <div className='bg-white rounded-lg shadow-xl w-full max-w-[500px] h-full max-h-[600px] flex flex-col'>
-                <div className='sticky top-0 bg-white z-10 px-4 sm:px-6 py-4 border-b border-gray-200 rounded-t-2xl'>
-                    <div className='flex justify-between items-center'>
-                        <h2 className='text-xl sm:text-2xl font-bold text-gray-800'>
+        <div className='fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4'>
+            <div className='bg-white rounded-xl shadow-xl w-full max-w-3xl max-h-[80vh] h-[80vh] flex flex-col'>
+                <div className='p-6 border-b border-gray-100'>
+                    <div className='flex justify-between items-center mb-4'>
+                        <h2 className='text-xl font-bold text-gray-800'>
                             {goal ? 'Ziel bearbeiten' : 'Neues Ziel erstellen'}
                         </h2>
                         <button
                             onClick={onClose}
-                            className='text-gray-500 hover:text-gray-700'
+                            className='p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200'
                         >
-                            <X size={24} />
+                            <X className='h-5 w-5 text-gray-400' />
                         </button>
                     </div>
-                    <div className='mt-2 text-sm text-gray-600'>
-                        Schritt {currentStep + 1} von {steps.length}:{' '}
-                        {steps[currentStep].title}
+
+                    <div className='flex items-center gap-2'>
+                        {steps.map((step, index) => (
+                            <React.Fragment key={step.title}>
+                                <div
+                                    className={`flex items-center gap-2 ${
+                                        index <= currentStep
+                                            ? 'text-blue-600'
+                                            : 'text-gray-400'
+                                    }`}
+                                >
+                                    <div
+                                        className={`w-8 h-8 rounded-full flex items-center justify-center font-medium
+                                        ${
+                                            index <= currentStep
+                                                ? 'bg-blue-100 text-blue-600'
+                                                : 'bg-gray-100 text-gray-400'
+                                        }`}
+                                    >
+                                        {index + 1}
+                                    </div>
+                                    <span className='text-sm hidden md:block'>
+                                        {step.title}
+                                    </span>
+                                </div>
+                                {index < steps.length - 1 && (
+                                    <div
+                                        className={`flex-grow h-0.5 ${
+                                            index < currentStep
+                                                ? 'bg-blue-500'
+                                                : 'bg-gray-200'
+                                        }`}
+                                    />
+                                )}
+                            </React.Fragment>
+                        ))}
                     </div>
                 </div>
 
-                <div className='flex-grow px-4 sm:px-6 py-4 overflow-y-auto'>
-                    {renderStepContent(currentStep)}
+                <div className='flex-1 min-h-0'>
+                    <div className='h-full p-6 overflow-y-auto'>
+                        {renderStepContent(currentStep)}
+                    </div>
                 </div>
 
-                <div className='sticky bottom-0 bg-white z-10 px-4 sm:px-6 py-4 border-t border-gray-200 rounded-b-2xl'>
-                    <div className='flex justify-between'>
+                <div className='p-6 border-t border-gray-100'>
+                    <div className='flex justify-between items-center'>
                         <button
                             onClick={handlePrevious}
                             disabled={currentStep === 0}
-                            className={`px-3 sm:px-4 py-2 border border-gray-300 rounded-md text-gray-700 ${
-                                currentStep === 0
-                                    ? 'opacity-50 cursor-not-allowed'
-                                    : 'hover:bg-gray-50'
-                            } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
+                            className={`px-6 py-2.5 rounded-lg font-medium transition-all duration-200 flex items-center gap-2
+                                ${
+                                    currentStep === 0
+                                        ? 'opacity-50 cursor-not-allowed text-gray-400'
+                                        : 'text-gray-600 hover:bg-gray-100'
+                                }`}
                         >
-                            <ChevronLeft size={20} />
+                            <ChevronLeft className='h-5 w-5' />
+                            Zurück
                         </button>
+
                         {currentStep === steps.length - 1 ? (
                             <button
                                 onClick={handleSave}
-                                className='px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+                                className='px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium shadow-lg 
+                                         hover:bg-blue-700 transition-all duration-200 hover:shadow-xl hover:scale-105'
                             >
                                 Speichern
                             </button>
                         ) : (
                             <button
                                 onClick={handleNext}
-                                className='px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+                                className='px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium shadow-lg 
+                                         hover:bg-blue-700 transition-all duration-200 hover:shadow-xl hover:scale-105
+                                         flex items-center gap-2'
                             >
-                                <ChevronRight size={20} />
+                                Weiter
+                                <ChevronRight className='h-5 w-5' />
                             </button>
                         )}
                     </div>

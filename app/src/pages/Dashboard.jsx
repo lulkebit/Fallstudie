@@ -8,20 +8,45 @@ const Dashboard = () => {
     return (
         <>
             <Navbar />
-            <div className='flex flex-col min-h-screen bg-gray-100 pt-20'>
+            <div className='min-h-screen bg-gray-50 pt-16'>
                 <Waves />
-                <h1 className='text-3xl font-bold my-4 text-center text-blue-600'>
-                    Dashboard
-                </h1>
-                <div className='flex flex-col md:flex-row flex-1 p-4 md:p-6 space-y-6 md:space-y-0 md:space-x-6 z-10'>
-                    <div className='w-full md:w-1/2 space-y-6'>
-                        <div className='bg-white rounded-lg shadow-md p-4 md:p-6'>
-                            <Table />
+                <div className='container mx-auto px-4 py-8 relative z-10'>
+                    <h1 className='text-4xl font-bold mb-8 text-center text-gray-800'>
+                        Dashboard
+                    </h1>
+
+                    <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
+                        <div className='bg-white rounded-xl shadow-lg overflow-hidden'>
+                            <div className='p-6'>
+                                <div className='border-b border-gray-100 pb-6'>
+                                    <h2 className='text-xl font-bold text-gray-800'>
+                                        Meine Ziele
+                                    </h2>
+                                    <p className='mt-1 text-sm text-gray-500'>
+                                        Verwalte deine persönlichen Ziele
+                                    </p>
+                                </div>
+                                <div className='mt-6'>
+                                    <Table />
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div className='w-full md:w-1/2 space-y-6'>
-                        <div className='bg-white rounded-lg shadow-md p-4 md:p-6'>
-                            <PublicGoalTable />
+
+                        <div className='bg-white rounded-xl shadow-lg overflow-hidden'>
+                            <div className='p-6'>
+                                <div className='border-b border-gray-100 pb-6'>
+                                    <h2 className='text-xl font-bold text-gray-800'>
+                                        Ziele von Freunden
+                                    </h2>
+                                    <p className='mt-1 text-sm text-gray-500'>
+                                        Entdecke die öffentlichen Ziele deiner
+                                        Freunde
+                                    </p>
+                                </div>
+                                <div className='mt-6'>
+                                    <PublicGoalTable />
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

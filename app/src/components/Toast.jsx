@@ -21,49 +21,67 @@ const Toast = ({ message, type, onClose }) => {
         setIsClosing(true);
         setTimeout(() => {
             onClose();
-        }, 500);
+        }, 300); // Reduced for snappier feeling
     };
 
-    const toastStyles = {
-        info: 'bg-blue-500',
-        success: 'bg-green-500',
-        error: 'bg-red-500',
-        warning: 'bg-yellow-500',
+    const toastConfig = {
+        info: {
+            background: 'bg-blue-50 border-blue-500',
+            icon: <Info className='w-5 h-5 text-blue-500' />,
+            textColor: 'text-blue-900',
+        },
+        success: {
+            background: 'bg-green-50 border-green-500',
+            icon: <CheckCircle className='w-5 h-5 text-green-500' />,
+            textColor: 'text-green-900',
+        },
+        error: {
+            background: 'bg-red-50 border-red-500',
+            icon: <AlertOctagon className='w-5 h-5 text-red-500' />,
+            textColor: 'text-red-900',
+        },
+        warning: {
+            background: 'bg-yellow-50 border-yellow-500',
+            icon: <AlertTriangle className='w-5 h-5 text-yellow-500' />,
+            textColor: 'text-yellow-900',
+        },
     };
 
-    const toastIcons = {
-        info: <Info className='mr-2' />,
-        success: <CheckCircle className='mr-2' />,
-        error: <AlertOctagon className='mr-2' />,
-        warning: <AlertTriangle className='mr-2' />,
-    };
+    const config = toastConfig[type];
 
     return (
         <div
             className={`
-                p-4 rounded-lg shadow-lg text-white
-                ${toastStyles[type]}
-                transition-all duration-300 ease-in-out
+                group flex items-center gap-3 p-4 rounded-xl border-l-4
+                shadow-lg backdrop-blur-sm
+                ${config.background}
                 ${
                     isClosing
-                        ? 'animate-slide-out-right'
-                        : 'animate-slide-in-right'
+                        ? 'animate-[slideRight_0.3s_ease-in-out_forwards]'
+                        : 'animate-[slideLeft_0.3s_ease-in-out_forwards]'
                 }
-                hover:scale-105 hover:shadow-xl
-                hover:translate-x-[-5px]
-                cursor-pointer
+                transition-all duration-300
+                hover:translate-x-[-4px] hover:shadow-xl
             `}
         >
-            <div className='flex items-center'>
-                {toastIcons[type]}
-                <span className='flex-grow'>{message}</span>
-                <button
-                    onClick={handleClose}
-                    className='ml-4 text-white hover:text-gray-200 transition-colors duration-200 focus:outline-none'
-                >
-                    <X size={18} />
-                </button>
-            </div>
+            {config.icon}
+
+            <span
+                className={`flex-grow text-sm font-medium ${config.textColor}`}
+            >
+                {message}
+            </span>
+
+            <button
+                onClick={handleClose}
+                className={`
+                    p-1 rounded-lg opacity-0 group-hover:opacity-100
+                    transition-all duration-200
+                    hover:bg-black/5
+                `}
+            >
+                <X className={`w-4 h-4 ${config.textColor}`} />
+            </button>
         </div>
     );
 };

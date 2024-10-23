@@ -2,9 +2,103 @@ import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { UserContext } from '../context/UserContext';
 import { useToast } from '../context/ToastContext';
-import { Bell, ChevronDown, Check } from 'lucide-react';
+import { Bell, ChevronDown, Check, Clock, Inbox } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Waves from '../components/Waves';
+import Loader from '../components/Loader';
+
+const NotificationCard = ({ notification, onMarkAsRead }) => {
+    const formattedDate = new Date(notification.createdAt).toLocaleString(
+        'de-DE',
+        {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+        }
+    );
+
+    return (
+        <div
+            className={`
+            bg-white rounded-xl border border-gray-100 hover:shadow-md 
+            transition-all duration-200 overflow-hidden
+            ${notification.read ? 'bg-gray-50' : ''}
+        `}
+        >
+            <div className='p-5'>
+                <div className='flex justify-between items-start gap-4 mb-3'>
+                    <div className='flex items-center gap-3'>
+                        <div
+                            className={`w-10 h-10 rounded-lg flex items-center justify-center 
+                            ${
+                                notification.read ? 'bg-gray-100' : 'bg-blue-50'
+                            }`}
+                        >
+                            <Bell
+                                className={`w-5 h-5 ${
+                                    notification.read
+                                        ? 'text-gray-400'
+                                        : 'text-blue-500'
+                                }`}
+                            />
+                        </div>
+                        <div>
+                            <h3 className='font-bold text-gray-900'>
+                                {notification.title}
+                            </h3>
+                            <span className='text-xs text-gray-400 flex items-center gap-1.5'>
+                                <Clock className='w-3.5 h-3.5' />
+                                {formattedDate}
+                            </span>
+                        </div>
+                    </div>
+                    {!notification.read && (
+                        <button
+                            onClick={() => onMarkAsRead(notification._id)}
+                            className='px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-sm 
+                                     font-medium hover:bg-blue-100 transition-colors duration-200 
+                                     flex items-center gap-1.5'
+                        >
+                            <Check className='w-4 h-4' />
+                            Gelesen
+                        </button>
+                    )}
+                </div>
+
+                <p className='text-gray-600 text-sm bg-gray-50 p-3 rounded-lg'>
+                    {notification.message}
+                </p>
+            </div>
+        </div>
+    );
+};
+
+const LoadMoreButton = ({ onClick, loading, disabled }) => (
+    <button
+        onClick={onClick}
+        disabled={disabled || loading}
+        className={`
+            px-6 py-2.5 rounded-lg font-medium flex items-center justify-center gap-2
+            transition-all duration-200
+            ${
+                disabled || loading
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    : 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl hover:scale-105'
+            }
+        `}
+    >
+        {loading ? (
+            <Loader />
+        ) : (
+            <>
+                Mehr anzeigen
+                <ChevronDown className='w-5 h-5' />
+            </>
+        )}
+    </button>
+);
 
 const Notifications = () => {
     const { user } = useContext(UserContext);
@@ -61,97 +155,51 @@ const Notifications = () => {
     return (
         <>
             <Navbar />
-            <div className='min-h-screen bg-gray-100 pt-24'>
+            <div className='min-h-screen bg-gray-50 pt-16'>
                 <Waves />
-                <div className='container mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10'>
+                <div className='container mx-auto px-4 py-8 relative z-10'>
                     <div className='max-w-3xl mx-auto'>
-                        <h2 className='text-2xl sm:text-3xl font-bold text-gray-800 mb-6 flex items-center'>
-                            <Bell className='mr-2' /> Benachrichtigungen
-                        </h2>
-                        <div className='space-y-4'>
-                            {notifications.map((notification) => (
-                                <div
-                                    key={notification._id}
-                                    className={`bg-white rounded-lg shadow-md p-4 sm:p-6 transition duration-300 ease-in-out hover:shadow-lg ${
-                                        notification.read ? 'bg-gray-50' : ''
-                                    }`}
-                                >
-                                    <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2'>
-                                        <h3 className='text-lg sm:text-xl font-semibold text-gray-800 mb-2 sm:mb-0'>
-                                            {notification.title}
-                                        </h3>
-                                        <div className='flex space-x-2'>
-                                            {!notification.read && (
-                                                <button
-                                                    onClick={() =>
-                                                        markAsRead(
-                                                            notification._id
-                                                        )
-                                                    }
-                                                    className='text-green-500 hover:text-green-600'
-                                                    title='Mark as read'
-                                                >
-                                                    <Check size={20} />
-                                                </button>
-                                            )}
-                                        </div>
-                                    </div>
-                                    <p className='text-gray-600 mb-4'>
-                                        {notification.message}
-                                    </p>
-                                    <p className='text-gray-400 text-sm'>
-                                        {new Date(
-                                            notification.createdAt
-                                        ).toLocaleString()}
-                                    </p>
-                                </div>
-                            ))}
+                        <div className='flex items-center gap-3 mb-8'>
+                            <div className='w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center'>
+                                <Bell className='w-6 h-6 text-blue-600' />
+                            </div>
+                            <h1 className='text-2xl font-bold text-gray-800'>
+                                Benachrichtigungen
+                            </h1>
                         </div>
-                        <div className='text-center mt-8'>
-                            <button
-                                onClick={loadMoreNotifications}
-                                className={`mt-6 px-4 sm:px-6 py-2 sm:py-3 rounded-full shadow-md transition duration-300 flex items-center justify-center mx-auto ${
-                                    loading || page >= totalPages
-                                        ? 'bg-gray-400 cursor-not-allowed'
-                                        : 'bg-blue-600 text-white hover:bg-blue-700'
-                                }`}
-                                disabled={loading || page >= totalPages}
-                            >
-                                {loading ? (
-                                    <span className='flex items-center'>
-                                        <svg
-                                            className='animate-spin -ml-1 mr-3 h-5 w-5 text-white'
-                                            xmlns='http://www.w3.org/2000/svg'
-                                            fill='none'
-                                            viewBox='0 0 24 24'
-                                        >
-                                            <circle
-                                                className='opacity-25'
-                                                cx='12'
-                                                cy='12'
-                                                r='10'
-                                                stroke='currentColor'
-                                                strokeWidth='4'
-                                            ></circle>
-                                            <path
-                                                className='opacity-75'
-                                                fill='currentColor'
-                                                d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
-                                            ></path>
-                                        </svg>
-                                        Lädt...
-                                    </span>
-                                ) : (
-                                    <span className='flex items-center'>
-                                        Mehr anzeigen
-                                        <ChevronDown
-                                            className='ml-2'
-                                            size={20}
+
+                        {loading && notifications.length === 0 ? (
+                            <div className='flex items-center justify-center py-12'>
+                                <Loader />
+                            </div>
+                        ) : notifications.length === 0 ? (
+                            <div className='text-center py-12'>
+                                <Inbox className='w-12 h-12 text-gray-400 mx-auto mb-3' />
+                                <p className='text-gray-500 text-lg'>
+                                    Keine Benachrichtigungen vorhanden
+                                </p>
+                            </div>
+                        ) : (
+                            <div className='space-y-4'>
+                                {notifications.map((notification) => (
+                                    <NotificationCard
+                                        key={notification._id}
+                                        notification={notification}
+                                        onMarkAsRead={markAsRead}
+                                    />
+                                ))}
+
+                                {page < totalPages && (
+                                    <div className='flex justify-center mt-6'>
+                                        <LoadMoreButton
+                                            onClick={loadMoreNotifications}
+                                            loading={loading}
+                                            disabled={page >= totalPages}
                                         />
-                                    </span>
+                                    </div>
                                 )}
-                            </button>
-                        </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

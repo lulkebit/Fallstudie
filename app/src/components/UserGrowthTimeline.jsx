@@ -33,7 +33,6 @@ const UserGrowthTimeline = () => {
                 `/user-growth?interval=${interval}&range=${intervalConfig.range}`
             );
             setData(response.data.stats);
-            console.log(response.data.stats);
             setLoading(false);
         } catch (err) {
             setError('Fehler beim Laden der Daten: ' + err.message);
@@ -87,9 +86,6 @@ const UserGrowthTimeline = () => {
     return (
         <div className='bg-white rounded-lg shadow-sm p-4 col-span-2'>
             <div className='flex justify-between items-center mb-6 px-2'>
-                <h3 className='font-bold text-gray-700 text-lg'>
-                    Nutzerwachstum
-                </h3>
                 <div className='flex gap-2'>
                     {INTERVALS.map((interval) => (
                         <button

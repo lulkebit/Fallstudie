@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import Cropper from 'react-easy-crop';
 import { X, ZoomIn, ZoomOut, RotateCw } from 'lucide-react';
+import DialogContainer from '../containers/DialogContainer';
 
 const createImage = (url) =>
     new Promise((resolve, reject) => {
@@ -75,71 +76,70 @@ const AvatarCropDialog = ({ onClose, onSave, imageFile }) => {
     }, [imageFile, croppedAreaPixels, rotation, onSave, onClose]);
 
     return (
-        <div className='fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none bg-gray-600 bg-opacity-75'>
-            <div className='relative w-full max-w-md mx-auto my-6'>
-                <div className='relative flex flex-col w-full bg-white border-0 rounded-lg shadow-lg outline-none focus:outline-none'>
-                    <div className='flex items-start justify-between p-5 border-b border-solid border-gray-300 rounded-t'>
-                        <h2 className='text-2xl font-semibold text-gray-700'>
-                            Avatar zuschneiden
-                        </h2>
-                        <button
-                            className='p-1 ml-auto bg-transparent border-0 text-gray-400 float-right text-3xl leading-none font-semibold outline-none focus:outline-none transition-colors duration-200 ease-in-out hover:text-gray-600'
-                            onClick={onClose}
-                        >
-                            <X size={24} />
-                        </button>
-                    </div>
-                    <div className='relative w-full h-64 overflow-hidden'>
-                        <Cropper
-                            image={URL.createObjectURL(imageFile)}
-                            crop={crop}
-                            zoom={zoom}
-                            aspect={1}
-                            onCropChange={setCrop}
-                            onCropComplete={onCropComplete}
-                            onZoomChange={setZoom}
-                            rotation={rotation}
-                        />
-                    </div>
-                    <div className='flex justify-center space-x-4 mt-4'>
-                        <button
-                            onClick={() => setZoom(Math.max(1, zoom - 0.1))}
-                            className='p-2 text-gray-600 bg-gray-100 rounded-full hover:bg-gray-200'
-                        >
-                            <ZoomOut size={24} />
-                        </button>
-                        <button
-                            onClick={() => setZoom(Math.min(3, zoom + 0.1))}
-                            className='p-2 text-gray-600 bg-gray-100 rounded-full hover:bg-gray-200'
-                        >
-                            <ZoomIn size={24} />
-                        </button>
-                        <button
-                            onClick={() => setRotation((rotation + 90) % 360)}
-                            className='p-2 text-gray-600 bg-gray-100 rounded-full hover:bg-gray-200'
-                        >
-                            <RotateCw size={24} />
-                        </button>
-                    </div>
-                    <div className='flex items-center justify-end p-6 border-t border-solid border-gray-300 rounded-b'>
-                        <button
-                            type='button'
-                            onClick={onClose}
-                            className='text-gray-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150 hover:bg-gray-100 rounded'
-                        >
-                            Abbrechen
-                        </button>
-                        <button
-                            type='button'
-                            onClick={handleSave}
-                            className='bg-blue-600 text-white active:bg-blue-700 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150 transform hover:scale-105'
-                        >
-                            Speichern
-                        </button>
-                    </div>
-                </div>
+        <DialogContainer onClose={onClose}>
+            <div className='p-6 border-b border-gray-100 flex justify-between items-center'>
+                <h3 className='text-xl font-bold text-gray-800'>
+                    Avatar zuschneiden
+                </h3>
+                <button
+                    onClick={onClose}
+                    className='p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200'
+                >
+                    <X className='h-5 w-5 text-gray-400' />
+                </button>
             </div>
-        </div>
+
+            <div className='relative w-full h-64'>
+                <Cropper
+                    image={URL.createObjectURL(imageFile)}
+                    crop={crop}
+                    zoom={zoom}
+                    aspect={1}
+                    onCropChange={setCrop}
+                    onCropComplete={onCropComplete}
+                    onZoomChange={setZoom}
+                    rotation={rotation}
+                />
+            </div>
+
+            <div className='flex justify-center gap-3 p-4 bg-gray-50'>
+                <button
+                    onClick={() => setZoom(Math.max(1, zoom - 0.1))}
+                    className='p-2 rounded-lg hover:bg-gray-200 text-gray-600 transition-colors duration-200'
+                >
+                    <ZoomOut className='h-5 w-5' />
+                </button>
+                <button
+                    onClick={() => setZoom(Math.min(3, zoom + 0.1))}
+                    className='p-2 rounded-lg hover:bg-gray-200 text-gray-600 transition-colors duration-200'
+                >
+                    <ZoomIn className='h-5 w-5' />
+                </button>
+                <button
+                    onClick={() => setRotation((rotation + 90) % 360)}
+                    className='p-2 rounded-lg hover:bg-gray-200 text-gray-600 transition-colors duration-200'
+                >
+                    <RotateCw className='h-5 w-5' />
+                </button>
+            </div>
+
+            <div className='p-6 border-t border-gray-100 flex justify-end gap-3'>
+                <button
+                    onClick={onClose}
+                    className='px-6 py-2.5 border border-gray-200 rounded-lg font-medium text-gray-600 
+                            hover:bg-gray-50 transition-colors duration-200'
+                >
+                    Abbrechen
+                </button>
+                <button
+                    onClick={handleSave}
+                    className='px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium shadow-lg 
+                            hover:bg-blue-700 transition-all duration-200 hover:shadow-xl hover:scale-105'
+                >
+                    Speichern
+                </button>
+            </div>
+        </DialogContainer>
     );
 };
 

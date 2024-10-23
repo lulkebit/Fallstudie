@@ -2,8 +2,35 @@ import React, { useEffect, useState, useContext, useRef } from 'react';
 import axios from 'axios';
 import { UserContext } from '../context/UserContext';
 import { useToast } from '../context/ToastContext';
-import { Bell, CheckCircle } from 'lucide-react';
+import { Bell, CheckCircle, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+
+const NotificationItem = ({ notification, onMarkAsRead }) => (
+    <div className='group flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200'>
+        <div className='flex-1 min-w-0'>
+            <p className='text-sm font-medium text-gray-900 line-clamp-1'>
+                {notification.title}
+            </p>
+            <p className='mt-1 text-sm text-gray-600 line-clamp-2'>
+                {notification.message}
+            </p>
+            <p className='mt-1.5 text-xs text-gray-400'>
+                {notification.formattedDate}
+            </p>
+        </div>
+        <button
+            onClick={(e) => {
+                e.stopPropagation();
+                onMarkAsRead(notification._id);
+            }}
+            className='p-1 rounded-lg text-blue-500 opacity-0 group-hover:opacity-100 
+                     hover:bg-blue-50 transition-all duration-200'
+            aria-label='Als gelesen markieren'
+        >
+            <CheckCircle className='h-4 w-4' />
+        </button>
+    </div>
+);
 
 const NotificationCard = () => {
     const { user } = useContext(UserContext);
@@ -74,7 +101,7 @@ const NotificationCard = () => {
                 className='relative p-2 text-gray-600 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 rounded-full'
                 aria-label='Toggle notifications'
             >
-                <Bell className='h-6 w-6' />
+                <Bell className='h-5 w-5' />
                 {notifications.length > 0 && (
                     <span className='absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full'>
                         {notifications.length}
@@ -85,60 +112,42 @@ const NotificationCard = () => {
             {isOpen && (
                 <div className='absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50'>
                     <div className='absolute w-full h-4 -top-4 left-0' />
-                    <div className='p-4'>
-                        <div className='flex justify-between items-center mb-4'>
-                            <h3 className='text-lg font-semibold text-gray-900'>
-                                Benachrichtigungen
-                            </h3>
-                        </div>
+                    <div className='p-4 border-b border-gray-100'>
+                        <h3 className='font-medium text-gray-900'>
+                            Benachrichtigungen
+                        </h3>
+                    </div>
+
+                    <div className='max-h-[360px] overflow-y-auto'>
                         {notifications.length > 0 ? (
-                            <ul className='space-y-2 max-h-60 overflow-y-auto'>
+                            <div className='p-2'>
                                 {notifications.map((notification) => (
-                                    <li
+                                    <NotificationItem
                                         key={notification._id}
-                                        className='bg-gray-50 rounded-md p-3'
-                                    >
-                                        <div className='flex justify-between items-start'>
-                                            <div>
-                                                <h4 className='text-sm font-medium text-gray-900'>
-                                                    {notification.title}
-                                                </h4>
-                                                <p className='mt-1 text-sm text-gray-600'>
-                                                    {notification.message}
-                                                </p>
-                                                <p className='mt-1 text-xs text-gray-500'>
-                                                    {formatDate(
-                                                        new Date(
-                                                            notification.createdAt
-                                                        )
-                                                    )}
-                                                </p>
-                                            </div>
-                                            <button
-                                                onClick={() =>
-                                                    markAsRead(notification._id)
-                                                }
-                                                className='ml-2 text-indigo-600 hover:text-indigo-800'
-                                                aria-label='Mark as read'
-                                            >
-                                                <CheckCircle className='h-5 w-5' />
-                                            </button>
-                                        </div>
-                                    </li>
+                                        notification={notification}
+                                        onMarkAsRead={markAsRead}
+                                    />
                                 ))}
-                            </ul>
+                            </div>
                         ) : (
-                            <div>
-                                <p className='text-gray-500 text-center py-4'>
-                                    Keine Benachrichtigungen
+                            <div className='py-12 px-4 text-center'>
+                                <Bell className='mx-auto h-6 w-6 text-gray-400 mb-2' />
+                                <p className='text-gray-500 text-sm'>
+                                    Keine neuen Benachrichtigungen
                                 </p>
                             </div>
                         )}
+                    </div>
+
+                    <div className='p-2 border-t border-gray-100'>
                         <button
                             onClick={() => navigate('/notifications')}
-                            className='text-blue-600 hover:text-blue-800 text-center w-full pt-1'
+                            className='w-full p-2 flex items-center justify-center gap-2 text-sm 
+                                         text-gray-600 hover:bg-gray-50 rounded-lg 
+                                         transition-colors duration-200'
                         >
-                            Alle Benachrichtigungen
+                            Alle anzeigen
+                            <ChevronRight className='h-4 w-4' />
                         </button>
                     </div>
                 </div>

@@ -9,121 +9,11 @@ import { UserContext } from '../context/UserContext';
 import axios from 'axios';
 import { useDialog } from '../context/DialogContext';
 import { useToast } from '../context/ToastContext';
-import { Goal, ChevronDown, ChevronUp, Pin } from 'lucide-react';
 import ConfirmationDialog from './dialogs/ConfirmationDialog';
 import EditGoalDialog from './dialogs/EditGoalDialog';
 import Loader from './Loader';
-
-const GoalCard = React.memo(
-    ({ goal, onEdit, onDelete, onPin, isExpanded, onToggle }) => {
-        const progressBarColor =
-            goal.progress === 100 ? 'bg-green-500' : 'bg-blue-500';
-
-        return (
-            <div
-                className={`goal-card bg-gray-50 rounded-lg shadow-md p-4 transition duration-300 ease-in-out hover:shadow-lg ${
-                    goal.isPinned ? 'border-2 border-yellow-500' : ''
-                }`}
-            >
-                <div className='flex items-center justify-between mb-2'>
-                    <div
-                        className='flex items-center flex-grow cursor-pointer'
-                        onClick={onToggle}
-                    >
-                        <div className='w-6 h-6 mr-3 flex-shrink-0'>
-                            <Goal />
-                        </div>
-                        <h2 className='text-xl font-semibold text-gray-800'>
-                            {goal.title}
-                        </h2>
-                    </div>
-                    <div className='flex items-center'>
-                        <button
-                            onClick={() => onPin(goal)}
-                            className={`mr-2 p-1 rounded-full ${
-                                goal.isPinned ? 'bg-yellow-200' : 'bg-gray-200'
-                            }`}
-                        >
-                            <Pin
-                                size={16}
-                                className={
-                                    goal.isPinned
-                                        ? 'text-yellow-600'
-                                        : 'text-gray-600'
-                                }
-                            />
-                        </button>
-                        {isExpanded ? (
-                            <ChevronUp size={20} />
-                        ) : (
-                            <ChevronDown size={20} />
-                        )}
-                    </div>
-                </div>
-                <div className='w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 mb-2'>
-                    <div
-                        className={`${progressBarColor} h-2.5 rounded-full`}
-                        style={{ width: `${goal.progress}%` }}
-                        role='progressbar'
-                        aria-valuenow={goal.progress}
-                        aria-valuemin='0'
-                        aria-valuemax='100'
-                    ></div>
-                </div>
-                {isExpanded && (
-                    <>
-                        <p className='text-gray-600 mb-4'>{goal.description}</p>
-                        <div className='grid grid-cols-2 gap-4 mb-4'>
-                            <p>
-                                <strong>Kategorie:</strong> {goal.category}
-                            </p>
-                            <p>
-                                <strong>Start:</strong>{' '}
-                                {new Date(goal.startDate).toLocaleDateString()}
-                            </p>
-                            <p>
-                                <strong>Ende:</strong>{' '}
-                                {new Date(goal.endDate).toLocaleDateString()}
-                            </p>
-                            <p>
-                                <strong>Öffentlich:</strong>{' '}
-                                {goal.public ? 'Ja' : 'Nein'}
-                            </p>
-                            <p>
-                                <strong>Zielwert:</strong> {goal.targetValue}{' '}
-                                {goal.unit}
-                            </p>
-                            <p>
-                                <strong>Richtung:</strong> {goal.direction}
-                            </p>
-                            <p>
-                                <strong>Erinnerungsintervall:</strong>{' '}
-                                {goal.reminderInterval} {goal.reminderType}
-                            </p>
-                            <p>
-                                <strong>Fortschritt:</strong> {goal.progress}%
-                            </p>
-                        </div>
-                        <div className='flex justify-end items-center space-x-2 mt-4'>
-                            <button
-                                onClick={() => onEdit(goal)}
-                                className='bg-blue-100 text-blue-600 hover:bg-blue-200 font-medium py-1 px-3 rounded transition duration-300 ease-in-out'
-                            >
-                                Bearbeiten
-                            </button>
-                            <button
-                                onClick={() => onDelete(goal.id)}
-                                className='bg-red-100 text-red-600 hover:bg-red-200 font-medium py-1 px-3 rounded transition duration-300 ease-in-out'
-                            >
-                                Löschen
-                            </button>
-                        </div>
-                    </>
-                )}
-            </div>
-        );
-    }
-);
+import { Goal } from 'lucide-react';
+import GoalCard from './GoalCards';
 
 const useGoals = (user, addToast) => {
     const [goals, setGoals] = useState([]);
@@ -318,46 +208,65 @@ const Table = () => {
     }, []);
 
     return (
-        <div className='container mx-auto p-6'>
-            <div className='flex justify-between items-center mb-6'>
-                <h2 className='text-2xl font-bold text-gray-800'>
-                    Meine Ziele
-                </h2>
+        <div className='space-y-4'>
+            <div className='flex flex-col sm:flex-row justify-between gap-4'>
+                <div className='flex flex-wrap gap-2'>
+                    <button
+                        onClick={() => handleSort('title')}
+                        className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors duration-200
+                            ${
+                                sortField === 'title'
+                                    ? 'bg-blue-50 text-blue-600'
+                                    : 'text-gray-600 hover:bg-gray-100'
+                            }`}
+                    >
+                        Nach Titel
+                        {sortField === 'title' && (
+                            <span className='ml-1'>
+                                {sortDirection === 'asc' ? '↑' : '↓'}
+                            </span>
+                        )}
+                    </button>
+                    <button
+                        onClick={() => handleSort('progress')}
+                        className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors duration-200
+                            ${
+                                sortField === 'progress'
+                                    ? 'bg-blue-50 text-blue-600'
+                                    : 'text-gray-600 hover:bg-gray-100'
+                            }`}
+                    >
+                        Nach Fortschritt
+                        {sortField === 'progress' && (
+                            <span className='ml-1'>
+                                {sortDirection === 'asc' ? '↑' : '↓'}
+                            </span>
+                        )}
+                    </button>
+                </div>
                 <button
                     onClick={handleAddGoal}
-                    className='bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105'
+                    className='px-4 py-2 bg-blue-600 text-white font-medium rounded-lg 
+                             shadow-lg hover:bg-blue-700 transition-all duration-200 
+                             hover:shadow-xl hover:scale-105'
                 >
                     + Neues Ziel
                 </button>
             </div>
+
             {loading ? (
-                <div className='flex items-center justify-center py-4'>
+                <div className='flex items-center justify-center py-12'>
                     <Loader />
                 </div>
             ) : goals.length === 0 ? (
-                <p className='text-gray-600 text-center py-8'>
-                    Noch keine Ziele erstellt.
-                </p>
+                <div className='text-center py-12'>
+                    <Goal className='w-12 h-12 text-gray-400 mx-auto mb-4' />
+                    <p className='text-gray-500 text-lg'>
+                        Noch keine Ziele erstellt.
+                    </p>
+                </div>
             ) : (
                 <div className='space-y-4'>
-                    <div className='flex space-x-4 mb-4'>
-                        <button
-                            onClick={() => handleSort('title')}
-                            className='font-medium'
-                        >
-                            Sortieren nach Titel
-                            {sortField === 'title' &&
-                                (sortDirection === 'asc' ? '↑' : '↓')}
-                        </button>
-                        <button
-                            onClick={() => handleSort('progress')}
-                            className='font-medium'
-                        >
-                            Sortieren nach Fortschritt
-                            {sortField === 'progress' &&
-                                (sortDirection === 'asc' ? '↑' : '↓')}
-                        </button>
-                    </div>
                     {sortedGoals.map((goal) => (
                         <GoalCard
                             key={goal.id}
