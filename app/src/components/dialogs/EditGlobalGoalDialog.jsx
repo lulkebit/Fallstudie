@@ -11,6 +11,7 @@ const EditGlobalGoalDialog = ({ goal, onSave, onClose }) => {
         currentValue: '',
         unit: '',
         participationCount: 0,
+        stepSize: 1, // Neues Feld für die Schrittgröße
     });
 
     const isEditing = !!goal;
@@ -27,6 +28,7 @@ const EditGlobalGoalDialog = ({ goal, onSave, onClose }) => {
                 currentValue: goal.currentValue,
                 unit: goal.unit,
                 participationCount: goal.participationCount,
+                stepSize: goal.stepSize || 1, // Neues Feld für die Schrittgröße
             });
         }
     }, [goal]);
@@ -181,7 +183,23 @@ const EditGlobalGoalDialog = ({ goal, onSave, onClose }) => {
                                 </div>
                             </div>
                         </div>
-
+                        <div>
+                            <label
+                                htmlFor='stepSize'
+                                className='block text-sm font-medium text-gray-700'
+                            >
+                                Schrittgröße
+                            </label>
+                            <input
+                                type='number'
+                                id='stepSize'
+                                name='stepSize'
+                                value={formData.stepSize}
+                                onChange={handleChange}
+                                required
+                                className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2'
+                            />
+                        </div>
                         {isEditing && (
                             <div className='bg-gray-50 p-4 rounded-lg space-y-4'>
                                 <h3 className='font-medium text-gray-700'>

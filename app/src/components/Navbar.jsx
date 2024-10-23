@@ -110,7 +110,8 @@ const Navbar = () => {
                             <img
                                 src='/Logo.png'
                                 alt='TrackMyGoal Logo'
-                                className='h-10 w-auto'
+                                className='h-12 w-auto cursor-pointer'
+                                onClick={() => navigate('/dashboard')}
                             />
                         </div>
                         <div className='hidden lg:flex items-center gap-2'>

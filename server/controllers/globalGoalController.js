@@ -16,8 +16,8 @@ const addGlobalGoal = async (req, res) => {
         logger.error(
             `Fehler beim Hinzufügen des globalen Ziels: ${error.message}`
         );
-        res.status(500).json({
-            error: 'Fehler beim Hinzufügen des globalen Ziels',
+        res.status(500).json({ 
+            error: 'Fehler beim Hinzufügen des globalen Ziels', 
         });
     }
 };
@@ -50,14 +50,14 @@ const updateGlobalGoal = async (req, res) => {
     try {
         const { id, ...updateData } = req.body;
         const updatedGoal = await GlobalGoalModel.findByIdAndUpdate(
-            id,
-            updateData,
+            id, 
+            updateData, 
             { new: true }
         );
         if (!updatedGoal) {
             return res
-                .status(404)
-                .json({ error: 'Globales Ziel nicht gefunden' });
+            .status(404)
+            .json({ error: 'Globales Ziel nicht gefunden' });
         }
         logger.info(`Globales Ziel aktualisiert: ${updatedGoal.title}`);
         res.status(200).json(updatedGoal);
@@ -66,8 +66,8 @@ const updateGlobalGoal = async (req, res) => {
             `Fehler beim Aktualisieren des globalen Ziels: ${error.message}`
         );
         res.status(500).json({
-            error: 'Fehler beim Aktualisieren des globalen Ziels',
-        });
+             error: 'Fehler beim Aktualisieren des globalen Ziels',
+             });
     }
 };
 
@@ -108,11 +108,11 @@ const participateInGlobalGoal = async (req, res) => {
         const goal = await GlobalGoalModel.findById(req.params.goalId);
         if (!goal) {
             return res
-                .status(404)
-                .json({ error: 'Globales Ziel nicht gefunden' });
+            .status(404)
+            .json({ error: 'Globales Ziel nicht gefunden' });
         }
 
-        goal.currentValue += 1;
+        goal.currentValue += goal.stepSize; // Schrittgröße verwenden
 
         if (goal.currentValue > goal.targetValue) {
             goal.currentValue = goal.targetValue;
@@ -130,8 +130,8 @@ const participateInGlobalGoal = async (req, res) => {
             `Fehler bei der Teilnahme am globalen Ziel: ${error.message}`
         );
         res.status(500).json({
-            error: 'Fehler bei der Teilnahme am globalen Ziel',
-        });
+             error: 'Fehler bei der Teilnahme am globalen Ziel', 
+            });
     }
 };
 
