@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Doughnut, Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import GlobalGoalTable from '../components/GlobalGoaltable';
 import UserManagement from '../components/UserManagement';
@@ -47,35 +46,6 @@ const AdminPanel = () => {
         if (loading) return <Loader />;
         if (error) return <div className='text-red-500'>{error}</div>;
         if (!stats) return null;
-
-        const goalCompletionData = {
-            labels: ['Abgeschlossene Ziele', 'Laufende Ziele'],
-            datasets: [
-                {
-                    data: [
-                        stats.completedUserGoals,
-                        stats.totalUserGoals - stats.completedUserGoals,
-                    ],
-                    backgroundColor: ['#4785FF', '#9EB9FF'],
-                    hoverBackgroundColor: ['#3B75E6', '#8AA3E6'],
-                },
-            ],
-        };
-
-        const mostPopularGoalData = {
-            labels: [stats.mostPopularGlobalGoal.unit, 'Zielwert'],
-            datasets: [
-                {
-                    data: [
-                        stats.mostPopularGlobalGoal.currentValue,
-                        stats.mostPopularGlobalGoal.targetValue -
-                            stats.mostPopularGlobalGoal.currentValue,
-                    ],
-                    backgroundColor: ['#4785FF', '#E6ECF8'],
-                    hoverBackgroundColor: ['#3B75E6', '#D1D9E6'],
-                },
-            ],
-        };
 
         const chartOptions = {
             responsive: true,

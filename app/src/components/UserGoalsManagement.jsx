@@ -8,7 +8,6 @@ import {
     Clock,
     Users,
     CheckCircle2,
-    Loader2,
     AlertCircle,
     ChevronDown,
     ChevronUp,
@@ -190,7 +189,6 @@ const UserGoalsManagement = () => {
     const [goals, setGoals] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [editingGoal, setEditingGoal] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [expandedGoals, setExpandedGoals] = useState({});
     const [sortField, setSortField] = useState('title');
@@ -216,7 +214,6 @@ const UserGoalsManagement = () => {
     };
 
     const handleEdit = (goal) => {
-        setEditingGoal(goal);
         addDialog({
             component: EditGoalDialog,
             props: {

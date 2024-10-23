@@ -1,5 +1,4 @@
 import React from 'react';
-import Loader from '../components/Loader';
 import Waves from '../components/Waves';
 
 const LoadingPage = () => {
