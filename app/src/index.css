@@ -2,6 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+h1 {
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+}
+
+h2 {
+    font-family: 'Roboto', sans-serif;
+    font-weight: normal;
+}
+
+h3 {
+    font-family: 'Roboto', sans-serif;
+    font-weight: normal;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: normal;
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -22,6 +42,41 @@
     opacity: 0;
     transform: translateY(20px);
   }
+}
+
+@keyframes slideLeft {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideRight {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
+
+@keyframes bounce {
+    0%,
+    80%,
+    100% {
+        transform: translateY(0);
+        opacity: 0.3;
+    }
+    40% {
+        transform: translateY(-8px);
+        opacity: 1;
+    }
 }
 
 .goal-card {

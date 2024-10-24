@@ -5,6 +5,20 @@ const { hashPassword, comparePassword } = require('../helpers/auth');
 const avatars = require('../ressources/avatars');
 const texts = require('../ressources/texts');
 
+/**
+ * Registriert einen neuen Benutzer im System.
+ *
+ * @param {Object} req - Das Express-Request-Objekt.
+ * @param {Object} req.body - Der Körper der Anfrage.
+ * @param {string} req.body.firstname - Der Vorname des Benutzers.
+ * @param {string} req.body.lastname - Der Nachname des Benutzers.
+ * @param {string} req.body.email - Die E-Mail-Adresse des Benutzers.
+ * @param {string} req.body.username - Der gewünschte Benutzername.
+ * @param {string} req.body.password - Das gewählte Passwort.
+ * @param {Object} res - Das Express-Response-Objekt.
+ * @returns {Promise<Object>} Ein Promise, das bei erfolgreicher Registrierung das Benutzer-Objekt zurückgibt.
+ * @throws {Object} Bei Fehlern während der Registrierung wird ein Fehler-Objekt zurückgegeben.
+ */
 const registerUser = async (req, res) => {
     try {
         logger.info(texts.INFO.ATTEMPTING_REGISTER_USER);
@@ -64,6 +78,17 @@ const registerUser = async (req, res) => {
     }
 };
 
+/**
+ * Authentifiziert einen Benutzer und erstellt ein JWT-Token bei erfolgreicher Anmeldung.
+ *
+ * @param {Object} req - Das Express-Request-Objekt.
+ * @param {Object} req.body - Der Körper der Anfrage.
+ * @param {string} req.body.emailOrUsername - Die E-Mail-Adresse oder der Benutzername.
+ * @param {string} req.body.password - Das Passwort des Benutzers.
+ * @param {Object} res - Das Express-Response-Objekt.
+ * @returns {Promise<Object>} Ein Promise, das bei erfolgreicher Anmeldung das Benutzer-Objekt und ein JWT-Token zurückgibt.
+ * @throws {Object} Bei Fehlern während der Anmeldung wird ein Fehler-Objekt zurückgegeben.
+ */
 const loginUser = async (req, res) => {
     try {
         logger.info(texts.INFO.ATTEMPTING_LOGIN_USER);
@@ -118,6 +143,14 @@ const loginUser = async (req, res) => {
     }
 };
 
+/**
+ * Meldet den aktuellen Benutzer ab, indem das JWT-Token gelöscht wird.
+ *
+ * @param {Object} req - Das Express-Request-Objekt.
+ * @param {Object} res - Das Express-Response-Objekt.
+ * @returns {Object} Eine JSON-Antwort mit einer Erfolgsmeldung.
+ * @throws {Object} Bei Fehlern während der Abmeldung wird ein Fehler-Objekt zurückgegeben.
+ */
 const logoutUser = (req, res) => {
     try {
         logger.info(texts.INFO.ATTEMPTING_LOGOUT_USER);
@@ -132,6 +165,16 @@ const logoutUser = (req, res) => {
     }
 };
 
+/**
+ * Ruft das Profil des aktuell angemeldeten Benutzers ab.
+ *
+ * @param {Object} req - Das Express-Request-Objekt.
+ * @param {Object} req.cookies - Die Cookies der Anfrage.
+ * @param {string} req.cookies.token - Das JWT-Token des Benutzers.
+ * @param {Object} res - Das Express-Response-Objekt.
+ * @returns {Promise<Object>} Ein Promise, das bei Erfolg das Benutzer-Objekt zurückgibt.
+ * @throws {Object} Bei Fehlern oder wenn kein gültiges Token vorhanden ist, wird ein Fehler-Objekt zurückgegeben.
+ */
 const getProfile = async (req, res) => {
     logger.info(texts.INFO.ATTEMPTING_PROFILE_RETRIEVAL);
     const { token } = req.cookies;
@@ -159,7 +202,7 @@ const getProfile = async (req, res) => {
                     }
 
                     logger.info(texts.SUCCESS.USER_LOGGED_IN(user.username));
-                    res.json(user);
+                    res.json({ success: true, user });
                 } catch (error) {
                     logger.error(
                         texts.ERRORS.ERROR('user profile retrieval', error)
@@ -176,6 +219,21 @@ const getProfile = async (req, res) => {
     }
 };
 
+/**
+ * Aktualisiert das Profil eines Benutzers.
+ *
+ * @param {Object} req - Das Express-Request-Objekt.
+ * @param {Object} req.body - Der Körper der Anfrage.
+ * @param {string} req.body.userId - Die ID des zu aktualisierenden Benutzers.
+ * @param {string} req.body.username - Der neue Benutzername (optional).
+ * @param {string} req.body.email - Die neue E-Mail-Adresse (optional).
+ * @param {string} req.body.firstname - Der neue Vorname (optional).
+ * @param {string} req.body.lastname - Der neue Nachname (optional).
+ * @param {Object} req.file - Die hochgeladene Avatardatei (optional).
+ * @param {Object} res - Das Express-Response-Objekt.
+ * @returns {Promise<Object>} Ein Promise, das bei erfolgreicher Aktualisierung das aktualisierte Benutzer-Objekt zurückgibt.
+ * @throws {Object} Bei Fehlern während der Aktualisierung wird ein Fehler-Objekt zurückgegeben.
+ */
 const updateProfile = async (req, res) => {
     try {
         const { userId, username, email, firstname, lastname } = req.body;
@@ -266,6 +324,18 @@ const updateProfile = async (req, res) => {
     }
 };
 
+/**
+ * Ändert das Passwort eines Benutzers.
+ *
+ * @param {Object} req - Das Express-Request-Objekt.
+ * @param {Object} req.body - Der Körper der Anfrage.
+ * @param {string} req.body.userId - Die ID des Benutzers.
+ * @param {string} req.body.oldPassword - Das alte Passwort.
+ * @param {string} req.body.newPassword - Das neue Passwort.
+ * @param {Object} res - Das Express-Response-Objekt.
+ * @returns {Promise<Object>} Ein Promise, das bei erfolgreicher Änderung eine Erfolgsmeldung zurückgibt.
+ * @throws {Object} Bei Fehlern während der Passwortänderung wird ein Fehler-Objekt zurückgegeben.
+ */
 const changePassword = async (req, res) => {
     const { userId, oldPassword, newPassword } = req.body;
 

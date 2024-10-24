@@ -2,9 +2,20 @@ const Friend = require('../models/friend');
 const User = require('../models/user');
 const Notification = require('../models/notification');
 const logger = require('../utils/logger');
-const { sendNotification } = require('../helpers/notification');
+const { createNotification } = require('../helpers/notification');
 const texts = require('../ressources/texts');
 
+/**
+ * Sendet eine Freundschaftsanfrage von einem Benutzer an einen anderen.
+ *
+ * @param {Object} req - Das Express-Request-Objekt.
+ * @param {Object} req.body - Der Körper der Anfrage.
+ * @param {string} req.body.userId - Die ID des Benutzers, der die Anfrage sendet.
+ * @param {string} req.body.friendUsername - Der Benutzername des Freundes, an den die Anfrage gesendet wird.
+ * @param {Object} res - Das Express-Response-Objekt.
+ * @returns {Promise<Object>} Ein Promise, das bei erfolgreicher Anfrage das Freundschaftsanfrage-Objekt zurückgibt.
+ * @throws {Object} Bei Fehlern während des Sendens der Anfrage wird ein Fehler-Objekt zurückgegeben.
+ */
 const sendFriendRequest = async (req, res) => {
     const { userId, friendUsername } = req.body;
 
@@ -47,12 +58,12 @@ const sendFriendRequest = async (req, res) => {
         await friendRequest.save();
         logger.info(texts.INFO.FRIEND_REQUEST_SAVED(userId, friend._id));
 
-        const notification = await sendNotification(
-            friend._id,
-            texts.MESSAGES.FRIEND_REQUEST_TITEl,
-            texts.MESSAGES.FRIEND_REQUEST_NOTIFICATION(user.username),
-            false
-        );
+        const notification = await createNotification({
+            userId: friend._id,
+            title: texts.MESSAGES.FRIEND_REQUEST_TITEl,
+            message: texts.MESSAGES.FRIEND_REQUEST_NOTIFICATION(user.username),
+            link: '/friends',
+        });
 
         friendRequest.notificationId = notification._id;
         await friendRequest.save();
@@ -64,6 +75,16 @@ const sendFriendRequest = async (req, res) => {
     }
 };
 
+/**
+ * Akzeptiert eine Freundschaftsanfrage.
+ *
+ * @param {Object} req - Das Express-Request-Objekt.
+ * @param {Object} req.params - Die Parameter der Anfrage.
+ * @param {string} req.params.requestId - Die ID der Freundschaftsanfrage.
+ * @param {Object} res - Das Express-Response-Objekt.
+ * @returns {Promise<Object>} Ein Promise, das bei erfolgreicher Akzeptierung das aktualisierte Freundschaftsanfrage-Objekt zurückgibt.
+ * @throws {Object} Bei Fehlern während der Akzeptierung wird ein Fehler-Objekt zurückgegeben.
+ */
 const acceptFriendRequest = async (req, res) => {
     const { requestId } = req.params;
     try {
@@ -98,6 +119,14 @@ const acceptFriendRequest = async (req, res) => {
             await friend.save();
         }
 
+        // Benachrichtigung für den ursprünglichen Absender
+        await createNotification({
+            userId: friendRequest.userId,
+            title: 'Freundschaftsanfrage akzeptiert',
+            message: `${friend.username} hat deine Freundschaftsanfrage angenommen.`,
+            link: '/friends',
+        });
+
         const notification = await Notification.findByIdAndUpdate(
             friendRequest.notificationId,
             { read: true },
@@ -118,20 +147,41 @@ const acceptFriendRequest = async (req, res) => {
     }
 };
 
+/**
+ * Lehnt eine Freundschaftsanfrage ab.
+ *
+ * @param {Object} req - Das Express-Request-Objekt.
+ * @param {Object} req.params - Die Parameter der Anfrage.
+ * @param {string} req.params.requestId - Die ID der Freundschaftsanfrage.
+ * @param {Object} res - Das Express-Response-Objekt.
+ * @returns {Promise<Object>} Ein Promise, das bei erfolgreicher Ablehnung das aktualisierte Freundschaftsanfrage-Objekt zurückgibt.
+ * @throws {Object} Bei Fehlern während der Ablehnung wird ein Fehler-Objekt zurückgegeben.
+ */
 const declineFriendRequest = async (req, res) => {
     const { requestId } = req.params;
     try {
         logger.info(texts.INFO.DECLINING_FRIEND_REQUEST(requestId));
-        const friendRequest = await Friend.findByIdAndUpdate(
-            requestId,
-            { status: 'declined' },
-            { new: true }
-        );
+        const friendRequest = await Friend.findById(requestId);
         if (!friendRequest) {
             return res
                 .status(404)
                 .json({ error: texts.ERRORS.FRIEND_REQUEST_NOT_FOUND });
         }
+
+        friendRequest.status = 'declined';
+        await friendRequest.save();
+
+        const user = await User.findById(friendRequest.userId);
+        const friend = await User.findById(friendRequest.friendId);
+
+        // Benachrichtigung für den ursprünglichen Absender
+        await createNotification({
+            userId: friendRequest.userId,
+            title: 'Freundschaftsanfrage abgelehnt',
+            message: `${friend.username} hat deine Freundschaftsanfrage abgelehnt.`,
+            link: '/friends',
+        });
+
         logger.info(texts.SUCCESS.FRIEND_REQUEST_DECLINED);
         res.status(200).json(friendRequest);
     } catch (error) {
@@ -140,6 +190,16 @@ const declineFriendRequest = async (req, res) => {
     }
 };
 
+/**
+ * Ruft die Freunde eines Benutzers ab.
+ *
+ * @param {Object} req - Das Express-Request-Objekt.
+ * @param {Object} req.params - Die Parameter der Anfrage.
+ * @param {string} req.params.userId - Die ID des Benutzers.
+ * @param {Object} res - Das Express-Response-Objekt.
+ * @returns {Promise<Array>} Ein Promise, das bei Erfolg ein Array von Freunden zurückgibt.
+ * @throws {Object} Bei Fehlern während des Abrufens wird ein Fehler-Objekt zurückgegeben.
+ */
 const getFriends = async (req, res) => {
     const { userId } = req.params;
     try {
@@ -156,6 +216,16 @@ const getFriends = async (req, res) => {
     }
 };
 
+/**
+ * Ruft die ausstehenden Freundschaftsanfragen eines Benutzers ab.
+ *
+ * @param {Object} req - Das Express-Request-Objekt.
+ * @param {Object} req.params - Die Parameter der Anfrage.
+ * @param {string} req.params.userId - Die ID des Benutzers.
+ * @param {Object} res - Das Express-Response-Objekt.
+ * @returns {Promise<Array>} Ein Promise, das bei Erfolg ein Array von ausstehenden Freundschaftsanfragen zurückgibt.
+ * @throws {Object} Bei Fehlern während des Abrufens wird ein Fehler-Objekt zurückgegeben.
+ */
 const getFriendRequests = async (req, res) => {
     const { userId } = req.params;
     try {
@@ -172,12 +242,41 @@ const getFriendRequests = async (req, res) => {
     }
 };
 
+/**
+ * Löscht eine Freundschaft zwischen zwei Benutzern.
+ *
+ * @param {Object} req - Das Express-Request-Objekt.
+ * @param {Object} req.params - Die Parameter der Anfrage.
+ * @param {string} req.params.userId - Die ID des ersten Benutzers.
+ * @param {string} req.params.friendId - Die ID des zweiten Benutzers (Freund).
+ * @param {Object} res - Das Express-Response-Objekt.
+ * @returns {Promise<Object>} Ein Promise, das bei erfolgreicher Löschung eine Erfolgsmeldung zurückgibt.
+ * @throws {Object} Bei Fehlern während der Löschung wird ein Fehler-Objekt zurückgegeben.
+ */
 const deleteFriend = async (req, res) => {
     const { userId, friendId } = req.params;
     try {
         logger.info(texts.INFO.DELETING_FRIENDSHIP(userId, friendId));
         await Friend.deleteOne({ userId, friendId });
         await Friend.deleteOne({ userId: friendId, friendId: userId });
+
+        const user = await User.findById(userId);
+        const friend = await User.findById(friendId);
+
+        // Benachrichtigungen für beide Benutzer
+        await createNotification({
+            userId: friendId,
+            title: 'Freundschaft beendet',
+            message: `${user.username} hat die Freundschaft beendet.`,
+            link: '/friends',
+        });
+
+        await createNotification({
+            userId: userId,
+            title: 'Freundschaft beendet',
+            message: `${friend.username} wurde aus deiner Freundesliste entfernt.`,
+            link: '/friends',
+        });
 
         logger.info(texts.SUCCESS.FRIENDSHIP_DELETED);
         res.status(200).json({ message: texts.SUCCESS.FRIENDSHIP_DELETED });
