@@ -2,8 +2,32 @@ import React, { useEffect, useState, useContext, useRef } from 'react';
 import axios from 'axios';
 import { UserContext } from '../context/UserContext';
 import { useToast } from '../context/ToastContext';
-import { Bell, CheckCircle, ChevronRight, CheckCheck } from 'lucide-react';
+import {
+    Bell,
+    CheckCircle,
+    ChevronRight,
+    CheckCheck,
+    UserPlus,
+    UserCheck,
+    UserX,
+    UserMinus,
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+
+const getNotificationIcon = (title) => {
+    switch (title) {
+        case 'Freundschaftsanfrage':
+            return <UserPlus className='h-5 w-5 text-blue-500' />;
+        case 'Freundschaftsanfrage akzeptiert':
+            return <UserCheck className='h-5 w-5 text-green-500' />;
+        case 'Freundschaftsanfrage abgelehnt':
+            return <UserX className='h-5 w-5 text-red-500' />;
+        case 'Freundschaft beendet':
+            return <UserMinus className='h-5 w-5 text-gray-500' />;
+        default:
+            return <Bell className='h-5 w-5 text-gray-500' />;
+    }
+};
 
 const NotificationItem = ({ notification, onMarkAsRead }) => {
     const navigate = useNavigate();
@@ -22,6 +46,9 @@ const NotificationItem = ({ notification, onMarkAsRead }) => {
             onClick={handleClick}
             className='group flex items-start gap-4 p-4 hover:bg-gray-50 transition-colors duration-200 cursor-pointer'
         >
+            <div className='flex-shrink-0'>
+                {getNotificationIcon(notification.title)}
+            </div>
             <div className='flex-1 min-w-0 space-y-1.5'>
                 <p className='text-sm font-medium text-gray-900 line-clamp-1'>
                     {notification.title}
