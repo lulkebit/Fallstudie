@@ -1,156 +1,147 @@
-# TrackMyGoal
+# Ziel-Erreichungs-Plattform
 
-TrackMyGoal ist eine Webanwendung, die Benutzern hilft, ihre Ziele zu verfolgen und zu verwalten. Diese Anwendung besteht aus einem Frontend, das mit React und Tailwind CSS erstellt wurde, und einem Backend, das mit Node.js und Express betrieben wird und MongoDB als Datenbank verwendet.
+Eine Full-Stack-Webanwendung, die Benutzern hilft, ihre Ziele zu setzen, zu verfolgen und zu erreichen, während sie sich mit Freunden verbinden und an globalen Herausforderungen teilnehmen können.
 
-## Inhaltsverzeichnis
+## Funktionen
 
--   Installation
--   Verwendung
--   Projektstruktur
--   Umgebungsvariablen
--   Skripte
--   API-Endpunkte
--   Technologien
--   Mitwirkende
--   Lizenz
+-   **Benutzerauthentifizierung**
 
-## Installation
+    -   Registrierungs- und Anmeldefunktion
+    -   Passwortverwaltung
+    -   Profilanpassung mit Avatar
 
-### Voraussetzungen
+-   **Zielverwaltung**
 
--   Node.js (>= 14.x)
--   npm (>= 6.x)
--   MongoDB
+    -   Erstellen und Verwalten privater Ziele
+    -   Ziele mit Freunden teilen
+    -   Teilnahme an globalen Zielen
+    -   Fortschrittsverfolgung
 
-### Schritte
+-   **Soziale Funktionen**
 
-1. Klone das Repository:
+    -   Freunde hinzufügen und verwalten
+    -   Geteilte Ziele von Freunden ansehen
+    -   Auf Ziele reagieren
+    -   Benachrichtigungssystem
 
-    ```sh
-    git clone https://github.com/lulkebit/Fallstudie.git
-    cd trackmygoal
-    ```
+-   **Admin-Bereich**
+    -   Benutzerverwaltung
+    -   Verwaltung globaler Ziele
+    -   Systemstatistiken
 
-2. Installiere die Abhängigkeiten für das Frontend:
-
-    ```sh
-    cd app
-    npm install
-    ```
-
-3. Installiere die Abhängigkeiten für das Backend:
-
-    ```sh
-    cd ../server
-    npm install
-    ```
-
-## Verwendung
+## Technologie-Stack
 
 ### Frontend
 
-Um das Frontend zu starten, navigiere in das `app` Verzeichnis und führe den folgenden Befehl aus:
-
-```sh
-npm start
-```
-
-Das Frontend wird auf `http://localhost:3000` laufen.
-
-### Backend
-
-Um das Backend zu starten, navigiere in das `server` Verzeichnis und führe den folgenden Befehl aus:
-
-```sh
-npm start
-```
-
-Das Backend wird auf `http://localhost:8000` laufen.
-
-## Projektstruktur
-
-```plaintext
-.gitignore
-.idea/
-app/
-    build/
-    package.json
-    public/
-    src/
-        components/
-        context/
-        index.css
-        index.js
-        pages/
-    tailwind.config.js
-server/
-    controllers/
-        authController.js
-        friendController.js
-    helpers/
-    index.js
-    models/
-    package.json
-    ressources/
-        texts.js
-    routes/
-    utils/
-        logger.js
-        logs/
-```
-
-### Wichtige Dateien und Verzeichnisse
-
--   `index.js`: Einstiegspunkt für das Frontend.
--   `tailwind.config.js`: Tailwind CSS Konfigurationsdatei.
--   `index.js`: Einstiegspunkt für das Backend.
--   `texts.js`: Enthält Textnachrichten für das Backend.
--   `logger.js`: Logger-Konfiguration.
-
-## Skripte
-
-### Frontend
-
--   `npm start`: Startet die Entwicklungsumgebung.
--   `npm run build`: Erstellt eine Produktionsversion der Anwendung.
-
-### Backend
-
--   `npm start`: Startet den Server mit [`nodemon`] für die Entwicklung.
-
-## API-Endpunkte
-
-### Authentifizierung
-
--   `POST /api/auth/register`: Registriert einen neuen Benutzer.
--   `POST /api/auth/login`: Meldet einen Benutzer an.
-
-### Ziele
-
--   `GET /api/goals`: Ruft die Ziele des angemeldeten Benutzers ab.
--   `POST /api/goals`: Erstellt ein neues Ziel.
--   `DELETE /api/goals/:id`: Löscht ein Ziel.
-
-### Freunde
-
--   `GET /api/friends`: Ruft die Freundesliste des angemeldeten Benutzers ab.
--   `POST /api/friends/request`: Sendet eine Freundschaftsanfrage.
--   `POST /api/friends/accept`: Akzeptiert eine Freundschaftsanfrage.
--   `POST /api/friends/reject`: Lehnt eine Freundschaftsanfrage ab.
-
-## Technologien
-
-### Frontend
-
--   React
+-   React.js
 -   Tailwind CSS
+-   Context API für State Management
 
 ### Backend
 
 -   Node.js
--   Express
--   MongoDB
--   Mongoose
+-   Express.js
+-   MongoDB (basierend auf der Modellstruktur)
+
+## Installation & Einrichtung
+
+### Voraussetzungen
+
+-   Node.js
+-   npm
+-   MongoDB-Instanz
+
+### Backend-Einrichtung
+
+1. In das Server-Verzeichnis wechseln:
+
+```bash
+cd server
+```
+
+2. Abhängigkeiten installieren:
+
+```bash
+npm install
+```
+
+3. Server starten:
+
+```bash
+npm start
+```
+
+Der Server läuft auf dem konfigurierten Port (Standard: 3001).
+
+### Frontend-Einrichtung
+
+1. In das App-Verzeichnis wechseln:
+
+```bash
+cd app
+```
+
+2. Abhängigkeiten installieren:
+
+```bash
+npm install
+```
+
+3. Entwicklungsserver starten:
+
+```bash
+npm start
+```
+
+Die Anwendung öffnet sich automatisch im Standard-Browser unter `http://localhost:3000`.
+
+## Projektstruktur
+
+```
+├── app/                    # Frontend React-Anwendung
+│   ├── public/            # Statische Dateien
+│   └── src/
+│       ├── components/    # React-Komponenten
+│       ├── context/       # Context-Provider
+│       ├── pages/         # Seiten-Komponenten
+│       └── Routes.jsx     # Anwendungsrouting
+│
+└── server/                # Backend Node.js-Anwendung
+    ├── controllers/       # Routen-Controller
+    ├── helpers/          # Hilfsfunktionen
+    ├── models/           # Datenbankmodelle
+    ├── routes/           # API-Routen
+    └── utils/            # Dienstprogramme
+```
+
+## Detaillierte Funktionen
+
+### Benutzerverwaltung
+
+-   Benutzerregistrierung und -authentifizierung
+-   Profilanpassung
+-   Passwortverwaltung
+-   Freundesystem
+
+### Zielsystem
+
+-   Private Ziele zur persönlichen Verfolgung
+-   Geteilte Ziele, sichtbar für Freunde
+-   Globale Ziele für die Community-Teilnahme
+-   Fortschrittsverfolgung und Aktualisierungen
+
+### Soziale Funktionen
+
+-   Freundschaftsanfragen und -verwaltung
+-   Aktivitätsbenachrichtigungen
+-   Zielreaktionen und Interaktionen
+-   Zeitleiste der persönlichen Entwicklung
+
+### Administrative Funktionen
+
+-   Benutzerkontoverwaltung
+-   Erstellung und Verwaltung globaler Ziele
+-   Systemüberwachung und Statistiken
 
 ## Mitwirkende
 
