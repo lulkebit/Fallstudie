@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, LogIn, Sun, Moon } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 
 const LandingNavbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const [isDarkMode, setIsDarkMode] = useState(true);
+    const { isDarkMode, toggleTheme } = useTheme();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -14,18 +15,6 @@ const LandingNavbar = () => {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
-
-    useEffect(() => {
-        if (isDarkMode) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    }, [isDarkMode]);
-
-    const toggleTheme = () => {
-        setIsDarkMode(!isDarkMode);
-    };
 
     const navigateToSection = (sectionId) => {
         setIsMobileMenuOpen(false);
@@ -92,16 +81,10 @@ const LandingNavbar = () => {
                         {/* Theme Toggle */}
                         <button
                             onClick={toggleTheme}
-                            className='p-2 rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/20 transition-colors duration-200'
-                            aria-label='Toggle theme'
+                            className='text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white transition-colors duration-200 text-sm font-medium'
                         >
-                            {isDarkMode ? (
-                                <Sun className='w-5 h-5 text-gray-700 dark:text-white' />
-                            ) : (
-                                <Moon className='w-5 h-5 text-gray-700 dark:text-white' />
-                            )}
+                            {isDarkMode ? <Sun /> : <Moon />}
                         </button>
-
                         <button className='px-4 py-2 text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white transition-colors duration-200 text-sm font-medium flex items-center gap-2'>
                             <LogIn className='w-4 h-4' />
                             Login
@@ -110,35 +93,33 @@ const LandingNavbar = () => {
                             Kostenlos starten
                         </button>
                     </div>
+                </div>
 
-                    {/* Mobile Menu Button */}
-                    <div className='lg:hidden flex items-center gap-4'>
-                        {/* Theme Toggle Mobile */}
-                        <button
-                            onClick={toggleTheme}
-                            className='p-2 rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/20 transition-colors duration-200'
-                            aria-label='Toggle theme'
-                        >
-                            {isDarkMode ? (
-                                <Sun className='w-5 h-5 text-gray-700 dark:text-white' />
-                            ) : (
-                                <Moon className='w-5 h-5 text-gray-700 dark:text-white' />
-                            )}
-                        </button>
+                {/* Mobile Menu Button */}
+                <div className='lg:hidden flex items-center gap-4'>
+                    {/* Theme Toggle Mobile */}
+                    <button
+                        onClick={toggleTheme}
+                        className='p-2 rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/20 transition-colors duration-200'
+                        aria-label='Toggle theme'
+                    >
+                        {isDarkMode ? (
+                            <Sun className='w-5 h-5 text-gray-700 dark:text-white' />
+                        ) : (
+                            <Moon className='w-5 h-5 text-gray-700 dark:text-white' />
+                        )}
+                    </button>
 
-                        <button
-                            onClick={() =>
-                                setIsMobileMenuOpen(!isMobileMenuOpen)
-                            }
-                            className='text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white transition-colors duration-200'
-                        >
-                            {isMobileMenuOpen ? (
-                                <X className='w-6 h-6' />
-                            ) : (
-                                <Menu className='w-6 h-6' />
-                            )}
-                        </button>
-                    </div>
+                    <button
+                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                        className='text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white transition-colors duration-200'
+                    >
+                        {isMobileMenuOpen ? (
+                            <X className='w-6 h-6' />
+                        ) : (
+                            <Menu className='w-6 h-6' />
+                        )}
+                    </button>
                 </div>
             </div>
 
