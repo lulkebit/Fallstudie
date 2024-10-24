@@ -90,7 +90,10 @@ const Landingpage = () => {
             <LandingNavbar />
 
             {/* Modern Hero Section */}
-            <section className='relative min-h-screen bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 flex overflow-hidden'>
+            <section
+                id='first-section'
+                className='relative min-h-screen bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 flex overflow-hidden'
+            >
                 {/* Left Content Side */}
                 <div className='w-full lg:w-1/2 flex flex-col justify-center px-6 lg:px-16 py-20 relative z-10'>
                     <div className='flex items-center gap-2 mb-8'>
@@ -826,21 +829,33 @@ const Landingpage = () => {
                                 name: 'Luke Schröter',
                                 image: Luke,
                                 role: 'Full Stack Developer',
-                                skills: ['React', 'UI/UX', 'TailwindCSS'],
+                                skills: [
+                                    'React',
+                                    'UI/UX',
+                                    'TailwindCSS',
+                                    'Node.js',
+                                    'MongoDB',
+                                ],
                                 social: {
-                                    github: '#',
-                                    linkedin: '#',
+                                    github: 'https://github.com/lulkebit',
+                                    linkedin:
+                                        'https://www.linkedin.com/in/luke-schr%C3%B6ter/',
                                 },
                                 gradient: 'from-[#4785FF] to-[#6769ff]',
                             },
                             {
                                 name: 'Sönke Vogelsberg',
                                 image: Sönke,
-                                role: 'Muss gefüllt werden',
-                                skills: ['Node.js', 'Database', 'API'],
+                                role: 'Quality Assurance Manager',
+                                skills: [
+                                    'Testmanagement',
+                                    'Fehleranalyse',
+                                    'Prozessoptimierung',
+                                ],
                                 social: {
-                                    github: '#',
-                                    linkedin: '#',
+                                    github: 'https://github.com/soenkevogelsberg',
+                                    linkedin:
+                                        'https://www.linkedin.com/in/soenkevogelsberg/',
                                 },
                                 gradient: 'from-[#6769ff] to-[#8c52ff]',
                             },
@@ -848,25 +863,27 @@ const Landingpage = () => {
                                 name: 'Jean-Luc Höfler',
                                 image: JeanLuc,
                                 role: 'Full Stack Developer',
-                                skills: ['React', 'Node.js', 'DevOps'],
+                                skills: ['MongoDB', 'Node.js', 'React', 'Git'],
                                 social: {
-                                    github: '#',
-                                    linkedin: '#',
+                                    github: 'https://github.com/Garf1x',
+                                    linkedin:
+                                        'https://www.linkedin.com/in/jean-luc-h%C3%B6fler-17713026b/',
                                 },
                                 gradient: 'from-[#8c52ff] to-[#4785FF]',
                             },
                             {
                                 name: 'Arman Rashoyan',
                                 image: Arman,
-                                role: 'Praktikant',
+                                role: 'Marketing Manager',
                                 skills: [
-                                    'Design',
-                                    'Prototyping',
-                                    'User Research',
+                                    'Marktanalyse',
+                                    'Kampagnenmanagement',
+                                    'Zielgruppenanalyse',
                                 ],
                                 social: {
-                                    github: '#',
-                                    linkedin: '#',
+                                    github: 'https://github.com/ArmanRashoyan',
+                                    linkedin:
+                                        'https://www.linkedin.com/in/arman-rashoyan-01ba8a264/',
                                 },
                                 gradient: 'from-[#4785FF] to-[#8c52ff]',
                             },
@@ -887,6 +904,8 @@ const Landingpage = () => {
                                             href={member.social.github}
                                             className='bg-white/10 hover:bg-white/20 p-3 rounded-full backdrop-blur-sm transition-colors duration-200'
                                             title='GitHub'
+                                            target='_blank'
+                                            rel='noreferrer'
                                         >
                                             <svg
                                                 className='w-6 h-6 text-white'
@@ -900,6 +919,8 @@ const Landingpage = () => {
                                             href={member.social.linkedin}
                                             className='bg-white/10 hover:bg-white/20 p-3 rounded-full backdrop-blur-sm transition-colors duration-200'
                                             title='LinkedIn'
+                                            target='_blank'
+                                            rel='noreferrer'
                                         >
                                             <svg
                                                 className='w-6 h-6 text-white'

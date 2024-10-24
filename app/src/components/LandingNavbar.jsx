@@ -43,7 +43,10 @@ const LandingNavbar = () => {
                 <div className='flex justify-between h-20 items-center'>
                     {/* Logo */}
                     <div className='flex items-center'>
-                        <div className='h-10 w-10 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center mr-3'>
+                        <div
+                            onClick={() => navigateToSection('first-section')}
+                            className='h-10 w-10 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center mr-3 cursor-pointer'
+                        >
                             <svg
                                 className='w-6 h-6 text-white'
                                 fill='none'
@@ -58,9 +61,12 @@ const LandingNavbar = () => {
                                 />
                             </svg>
                         </div>
-                        <span className='text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#4785FF] to-[#8c52ff]'>
+                        <button
+                            onClick={() => navigateToSection('first-section')}
+                            className='text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#4785FF] to-[#8c52ff]'
+                        >
                             TrackMyGoal
-                        </span>
+                        </button>
                     </div>
 
                     {/* Desktop Navigation */}
