@@ -103,7 +103,7 @@ const AdminPanel = () => {
                             unit: stats.mostPopularGlobalGoal.unit,
                         }}
                         chartData={{
-                            labels: ['Aktueller Fortschritt', 'Verbleibend'],
+                            labels: ['Zielwert', 'Verbleibend'],
                             datasets: [
                                 {
                                     data: [
