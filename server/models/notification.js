@@ -8,6 +8,7 @@ const mongoose = require('mongoose');
  * @property {string} message - Der Inhalt der Benachrichtigung.
  * @property {boolean} read - Gibt an, ob die Benachrichtigung gelesen wurde.
  * @property {Date} createdAt - Das Erstellungsdatum der Benachrichtigung.
+ * @property {string} link - Der Link zu dem die Benachrichtigung führen soll.
  */
 
 const notificationSchema = new mongoose.Schema({
@@ -40,6 +41,15 @@ const notificationSchema = new mongoose.Schema({
     message: {
         type: String,
         required: true,
+    },
+
+    /**
+     * Der Link zu dem die Benachrichtigung führen soll.
+     * @type {string}
+     */
+    link: {
+        type: String,
+        default: null,
     },
 
     /**

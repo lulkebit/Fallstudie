@@ -6,8 +6,10 @@ import { Bell, ChevronDown, Check, Clock, Inbox } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Waves from '../components/Waves';
 import Loader from '../components/Loader';
+import { useNavigate } from 'react-router-dom';
 
 const NotificationCard = ({ notification, onMarkAsRead }) => {
+    const navigate = useNavigate();
     const formattedDate = new Date(notification.createdAt).toLocaleString(
         'de-DE',
         {
@@ -19,11 +21,18 @@ const NotificationCard = ({ notification, onMarkAsRead }) => {
         }
     );
 
+    const handleClick = () => {
+        if (notification.link) {
+            navigate(notification.link);
+        }
+    };
+
     return (
         <div
+            onClick={handleClick}
             className={`
             bg-white rounded-xl border border-gray-100 hover:shadow-md 
-            transition-all duration-200 overflow-hidden
+            transition-all duration-200 overflow-hidden cursor-pointer
             ${notification.read ? 'bg-gray-50' : ''}
         `}
         >
@@ -31,7 +40,7 @@ const NotificationCard = ({ notification, onMarkAsRead }) => {
                 <div className='flex justify-between items-start gap-4 mb-3'>
                     <div className='flex items-center gap-3'>
                         <div
-                            className={`w-10 h-10 rounded-lg flex items-center justify-center 
+                            className={`w-10 h-10 rounded-lg flex items-center justify-center relative
                             ${
                                 notification.read ? 'bg-gray-100' : 'bg-blue-50'
                             }`}
@@ -43,6 +52,19 @@ const NotificationCard = ({ notification, onMarkAsRead }) => {
                                         : 'text-blue-500'
                                 }`}
                             />
+                            {!notification.read && (
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onMarkAsRead(notification._id);
+                                    }}
+                                    className='absolute -top-2 -right-2 p-1 rounded-full bg-blue-50 
+                                             text-blue-600 hover:bg-blue-100 transition-colors duration-200'
+                                    aria-label='Als gelesen markieren'
+                                >
+                                    <Check className='w-3 h-3' />
+                                </button>
+                            )}
                         </div>
                         <div>
                             <h3 className='font-bold text-gray-900'>
@@ -54,17 +76,6 @@ const NotificationCard = ({ notification, onMarkAsRead }) => {
                             </span>
                         </div>
                     </div>
-                    {!notification.read && (
-                        <button
-                            onClick={() => onMarkAsRead(notification._id)}
-                            className='px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-sm 
-                                     font-medium hover:bg-blue-100 transition-colors duration-200 
-                                     flex items-center gap-1.5'
-                        >
-                            <Check className='w-4 h-4' />
-                            Gelesen
-                        </button>
-                    )}
                 </div>
 
                 <p className='text-gray-600 text-sm bg-gray-50 p-3 rounded-lg'>

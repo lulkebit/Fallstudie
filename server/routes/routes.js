@@ -180,5 +180,3 @@ router.get('/admin/stats', getAdminStats);
 router.get('/user-growth', getUserGrowthStats);
 
 module.exports = router;
-
-module.exports = router;

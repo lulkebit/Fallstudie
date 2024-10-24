@@ -5,32 +5,48 @@ import { useToast } from '../context/ToastContext';
 import { Bell, CheckCircle, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const NotificationItem = ({ notification, onMarkAsRead }) => (
-    <div className='group flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200'>
-        <div className='flex-1 min-w-0'>
-            <p className='text-sm font-medium text-gray-900 line-clamp-1'>
-                {notification.title}
-            </p>
-            <p className='mt-1 text-sm text-gray-600 line-clamp-2'>
-                {notification.message}
-            </p>
-            <p className='mt-1.5 text-xs text-gray-400'>
-                {notification.formattedDate}
-            </p>
-        </div>
-        <button
-            onClick={(e) => {
-                e.stopPropagation();
+const NotificationItem = ({ notification, onMarkAsRead }) => {
+    const navigate = useNavigate();
+
+    const handleClick = () => {
+        if (notification.link) {
+            navigate(notification.link);
+            if (!notification.read) {
                 onMarkAsRead(notification._id);
-            }}
-            className='p-1 rounded-lg text-blue-500 opacity-0 group-hover:opacity-100 
-                     hover:bg-blue-50 transition-all duration-200'
-            aria-label='Als gelesen markieren'
+            }
+        }
+    };
+
+    return (
+        <div
+            onClick={handleClick}
+            className='group flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200 cursor-pointer'
         >
-            <CheckCircle className='h-4 w-4' />
-        </button>
-    </div>
-);
+            <div className='flex-1 min-w-0'>
+                <p className='text-sm font-medium text-gray-900 line-clamp-1'>
+                    {notification.title}
+                </p>
+                <p className='mt-1 text-sm text-gray-600 line-clamp-2'>
+                    {notification.message}
+                </p>
+                <p className='mt-1.5 text-xs text-gray-400'>
+                    {notification.formattedDate}
+                </p>
+            </div>
+            <button
+                onClick={(e) => {
+                    e.stopPropagation();
+                    onMarkAsRead(notification._id);
+                }}
+                className='p-1 rounded-lg text-blue-500 opacity-0 group-hover:opacity-100 
+                         hover:bg-blue-50 transition-all duration-200'
+                aria-label='Als gelesen markieren'
+            >
+                <CheckCircle className='h-4 w-4' />
+            </button>
+        </div>
+    );
+};
 
 const NotificationCard = () => {
     const { user } = useContext(UserContext);
