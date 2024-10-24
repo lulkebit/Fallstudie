@@ -39,6 +39,7 @@ const {
     getNotifications,
     markNotificationAsRead,
     getAllNotifications,
+    markAllNotificationsAsRead,
 } = require('../controllers/notificationController');
 
 const {
@@ -102,6 +103,8 @@ router.get('/notifications/:userId', getNotifications);
 router.patch('/notifications/:notificationId/read', markNotificationAsRead);
 // Abrufen aller Benachrichtigungen eines Benutzers (mit Pagination)
 router.get('/notifications/all/:userId', getAllNotifications);
+// Markieren aller Benachrichtigungen eines Benutzers als gelesen
+router.patch('/notifications/:userId/read-all', markAllNotificationsAsRead);
 
 /**
  * Ziel-Routen

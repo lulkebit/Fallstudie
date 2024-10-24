@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext, useRef } from 'react';
 import axios from 'axios';
 import { UserContext } from '../context/UserContext';
 import { useToast } from '../context/ToastContext';
-import { Bell, CheckCircle, ChevronRight } from 'lucide-react';
+import { Bell, CheckCircle, ChevronRight, CheckCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const NotificationItem = ({ notification, onMarkAsRead }) => {
@@ -20,16 +20,16 @@ const NotificationItem = ({ notification, onMarkAsRead }) => {
     return (
         <div
             onClick={handleClick}
-            className='group flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200 cursor-pointer'
+            className='group flex items-start gap-4 p-4 hover:bg-gray-50 transition-colors duration-200 cursor-pointer'
         >
-            <div className='flex-1 min-w-0'>
+            <div className='flex-1 min-w-0 space-y-1.5'>
                 <p className='text-sm font-medium text-gray-900 line-clamp-1'>
                     {notification.title}
                 </p>
-                <p className='mt-1 text-sm text-gray-600 line-clamp-2'>
+                <p className='text-sm text-gray-600 line-clamp-2'>
                     {notification.message}
                 </p>
-                <p className='mt-1.5 text-xs text-gray-400'>
+                <p className='text-xs text-gray-400'>
                     {notification.formattedDate}
                 </p>
             </div>
@@ -38,7 +38,7 @@ const NotificationItem = ({ notification, onMarkAsRead }) => {
                     e.stopPropagation();
                     onMarkAsRead(notification._id);
                 }}
-                className='p-1 rounded-lg text-blue-500 opacity-0 group-hover:opacity-100 
+                className='p-1.5 rounded-lg text-blue-500 opacity-0 group-hover:opacity-100 
                          hover:bg-blue-50 transition-all duration-200'
                 aria-label='Als gelesen markieren'
             >
@@ -96,6 +96,22 @@ const NotificationCard = () => {
         }
     };
 
+    const markAllAsRead = async () => {
+        try {
+            await axios.patch(`/notifications/${user._id}/read-all`);
+            fetchNotifications();
+            addToast(
+                'Alle Benachrichtigungen als gelesen markiert.',
+                'success'
+            );
+        } catch (error) {
+            addToast(
+                'Fehler beim Markieren aller Benachrichtigungen: ' + error,
+                'error'
+            );
+        }
+    };
+
     return (
         <div
             className='relative'
@@ -116,17 +132,27 @@ const NotificationCard = () => {
             </button>
             <div className='absolute w-full h-4 bottom-0 left-0' />
             {isOpen && (
-                <div className='absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50'>
+                <div className='absolute right-0 mt-2 w-96 bg-white border border-gray-200 rounded-xl shadow-lg z-50'>
                     <div className='absolute w-full h-4 -top-4 left-0' />
-                    <div className='p-4 border-b border-gray-100'>
+                    <div className='px-6 py-4 border-b border-gray-100 flex items-center justify-between'>
                         <h3 className='font-medium text-gray-900'>
                             Benachrichtigungen
                         </h3>
+                        {notifications.length > 0 && (
+                            <button
+                                onClick={markAllAsRead}
+                                className='flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-blue-600 
+                                         hover:bg-blue-50 rounded-md transition-colors duration-200'
+                            >
+                                <CheckCheck className='h-3.5 w-3.5' />
+                                Alle lesen
+                            </button>
+                        )}
                     </div>
 
-                    <div className='max-h-[360px] overflow-y-auto'>
+                    <div className='max-h-[420px] overflow-y-auto'>
                         {notifications.length > 0 ? (
-                            <div className='p-2'>
+                            <div className='divide-y divide-gray-100'>
                                 {notifications.map((notification) => (
                                     <NotificationItem
                                         key={notification._id}
@@ -136,8 +162,8 @@ const NotificationCard = () => {
                                 ))}
                             </div>
                         ) : (
-                            <div className='py-12 px-4 text-center'>
-                                <Bell className='mx-auto h-6 w-6 text-gray-400 mb-2' />
+                            <div className='py-16 px-4 text-center'>
+                                <Bell className='mx-auto h-6 w-6 text-gray-400 mb-3' />
                                 <p className='text-gray-500 text-sm'>
                                     Keine neuen Benachrichtigungen
                                 </p>
@@ -145,12 +171,12 @@ const NotificationCard = () => {
                         )}
                     </div>
 
-                    <div className='p-2 border-t border-gray-100'>
+                    <div className='px-4 py-3 border-t border-gray-100 bg-gray-50'>
                         <button
                             onClick={() => navigate('/notifications')}
-                            className='w-full p-2 flex items-center justify-center gap-2 text-sm 
-                                         text-gray-600 hover:bg-gray-50 rounded-lg 
-                                         transition-colors duration-200'
+                            className='w-full px-4 py-2 flex items-center justify-center gap-2 text-sm 
+                                     text-gray-600 hover:bg-white rounded-lg 
+                                     transition-colors duration-200'
                         >
                             Alle anzeigen
                             <ChevronRight className='h-4 w-4' />

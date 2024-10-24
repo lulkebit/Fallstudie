@@ -128,8 +128,39 @@ const markNotificationAsRead = async (req, res) => {
     }
 };
 
+/**
+ * Markiert alle ungelesenen Benachrichtigungen eines Benutzers als gelesen.
+ *
+ * @param {Object} req - Das Express-Request-Objekt.
+ * @param {Object} req.params - Die Parameter der Anfrage.
+ * @param {string} req.params.userId - Die ID des Benutzers.
+ * @param {Object} res - Das Express-Response-Objekt.
+ * @returns {Promise<Object>} Ein Promise, das bei Erfolg die Anzahl der aktualisierten Benachrichtigungen zurückgibt.
+ * @throws {Object} Bei Fehlern während der Aktualisierung wird ein Fehler-Objekt zurückgegeben.
+ */
+const markAllNotificationsAsRead = async (req, res) => {
+    const { userId } = req.params;
+    try {
+        const result = await Notification.updateMany(
+            { userId, read: false },
+            { read: true }
+        );
+
+        res.status(200).json({
+            message: 'All notifications marked as read',
+            modifiedCount: result.modifiedCount,
+        });
+    } catch (error) {
+        logger.error('Error marking all notifications as read:', error);
+        res.status(500).json({
+            error: 'Error marking all notifications as read',
+        });
+    }
+};
+
 module.exports = {
     getNotifications,
     getAllNotifications,
     markNotificationAsRead,
+    markAllNotificationsAsRead,
 };

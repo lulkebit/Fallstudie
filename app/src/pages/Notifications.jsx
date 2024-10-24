@@ -2,7 +2,14 @@ import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { UserContext } from '../context/UserContext';
 import { useToast } from '../context/ToastContext';
-import { Bell, ChevronDown, Check, Clock, Inbox } from 'lucide-react';
+import {
+    Bell,
+    ChevronDown,
+    Check,
+    Clock,
+    Inbox,
+    CheckCheck,
+} from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Waves from '../components/Waves';
 import Loader from '../components/Loader';
@@ -118,12 +125,17 @@ const Notifications = () => {
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [hasUnread, setHasUnread] = useState(false);
 
     useEffect(() => {
         if (user) {
             fetchNotifications();
         }
     }, [page, user]);
+
+    useEffect(() => {
+        setHasUnread(notifications.some((notification) => !notification.read));
+    }, [notifications]);
 
     const fetchNotifications = async () => {
         setLoading(true);
@@ -157,9 +169,30 @@ const Notifications = () => {
                     notif._id === id ? { ...notif, read: true } : notif
                 )
             );
-            addToast('Notification marked as read.', 'success');
+            addToast('Benachrichtigung als gelesen markiert.', 'success');
         } catch (error) {
-            addToast('Error marking notification as read: ' + error, 'error');
+            addToast(
+                'Fehler beim Markieren der Benachrichtigung: ' + error,
+                'error'
+            );
+        }
+    };
+
+    const markAllAsRead = async () => {
+        try {
+            await axios.patch(`/notifications/${user._id}/read-all`);
+            setNotifications((prevNotifications) =>
+                prevNotifications.map((notif) => ({ ...notif, read: true }))
+            );
+            addToast(
+                'Alle Benachrichtigungen als gelesen markiert.',
+                'success'
+            );
+        } catch (error) {
+            addToast(
+                'Fehler beim Markieren aller Benachrichtigungen: ' + error,
+                'error'
+            );
         }
     };
 
@@ -170,13 +203,25 @@ const Notifications = () => {
                 <Waves />
                 <div className='container mx-auto px-4 py-8 relative z-10'>
                     <div className='max-w-3xl mx-auto'>
-                        <div className='flex items-center gap-3 mb-8'>
-                            <div className='w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center'>
-                                <Bell className='w-6 h-6 text-blue-600' />
+                        <div className='flex items-center justify-between mb-8'>
+                            <div className='flex items-center gap-3'>
+                                <div className='w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center'>
+                                    <Bell className='w-6 h-6 text-blue-600' />
+                                </div>
+                                <h1 className='text-2xl font-bold text-gray-800'>
+                                    Benachrichtigungen
+                                </h1>
                             </div>
-                            <h1 className='text-2xl font-bold text-gray-800'>
-                                Benachrichtigungen
-                            </h1>
+                            {hasUnread && (
+                                <button
+                                    onClick={markAllAsRead}
+                                    className='flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 
+                                             rounded-lg hover:bg-blue-100 transition-colors duration-200'
+                                >
+                                    <CheckCheck className='w-5 h-5' />
+                                    Alle als gelesen markieren
+                                </button>
+                            )}
                         </div>
 
                         {loading && notifications.length === 0 ? (
