@@ -1,4 +1,4 @@
-# TracMyGoal
+# TrackMyGoal
 
 Eine Full-Stack-Webanwendung, die Benutzern hilft, ihre Ziele zu setzen, zu verfolgen und zu erreichen, während sie sich mit Freunden verbinden und an globalen Herausforderungen teilnehmen können.
 
