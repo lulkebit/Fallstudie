@@ -33,12 +33,10 @@ const Landingpage = () => {
     const [goals, setGoals] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // Fetch global goals from backend
     useEffect(() => {
         const fetchGoals = async () => {
             try {
                 const response = await axios.get('/global-goals');
-                // Take the first 3 goals with highest participation count
                 const topGoals = response.data
                     .sort((a, b) => b.participationCount - a.participationCount)
                     .slice(0, 3)
@@ -47,18 +45,17 @@ const Landingpage = () => {
                         progress: Math.round(
                             (goal.currentValue / goal.targetValue) * 100
                         ),
-                        category: goal.category || 'Community', // Fallback if category isn't provided
+                        category: goal.category || 'Community',
                         currentValue: goal.currentValue,
                         targetValue: goal.targetValue,
                         unit: goal.unit,
                         participationCount: goal.participationCount,
-                        streak: Math.floor(Math.random() * 30) + 1, // Example - replace with real data if available
+                        streak: Math.floor(Math.random() * 30) + 1,
                     }));
                 setGoals(topGoals);
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching global goals:', error);
-                // Fallback data in case of error
                 setGoals([
                     {
                         title: 'Laden...',
@@ -78,7 +75,6 @@ const Landingpage = () => {
         fetchGoals();
     }, []);
 
-    // Rotate through goals
     useEffect(() => {
         if (goals.length === 0) return;
 
@@ -90,30 +86,30 @@ const Landingpage = () => {
     }, [goals.length]);
 
     return (
-        <div className='min-h-screen bg-gray-50'>
+        <div className='min-h-screen bg-white dark:bg-gray-900'>
             <LandingNavbar />
 
             {/* Modern Hero Section */}
-            <section className='relative min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex overflow-hidden'>
+            <section className='relative min-h-screen bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 flex overflow-hidden'>
                 {/* Left Content Side */}
                 <div className='w-full lg:w-1/2 flex flex-col justify-center px-6 lg:px-16 py-20 relative z-10'>
                     <div className='flex items-center gap-2 mb-8'>
                         <div className='h-10 w-10 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center'>
                             <Target className='h-6 w-6 text-white' />
                         </div>
-                        <span className='text-white/80 font-medium'>
+                        <span className='text-gray-600 dark:text-white/80 font-medium'>
                             TrackMyGoal
                         </span>
                     </div>
 
-                    <h1 className='text-4xl lg:text-6xl font-bold text-white mb-6 leading-tight'>
+                    <h1 className='text-4xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6 leading-tight'>
                         Mach deine Ziele zur{' '}
                         <span className='text-transparent bg-clip-text bg-gradient-to-r from-[#4785FF] to-[#8c52ff]'>
                             Erfolgsgeschichte
                         </span>
                     </h1>
 
-                    <p className='text-lg text-white/70 mb-8 max-w-xl leading-relaxed'>
+                    <p className='text-lg text-gray-600 dark:text-white/70 mb-8 max-w-xl leading-relaxed'>
                         Visualisiere deinen Fortschritt, bleib motiviert und
                         erreiche deine Ziele mit einem intelligenten System, das
                         sich an deine Bedürfnisse anpasst.
@@ -123,7 +119,7 @@ const Landingpage = () => {
                         <button className='px-8 py-4 rounded-xl font-medium text-white bg-gradient-to-r from-[#4785FF] to-[#8c52ff] hover:shadow-lg hover:shadow-[#4785FF]/20 transition-all duration-300 hover:-translate-y-1'>
                             Kostenlos starten
                         </button>
-                        <button className='group px-8 py-4 rounded-xl font-medium text-white border border-white/10 hover:bg-white/5 transition-all duration-300 flex items-center justify-center gap-2'>
+                        <button className='group px-8 py-4 rounded-xl font-medium text-gray-700 dark:text-white border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/5 transition-all duration-300 flex items-center justify-center gap-2'>
                             Demo ansehen
                             <ChevronRight className='w-4 h-4 group-hover:translate-x-1 transition-transform' />
                         </button>
@@ -134,9 +130,9 @@ const Landingpage = () => {
                             {avatars.map((avatar, i) => (
                                 <div
                                     key={i}
-                                    className='w-10 h-10 rounded-full border-2 border-gray-800 overflow-hidden relative hover:-translate-y-1 transition-transform duration-200'
+                                    className='w-10 h-10 rounded-full border-2 border-white dark:border-gray-800 overflow-hidden relative hover:-translate-y-1 transition-transform duration-200'
                                     style={{
-                                        zIndex: avatars.length - i, // Ensures proper stacking order
+                                        zIndex: avatars.length - i,
                                     }}
                                 >
                                     <img
@@ -147,9 +143,9 @@ const Landingpage = () => {
                                 </div>
                             ))}
                         </div>
-                        <div className='text-white/60 text-sm'>
+                        <div className='text-gray-500 dark:text-white/60 text-sm'>
                             Bereits über{' '}
-                            <span className='text-white font-medium'>
+                            <span className='text-gray-900 dark:text-white font-medium'>
                                 10.000+ Nutzer
                             </span>
                             <br />
@@ -176,7 +172,7 @@ const Landingpage = () => {
                             goals.map((goal, index) => (
                                 <div
                                     key={index}
-                                    className={`absolute w-full p-6 bg-white/10 backdrop-blur-xl rounded-2xl border border-white/20 transform transition-all duration-500 ${
+                                    className={`absolute w-full p-6 bg-white dark:bg-white/10 backdrop-blur-xl rounded-2xl border border-gray-200 dark:border-white/20 shadow-lg dark:shadow-none transform transition-all duration-500 ${
                                         index === activeGoal
                                             ? 'translate-y-0 opacity-100 scale-100'
                                             : index < activeGoal
@@ -186,10 +182,10 @@ const Landingpage = () => {
                                 >
                                     <div className='flex justify-between items-start mb-4'>
                                         <div>
-                                            <span className='text-white/60 text-sm'>
+                                            <span className='text-gray-500 dark:text-white/60 text-sm'>
                                                 {goal.category}
                                             </span>
-                                            <h3 className='text-white text-xl font-medium'>
+                                            <h3 className='text-gray-900 dark:text-white text-xl font-medium'>
                                                 {goal.title}
                                             </h3>
                                         </div>
@@ -198,15 +194,15 @@ const Landingpage = () => {
                                                 <Check className='h-5 w-5 text-green-500' />
                                             </div>
                                         ) : (
-                                            <div className='h-8 w-8 rounded-full bg-white/10 flex items-center justify-center'>
-                                                <TrendingUp className='h-5 w-5 text-white/80' />
+                                            <div className='h-8 w-8 rounded-full bg-gray-100 dark:bg-white/10 flex items-center justify-center'>
+                                                <TrendingUp className='h-5 w-5 text-gray-500 dark:text-white/80' />
                                             </div>
                                         )}
                                     </div>
 
-                                    <div className='relative h-2 bg-white/10 rounded-full mb-4'>
+                                    <div className='relative h-2 bg-gray-100 dark:bg-white/10 rounded-full mb-4'>
                                         <div
-                                            className={`absolute left-0 top-0 h-full rounded-full bg-gradient-to-r from-[#4785FF] to-[#8c52ff] transition-all duration-1000`}
+                                            className='absolute left-0 top-0 h-full rounded-full bg-gradient-to-r from-[#4785FF] to-[#8c52ff] transition-all duration-1000'
                                             style={{
                                                 width: `${goal.progress}%`,
                                             }}
@@ -214,37 +210,36 @@ const Landingpage = () => {
                                     </div>
 
                                     <div className='flex justify-between text-sm'>
-                                        <span className='text-white/60'>
+                                        <span className='text-gray-500 dark:text-white/60'>
                                             Fortschritt
                                         </span>
-                                        <span className='text-white font-medium'>
+                                        <span className='text-gray-900 dark:text-white font-medium'>
                                             {goal.progress}%
                                         </span>
                                     </div>
 
-                                    {/* Mini Stats */}
                                     <div className='mt-4 grid grid-cols-3 gap-2'>
-                                        <div className='bg-white/5 rounded-lg p-2'>
-                                            <div className='text-white/40 text-xs'>
+                                        <div className='bg-gray-50 dark:bg-white/5 rounded-lg p-2'>
+                                            <div className='text-gray-400 dark:text-white/40 text-xs'>
                                                 Aktuell
                                             </div>
-                                            <div className='text-white text-sm font-medium'>
+                                            <div className='text-gray-900 dark:text-white text-sm font-medium'>
                                                 {goal.currentValue} {goal.unit}
                                             </div>
                                         </div>
-                                        <div className='bg-white/5 rounded-lg p-2'>
-                                            <div className='text-white/40 text-xs'>
+                                        <div className='bg-gray-50 dark:bg-white/5 rounded-lg p-2'>
+                                            <div className='text-gray-400 dark:text-white/40 text-xs'>
                                                 Teilnahmen
                                             </div>
-                                            <div className='text-white text-sm font-medium'>
+                                            <div className='text-gray-900 dark:text-white text-sm font-medium'>
                                                 {goal.participationCount}
                                             </div>
                                         </div>
-                                        <div className='bg-white/5 rounded-lg p-2'>
-                                            <div className='text-white/40 text-xs'>
+                                        <div className='bg-gray-50 dark:bg-white/5 rounded-lg p-2'>
+                                            <div className='text-gray-400 dark:text-white/40 text-xs'>
                                                 Streak
                                             </div>
-                                            <div className='text-white text-sm font-medium'>
+                                            <div className='text-gray-900 dark:text-white text-sm font-medium'>
                                                 {goal.streak} Tage
                                             </div>
                                         </div>
@@ -258,7 +253,7 @@ const Landingpage = () => {
                 {/* Mobile Goal Preview */}
                 <div className='lg:hidden absolute inset-0 flex items-end justify-center pb-20 z-0 opacity-10'>
                     <div className='w-full max-w-sm px-6'>
-                        <div className='bg-white/10 backdrop-blur-xl rounded-2xl border border-white/20 p-6'>
+                        <div className='bg-white/80 dark:bg-white/10 backdrop-blur-xl rounded-2xl border border-gray-200 dark:border-white/20 p-6'>
                             <div className='h-40'></div>
                         </div>
                     </div>
@@ -268,7 +263,7 @@ const Landingpage = () => {
             {/* Vision Section */}
             <section
                 id='second-section'
-                className='py-32 bg-gradient-to-br from-gray-900 to-gray-800 relative overflow-hidden'
+                className='py-32 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 relative overflow-hidden'
             >
                 {/* Animated Background Elements */}
                 <div className='absolute inset-0'>
@@ -278,13 +273,13 @@ const Landingpage = () => {
 
                 <div className='container mx-auto px-4 relative'>
                     <div className='text-center max-w-4xl mx-auto mb-20'>
-                        <h2 className='text-4xl md:text-5xl font-bold mb-6 text-white'>
+                        <h2 className='text-4xl md:text-5xl font-bold mb-6 text-gray-900 dark:text-white'>
                             Unsere Vision für deine{' '}
                             <span className='text-transparent bg-clip-text bg-gradient-to-r from-[#4785FF] to-[#8c52ff]'>
                                 Zukunft
                             </span>
                         </h2>
-                        <p className='text-xl md:text-2xl text-white/70 font-light'>
+                        <p className='text-xl md:text-2xl text-gray-600 dark:text-white/70 font-light'>
                             Wir glauben an eine Zukunft, in der jeder sein
                             volles Potenzial entfalten kann
                         </p>
@@ -358,24 +353,24 @@ const Landingpage = () => {
                         ].map((item, index) => (
                             <div
                                 key={index}
-                                className='group bg-white/5 backdrop-blur-xl rounded-2xl p-8 hover:bg-white/10 transition-all duration-300 hover:-translate-y-2 border border-white/10'
+                                className='group bg-white dark:bg-white/5 backdrop-blur-xl rounded-2xl p-8 hover:bg-gray-50 dark:hover:bg-white/10 transition-all duration-300 hover:-translate-y-2 border border-gray-200 dark:border-white/10 shadow-lg dark:shadow-none'
                             >
                                 <div
                                     className={`w-16 h-16 rounded-xl bg-gradient-to-br ${item.gradient} flex items-center justify-center text-white mb-6 group-hover:scale-110 transform transition-transform duration-300`}
                                 >
                                     {item.icon}
                                 </div>
-                                <h3 className='text-xl font-bold text-white mb-4'>
+                                <h3 className='text-xl font-bold text-gray-900 dark:text-white mb-4'>
                                     {item.title}
                                 </h3>
-                                <p className='text-white/70'>
+                                <p className='text-gray-600 dark:text-white/70'>
                                     {item.description}
                                 </p>
                             </div>
                         ))}
                     </div>
 
-                    <div className='bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-8 md:p-12'>
+                    <div className='bg-white dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200 dark:border-white/10 p-8 md:p-12 shadow-lg dark:shadow-none'>
                         <div className='grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12'>
                             {[
                                 {
@@ -398,10 +393,10 @@ const Landingpage = () => {
                                     <div className='text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#4785FF] to-[#8c52ff] mb-2 group-hover:scale-110 transform transition-transform duration-300'>
                                         {stat.number}
                                     </div>
-                                    <div className='text-lg font-semibold text-white mb-1'>
+                                    <div className='text-lg font-semibold text-gray-900 dark:text-white mb-1'>
                                         {stat.label}
                                     </div>
-                                    <div className='text-sm text-white/60'>
+                                    <div className='text-sm text-gray-500 dark:text-white/60'>
                                         {stat.sublabel}
                                     </div>
                                 </div>
@@ -416,7 +411,7 @@ const Landingpage = () => {
                                     .getElementById('third-section')
                                     .scrollIntoView({ behavior: 'smooth' })
                             }
-                            className='group px-8 py-4 rounded-xl font-medium text-white bg-white/5 hover:bg-white/10 border border-white/10 transition-all duration-300 hover:-translate-y-1 flex items-center gap-2 mx-auto'
+                            className='group px-8 py-4 rounded-xl font-medium text-gray-700 dark:text-white bg-white hover:bg-gray-50 dark:bg-white/5 dark:hover:bg-white/10 border border-gray-200 dark:border-white/10 transition-all duration-300 hover:-translate-y-1 flex items-center gap-2 mx-auto shadow-lg dark:shadow-none'
                         >
                             Entdecke deine Möglichkeiten
                             <svg
@@ -440,7 +435,7 @@ const Landingpage = () => {
             {/* Features Section */}
             <section
                 id='third-section'
-                className='py-32 bg-gradient-to-br from-gray-800 to-gray-900 relative overflow-hidden'
+                className='py-32 bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 relative overflow-hidden'
             >
                 {/* Animated Background Elements */}
                 <div className='absolute inset-0'>
@@ -450,13 +445,13 @@ const Landingpage = () => {
 
                 <div className='container mx-auto px-4 relative z-10'>
                     <div className='text-center mb-16'>
-                        <h2 className='text-4xl md:text-5xl font-bold mb-6 text-white'>
+                        <h2 className='text-4xl md:text-5xl font-bold mb-6 text-gray-900 dark:text-white'>
                             Deine{' '}
                             <span className='text-transparent bg-clip-text bg-gradient-to-r from-[#4785FF] to-[#8c52ff]'>
                                 Vorteile
                             </span>
                         </h2>
-                        <p className='text-xl text-white/70 max-w-2xl mx-auto'>
+                        <p className='text-xl text-gray-600 dark:text-white/70 max-w-2xl mx-auto'>
                             Mit TrackMyGoal erhältst du alle Werkzeuge, die du
                             brauchst, um deine Ziele erfolgreich zu erreichen
                         </p>
@@ -510,7 +505,7 @@ const Landingpage = () => {
                         ].map((feature, index) => (
                             <div
                                 key={index}
-                                className='group bg-white/5 backdrop-blur-xl rounded-2xl overflow-hidden border border-white/10 hover:bg-white/10 transition-all duration-300 hover:-translate-y-2'
+                                className='group bg-white dark:bg-white/5 backdrop-blur-xl rounded-2xl overflow-hidden border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/10 transition-all duration-300 hover:-translate-y-2 shadow-lg dark:shadow-none'
                             >
                                 <div className='aspect-[16/10] relative overflow-hidden'>
                                     <div className='absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/50 to-transparent z-10'></div>
@@ -529,10 +524,10 @@ const Landingpage = () => {
                                 </div>
 
                                 <div className='p-6'>
-                                    <h3 className='text-xl font-semibold mb-3 text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#4785FF] group-hover:to-[#8c52ff] transition-all duration-300'>
+                                    <h3 className='text-xl font-semibold mb-3 text-gray-900 dark:text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#4785FF] group-hover:to-[#8c52ff] transition-all duration-300'>
                                         {feature.title}
                                     </h3>
-                                    <p className='text-white/70 mb-6'>
+                                    <p className='text-gray-600 dark:text-white/70 mb-6'>
                                         {feature.description}
                                     </p>
                                     <ul className='space-y-3'>
@@ -540,7 +535,7 @@ const Landingpage = () => {
                                             (item, itemIndex) => (
                                                 <li
                                                     key={itemIndex}
-                                                    className='flex items-center text-white/70'
+                                                    className='flex items-center text-gray-600 dark:text-white/70'
                                                 >
                                                     <div
                                                         className={`w-8 h-8 rounded-lg bg-gradient-to-br ${feature.gradient} flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-300`}
@@ -574,7 +569,7 @@ const Landingpage = () => {
             {/* Pricing Section */}
             <section
                 id='fourth-section'
-                className='py-32 bg-gradient-to-br from-gray-900 to-gray-800 relative overflow-hidden'
+                className='py-32 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 relative overflow-hidden'
             >
                 {/* Animated Background Elements */}
                 <div className='absolute inset-0'>
@@ -584,13 +579,13 @@ const Landingpage = () => {
 
                 <div className='container mx-auto px-4 relative z-10'>
                     <div className='text-center mb-16'>
-                        <h2 className='text-4xl md:text-5xl font-bold mb-6 text-white'>
+                        <h2 className='text-4xl md:text-5xl font-bold mb-6 text-gray-900 dark:text-white'>
                             Finde deinen{' '}
                             <span className='text-transparent bg-clip-text bg-gradient-to-r from-[#4785FF] to-[#8c52ff]'>
                                 perfekten Plan
                             </span>
                         </h2>
-                        <p className='text-xl text-white/70 max-w-2xl mx-auto'>
+                        <p className='text-xl text-gray-600 dark:text-white/70 max-w-2xl mx-auto'>
                             Wähle das passende Paket für deine Ziele und starte
                             noch heute
                         </p>
@@ -598,10 +593,10 @@ const Landingpage = () => {
 
                     <div className='grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto'>
                         {/* Basic Plan */}
-                        <div className='group bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-8 hover:bg-white/10 transition-all duration-300 hover:-translate-y-2'>
+                        <div className='group bg-white dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200 dark:border-white/10 p-8 hover:bg-gray-50 dark:hover:bg-white/10 transition-all duration-300 hover:-translate-y-2 shadow-lg dark:shadow-none'>
                             <div className='flex flex-col h-full'>
                                 <div className='mb-8'>
-                                    <h3 className='text-2xl font-bold text-white mb-4'>
+                                    <h3 className='text-2xl font-bold text-gray-900 dark:text-white mb-4'>
                                         Basic
                                     </h3>
                                     <div className='flex items-baseline gap-2 mb-6'>
@@ -609,7 +604,7 @@ const Landingpage = () => {
                                             Kostenlos
                                         </span>
                                     </div>
-                                    <p className='text-white/70 mb-6'>
+                                    <p className='text-gray-600 dark:text-white/70 mb-6'>
                                         Perfekt für Einsteiger, die ihre ersten
                                         Ziele erreichen möchten
                                     </p>
@@ -641,14 +636,14 @@ const Landingpage = () => {
                                                     />
                                                 </svg>
                                             </div>
-                                            <span className='text-white/70'>
+                                            <span className='text-gray-600 dark:text-white/70'>
                                                 {feature}
                                             </span>
                                         </div>
                                     ))}
                                 </div>
 
-                                <button className='w-full py-3 px-4 rounded-xl text-white bg-white/10 hover:bg-white/20 transition-colors duration-300 font-medium'>
+                                <button className='w-full py-3 px-4 rounded-xl text-gray-700 dark:text-white bg-gray-100 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/20 transition-colors duration-300 font-medium'>
                                     Jetzt starten
                                 </button>
                             </div>
@@ -657,7 +652,7 @@ const Landingpage = () => {
                         {/* Pro Plan */}
                         <div className='relative group'>
                             <div className='absolute -inset-[1px] bg-gradient-to-r from-[#4785FF] to-[#8c52ff] rounded-2xl blur-md opacity-70 group-hover:opacity-100 transition-opacity duration-300'></div>
-                            <div className='relative bg-gray-900 rounded-2xl p-8 h-full hover:-translate-y-2 transition-transform duration-300'>
+                            <div className='relative bg-white dark:bg-gray-900 rounded-2xl p-8 h-full hover:-translate-y-2 transition-transform duration-300 shadow-xl'>
                                 <div className='absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>
                                     <div className='bg-gradient-to-r from-[#4785FF] to-[#8c52ff] text-white text-sm px-4 py-1 rounded-full font-medium'>
                                         Beliebt
@@ -666,18 +661,18 @@ const Landingpage = () => {
 
                                 <div className='flex flex-col h-full'>
                                     <div className='mb-8'>
-                                        <h3 className='text-2xl font-bold text-white mb-4'>
+                                        <h3 className='text-2xl font-bold text-gray-900 dark:text-white mb-4'>
                                             Pro
                                         </h3>
                                         <div className='flex items-baseline gap-2 mb-6'>
                                             <span className='text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#4785FF] to-[#8c52ff]'>
                                                 9,99€
                                             </span>
-                                            <span className='text-white/70'>
+                                            <span className='text-gray-600 dark:text-white/70'>
                                                 /Monat
                                             </span>
                                         </div>
-                                        <p className='text-white/70 mb-6'>
+                                        <p className='text-gray-600 dark:text-white/70 mb-6'>
                                             Ideal für ambitionierte Nutzer mit
                                             mehreren Zielen
                                         </p>
@@ -711,7 +706,7 @@ const Landingpage = () => {
                                                         />
                                                     </svg>
                                                 </div>
-                                                <span className='text-white/70'>
+                                                <span className='text-gray-600 dark:text-white/70'>
                                                     {feature}
                                                 </span>
                                             </div>
@@ -726,10 +721,10 @@ const Landingpage = () => {
                         </div>
 
                         {/* Enterprise Plan */}
-                        <div className='group bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-8 hover:bg-white/10 transition-all duration-300 hover:-translate-y-2'>
+                        <div className='group bg-white dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200 dark:border-white/10 p-8 hover:bg-gray-50 dark:hover:bg-white/10 transition-all duration-300 hover:-translate-y-2 shadow-lg dark:shadow-none'>
                             <div className='flex flex-col h-full'>
                                 <div className='mb-8'>
-                                    <h3 className='text-2xl font-bold text-white mb-4'>
+                                    <h3 className='text-2xl font-bold text-gray-900 dark:text-white mb-4'>
                                         Enterprise
                                     </h3>
                                     <div className='flex items-baseline gap-2 mb-6'>
@@ -737,7 +732,7 @@ const Landingpage = () => {
                                             Individuell
                                         </span>
                                     </div>
-                                    <p className='text-white/70 mb-6'>
+                                    <p className='text-gray-600 dark:text-white/70 mb-6'>
                                         Maßgeschneiderte Lösungen für
                                         Unternehmen und Teams
                                     </p>
@@ -771,14 +766,14 @@ const Landingpage = () => {
                                                     />
                                                 </svg>
                                             </div>
-                                            <span className='text-white/70'>
+                                            <span className='text-gray-600 dark:text-white/70'>
                                                 {feature}
                                             </span>
                                         </div>
                                     ))}
                                 </div>
 
-                                <button className='w-full py-3 px-4 rounded-xl text-white bg-white/10 hover:bg-white/20 transition-colors duration-300 font-medium'>
+                                <button className='w-full py-3 px-4 rounded-xl text-gray-700 dark:text-white bg-gray-100 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/20 transition-colors duration-300 font-medium'>
                                     Kontaktiere uns
                                 </button>
                             </div>
@@ -786,13 +781,13 @@ const Landingpage = () => {
                     </div>
 
                     <div className='mt-16 text-center'>
-                        <p className='text-white/60 mb-8'>
+                        <p className='text-gray-500 dark:text-white/60 mb-8'>
                             Alle Pläne beinhalten eine 14-tägige
                             Geld-zurück-Garantie
                         </p>
                         <a
                             href='#faq'
-                            className='text-sm text-white/40 hover:text-white/60 transition-colors duration-300 underline'
+                            className='text-sm text-gray-400 hover:text-gray-600 dark:text-white/40 dark:hover:text-white/60 transition-colors duration-300 underline'
                         >
                             Häufig gestellte Fragen zu unseren Plänen
                         </a>
@@ -803,7 +798,7 @@ const Landingpage = () => {
             {/* Team Section */}
             <section
                 id='fifth-section'
-                className='py-32 bg-gradient-to-br from-gray-800 to-gray-900 relative overflow-hidden'
+                className='py-32 bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 relative overflow-hidden'
             >
                 {/* Animated Background Elements */}
                 <div className='absolute inset-0'>
@@ -813,13 +808,13 @@ const Landingpage = () => {
 
                 <div className='container mx-auto px-4 relative z-10'>
                     <div className='text-center mb-16'>
-                        <h2 className='text-4xl md:text-5xl font-bold mb-6 text-white'>
+                        <h2 className='text-4xl md:text-5xl font-bold mb-6 text-gray-900 dark:text-white'>
                             Das Team hinter{' '}
                             <span className='text-transparent bg-clip-text bg-gradient-to-r from-[#4785FF] to-[#8c52ff]'>
                                 TrackMyGoal
                             </span>
                         </h2>
-                        <p className='text-xl text-white/70 max-w-2xl mx-auto'>
+                        <p className='text-xl text-gray-600 dark:text-white/70 max-w-2xl mx-auto'>
                             Mit Leidenschaft und Expertise arbeiten wir daran,
                             deine Ziele Wirklichkeit werden zu lassen
                         </p>
@@ -878,21 +873,15 @@ const Landingpage = () => {
                         ].map((member, index) => (
                             <div
                                 key={index}
-                                className='group relative bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden hover:-translate-y-2 transition-all duration-300'
+                                className='group relative bg-white dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200 dark:border-white/10 overflow-hidden hover:-translate-y-2 transition-all duration-300 shadow-lg dark:shadow-none'
                             >
-                                {/* Image Container */}
                                 <div className='relative h-[300px] overflow-hidden'>
-                                    {/* Gradient Overlay */}
                                     <div className='absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/50 to-transparent z-10 group-hover:opacity-90 transition-opacity duration-300'></div>
-
-                                    {/* Member Image */}
                                     <img
                                         src={member.image}
                                         alt={member.name}
                                         className='w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700'
                                     />
-
-                                    {/* Social Links Overlay */}
                                     <div className='absolute inset-0 z-20 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:-translate-y-2'>
                                         <a
                                             href={member.social.github}
@@ -923,27 +912,21 @@ const Landingpage = () => {
                                     </div>
                                 </div>
 
-                                {/* Member Info */}
                                 <div className='p-6'>
-                                    {/* Role Badge */}
                                     <div
                                         className={`inline-block bg-gradient-to-r ${member.gradient} text-white text-sm px-3 py-1 rounded-full mb-4`}
                                     >
                                         {member.role}
                                     </div>
-
-                                    {/* Name */}
-                                    <h3 className='text-xl font-semibold text-white mb-3'>
+                                    <h3 className='text-xl font-semibold text-gray-900 dark:text-white mb-3'>
                                         {member.name}
                                     </h3>
-
-                                    {/* Skills */}
                                     <div className='flex flex-wrap gap-2'>
                                         {member.skills.map(
                                             (skill, skillIndex) => (
                                                 <span
                                                     key={skillIndex}
-                                                    className='bg-white/5 text-white/70 px-3 py-1 rounded-full text-sm border border-white/10'
+                                                    className='bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-white/70 px-3 py-1 rounded-full text-sm border border-gray-200 dark:border-white/10'
                                                 >
                                                     {skill}
                                                 </span>
@@ -951,22 +934,19 @@ const Landingpage = () => {
                                         )}
                                     </div>
                                 </div>
-
-                                {/* Hover Gradient Border */}
-                                <div className='absolute inset-0 rounded-2xl bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300'></div>
                             </div>
                         ))}
                     </div>
 
                     <div className='mt-16 text-center'>
-                        <p className='text-lg text-white/70 mb-8 max-w-2xl mx-auto'>
+                        <p className='text-lg text-gray-600 dark:text-white/70 mb-8 max-w-2xl mx-auto'>
                             Interessiert daran, Teil unseres Teams zu werden?
                             Wir suchen immer nach talentierten Menschen, die
                             unsere Vision teilen.
                         </p>
                         <a
                             href='/careers'
-                            className='inline-flex items-center gap-2 text-white bg-white/5 hover:bg-white/10 px-6 py-3 rounded-xl transition-all duration-300 group'
+                            className='inline-flex items-center gap-2 text-gray-700 dark:text-white bg-white hover:bg-gray-50 dark:bg-white/5 dark:hover:bg-white/10 px-6 py-3 rounded-xl transition-all duration-300 group border border-gray-200 dark:border-white/10 shadow-lg dark:shadow-none'
                         >
                             Offene Positionen ansehen
                             <svg
@@ -990,7 +970,7 @@ const Landingpage = () => {
             {/* FAQ Section */}
             <section
                 id='last-section'
-                className='py-32 bg-gradient-to-br from-gray-900 to-gray-800 relative overflow-hidden'
+                className='py-32 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 relative overflow-hidden'
             >
                 {/* Animated Background Elements */}
                 <div className='absolute inset-0'>
@@ -1000,13 +980,13 @@ const Landingpage = () => {
 
                 <div className='container mx-auto px-4 relative z-10'>
                     <div className='text-center mb-16'>
-                        <h2 className='text-4xl md:text-5xl font-bold mb-6 text-white'>
+                        <h2 className='text-4xl md:text-5xl font-bold mb-6 text-gray-900 dark:text-white'>
                             Häufig gestellte{' '}
                             <span className='text-transparent bg-clip-text bg-gradient-to-r from-[#4785FF] to-[#8c52ff]'>
                                 Fragen
                             </span>
                         </h2>
-                        <p className='text-xl text-white/70 max-w-2xl mx-auto'>
+                        <p className='text-xl text-gray-600 dark:text-white/70 max-w-2xl mx-auto'>
                             Hier findest du Antworten auf die wichtigsten
                             Fragen. Weitere Hilfe erhältst du in unserem
                             Support-Bereich.
@@ -1102,10 +1082,9 @@ const Landingpage = () => {
                             ].map((faq, index) => (
                                 <details
                                     key={index}
-                                    className='group bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 hover:bg-white/10 transition-all duration-300'
+                                    className='group bg-white dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/10 transition-all duration-300 shadow-lg dark:shadow-none'
                                 >
                                     <summary className='flex items-center gap-4 p-6 cursor-pointer marker:content-none'>
-                                        {/* Icon Container */}
                                         <div
                                             className={`flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-xl bg-gradient-to-br ${faq.gradient} group-hover:scale-110 transition-transform duration-300`}
                                         >
@@ -1114,17 +1093,15 @@ const Landingpage = () => {
                                             </div>
                                         </div>
 
-                                        {/* Question */}
                                         <div className='flex-grow'>
-                                            <h3 className='text-lg font-semibold text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#4785FF] group-hover:to-[#8c52ff] transition-colors duration-300'>
+                                            <h3 className='text-lg font-semibold text-gray-900 dark:text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#4785FF] group-hover:to-[#8c52ff] transition-colors duration-300'>
                                                 {faq.question}
                                             </h3>
                                         </div>
 
-                                        {/* Arrow Icon */}
                                         <div className='flex-shrink-0'>
                                             <svg
-                                                className='w-6 h-6 text-white/40 group-hover:text-white/60 group-open:rotate-180 transition-all duration-300'
+                                                className='w-6 h-6 text-gray-400 dark:text-white/40 group-hover:text-gray-600 dark:group-hover:text-white/60 group-open:rotate-180 transition-all duration-300'
                                                 fill='none'
                                                 stroke='currentColor'
                                                 viewBox='0 0 24 24'
@@ -1139,10 +1116,9 @@ const Landingpage = () => {
                                         </div>
                                     </summary>
 
-                                    {/* Answer Container */}
                                     <div className='px-6 pb-6 pt-2'>
                                         <div className='pl-16'>
-                                            <p className='text-white/70 leading-relaxed'>
+                                            <p className='text-gray-600 dark:text-white/70 leading-relaxed'>
                                                 {faq.answer}
                                             </p>
                                         </div>
@@ -1153,8 +1129,8 @@ const Landingpage = () => {
 
                         {/* Support Section */}
                         <div className='mt-16 text-center'>
-                            <div className='bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-8 hover:bg-white/10 transition-all duration-300'>
-                                <p className='text-white/70 mb-6 text-lg'>
+                            <div className='bg-white dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200 dark:border-white/10 p-8 hover:bg-gray-50 dark:hover:bg-white/10 transition-all duration-300 shadow-lg dark:shadow-none'>
+                                <p className='text-gray-600 dark:text-white/70 mb-6 text-lg'>
                                     Noch Fragen? Unser Support-Team ist für dich
                                     da.
                                 </p>

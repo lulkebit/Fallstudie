@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+    darkMode: 'class',
     content: [
         './src/**/*.{js,jsx,ts,tsx}', // Dies stellt sicher, dass Tailwind alle React-Komponenten scannt
     ],

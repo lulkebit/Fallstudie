@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, LogIn } from 'lucide-react';
+import { Menu, X, LogIn, Sun, Moon } from 'lucide-react';
 
 const LandingNavbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isDarkMode, setIsDarkMode] = useState(true);
 
-    // Handle scroll effect
     useEffect(() => {
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 20);
@@ -14,6 +14,18 @@ const LandingNavbar = () => {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    useEffect(() => {
+        if (isDarkMode) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    }, [isDarkMode]);
+
+    const toggleTheme = () => {
+        setIsDarkMode(!isDarkMode);
+    };
 
     const navigateToSection = (sectionId) => {
         setIsMobileMenuOpen(false);
@@ -34,8 +46,8 @@ const LandingNavbar = () => {
         <nav
             className={`fixed w-full z-50 transition-all duration-300 ${
                 isScrolled
-                    ? 'bg-gray-900/80 backdrop-blur-xl border-b border-white/10'
-                    : 'bg-transparent'
+                    ? 'bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-200 dark:border-white/10'
+                    : 'bg-white/50 dark:bg-gray-900/50 backdrop-blur-lg'
             }`}
         >
             <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
@@ -68,7 +80,7 @@ const LandingNavbar = () => {
                             <button
                                 key={item.id}
                                 onClick={() => navigateToSection(item.id)}
-                                className='text-white/70 hover:text-white transition-colors duration-200 text-sm font-medium'
+                                className='text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white transition-colors duration-200 text-sm font-medium'
                             >
                                 {item.label}
                             </button>
@@ -77,7 +89,20 @@ const LandingNavbar = () => {
 
                     {/* Desktop Actions */}
                     <div className='hidden lg:flex items-center gap-4'>
-                        <button className='px-4 py-2 text-white/70 hover:text-white transition-colors duration-200 text-sm font-medium flex items-center gap-2'>
+                        {/* Theme Toggle */}
+                        <button
+                            onClick={toggleTheme}
+                            className='p-2 rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/20 transition-colors duration-200'
+                            aria-label='Toggle theme'
+                        >
+                            {isDarkMode ? (
+                                <Sun className='w-5 h-5 text-gray-700 dark:text-white' />
+                            ) : (
+                                <Moon className='w-5 h-5 text-gray-700 dark:text-white' />
+                            )}
+                        </button>
+
+                        <button className='px-4 py-2 text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white transition-colors duration-200 text-sm font-medium flex items-center gap-2'>
                             <LogIn className='w-4 h-4' />
                             Login
                         </button>
@@ -87,12 +112,25 @@ const LandingNavbar = () => {
                     </div>
 
                     {/* Mobile Menu Button */}
-                    <div className='lg:hidden'>
+                    <div className='lg:hidden flex items-center gap-4'>
+                        {/* Theme Toggle Mobile */}
+                        <button
+                            onClick={toggleTheme}
+                            className='p-2 rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/20 transition-colors duration-200'
+                            aria-label='Toggle theme'
+                        >
+                            {isDarkMode ? (
+                                <Sun className='w-5 h-5 text-gray-700 dark:text-white' />
+                            ) : (
+                                <Moon className='w-5 h-5 text-gray-700 dark:text-white' />
+                            )}
+                        </button>
+
                         <button
                             onClick={() =>
                                 setIsMobileMenuOpen(!isMobileMenuOpen)
                             }
-                            className='text-white/70 hover:text-white transition-colors duration-200'
+                            className='text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white transition-colors duration-200'
                         >
                             {isMobileMenuOpen ? (
                                 <X className='w-6 h-6' />
@@ -108,19 +146,19 @@ const LandingNavbar = () => {
             <div
                 className={`lg:hidden ${isMobileMenuOpen ? 'block' : 'hidden'}`}
             >
-                <div className='bg-gray-900/95 backdrop-blur-xl border-t border-white/10'>
+                <div className='bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-t border-gray-200 dark:border-white/10'>
                     <div className='px-4 pt-2 pb-6 space-y-4'>
                         {navItems.map((item) => (
                             <button
                                 key={item.id}
                                 onClick={() => navigateToSection(item.id)}
-                                className='block w-full text-left px-4 py-2 text-white/70 hover:text-white transition-colors duration-200 text-sm font-medium'
+                                className='block w-full text-left px-4 py-2 text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white transition-colors duration-200 text-sm font-medium'
                             >
                                 {item.label}
                             </button>
                         ))}
                         <div className='pt-4 space-y-2'>
-                            <button className='w-full px-4 py-2 text-white/70 hover:text-white transition-colors duration-200 text-sm font-medium flex items-center gap-2'>
+                            <button className='w-full px-4 py-2 text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white transition-colors duration-200 text-sm font-medium flex items-center gap-2'>
                                 <LogIn className='w-4 h-4' />
                                 Login
                             </button>

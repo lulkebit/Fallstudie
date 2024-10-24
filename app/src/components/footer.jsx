@@ -16,7 +16,7 @@ const Footer = () => {
     };
 
     return (
-        <footer className='relative bg-gradient-to-br from-gray-900 to-gray-800 overflow-hidden'>
+        <footer className='relative bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 overflow-hidden'>
             {/* Decorative Elements */}
             <div className='absolute inset-0'>
                 <div className='absolute top-1/4 right-1/4 w-96 h-96 bg-[#4785FF]/10 rounded-full blur-3xl animate-pulse'></div>
@@ -49,7 +49,7 @@ const Footer = () => {
                                     TrackMyGoal
                                 </span>
                             </div>
-                            <p className='text-white/70'>
+                            <p className='text-gray-600 dark:text-white/70'>
                                 Your Journey, Your Success! Erreiche deine Ziele
                                 mit System und Community.
                             </p>
@@ -58,32 +58,32 @@ const Footer = () => {
                                     href='https://www.instagram.com/trackmygoal2024/'
                                     target='_blank'
                                     rel='noopener noreferrer'
-                                    className='bg-white/5 hover:bg-white/10 p-2 rounded-lg transition-colors duration-200'
+                                    className='bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 p-2 rounded-lg transition-colors duration-200'
                                 >
-                                    <Instagram className='w-5 h-5 text-white/70' />
+                                    <Instagram className='w-5 h-5 text-gray-600 dark:text-white/70' />
                                 </a>
                                 <a
                                     href='#'
                                     target='_blank'
                                     rel='noopener noreferrer'
-                                    className='bg-white/5 hover:bg-white/10 p-2 rounded-lg transition-colors duration-200'
+                                    className='bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 p-2 rounded-lg transition-colors duration-200'
                                 >
-                                    <Twitter className='w-5 h-5 text-white/70' />
+                                    <Twitter className='w-5 h-5 text-gray-600 dark:text-white/70' />
                                 </a>
                                 <a
                                     href='#'
                                     target='_blank'
                                     rel='noopener noreferrer'
-                                    className='bg-white/5 hover:bg-white/10 p-2 rounded-lg transition-colors duration-200'
+                                    className='bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 p-2 rounded-lg transition-colors duration-200'
                                 >
-                                    <Facebook className='w-5 h-5 text-white/70' />
+                                    <Facebook className='w-5 h-5 text-gray-600 dark:text-white/70' />
                                 </a>
                             </div>
                         </div>
 
                         {/* Quick Links */}
                         <div>
-                            <h3 className='text-white font-semibold mb-6'>
+                            <h3 className='text-gray-900 dark:text-white font-semibold mb-6'>
                                 Quick Links
                             </h3>
                             <ul className='space-y-4'>
@@ -107,7 +107,7 @@ const Footer = () => {
                                             onClick={() =>
                                                 navigate(link.section)
                                             }
-                                            className='text-white/70 hover:text-white flex items-center gap-2 group'
+                                            className='text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white flex items-center gap-2 group'
                                         >
                                             <ChevronRight className='w-4 h-4 group-hover:translate-x-1 transition-transform duration-200' />
                                             {link.label}
@@ -119,7 +119,7 @@ const Footer = () => {
 
                         {/* Legal Links */}
                         <div>
-                            <h3 className='text-white font-semibold mb-6'>
+                            <h3 className='text-gray-900 dark:text-white font-semibold mb-6'>
                                 Rechtliches
                             </h3>
                             <ul className='space-y-4'>
@@ -138,7 +138,7 @@ const Footer = () => {
                                     <li key={index}>
                                         <a
                                             href={link.href}
-                                            className='text-white/70 hover:text-white flex items-center gap-2 group'
+                                            className='text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white flex items-center gap-2 group'
                                         >
                                             <ChevronRight className='w-4 h-4 group-hover:translate-x-1 transition-transform duration-200' />
                                             {link.label}
@@ -150,25 +150,25 @@ const Footer = () => {
 
                         {/* Contact */}
                         <div>
-                            <h3 className='text-white font-semibold mb-6'>
+                            <h3 className='text-gray-900 dark:text-white font-semibold mb-6'>
                                 Kontakt
                             </h3>
                             <div className='space-y-4'>
                                 <a
                                     href='mailto:contact@trackmygoal.de'
-                                    className='bg-white/5 hover:bg-white/10 px-4 py-3 rounded-xl flex items-center gap-3 group transition-colors duration-200'
+                                    className='bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 px-4 py-3 rounded-xl flex items-center gap-3 group transition-colors duration-200'
                                 >
-                                    <Mail className='w-5 h-5 text-white/70' />
-                                    <span className='text-white/70 group-hover:text-white text-sm'>
+                                    <Mail className='w-5 h-5 text-gray-600 dark:text-white/70' />
+                                    <span className='text-gray-600 group-hover:text-gray-900 dark:text-white/70 dark:group-hover:text-white text-sm'>
                                         contact@trackmygoal.de
                                     </span>
                                 </a>
                                 <a
                                     href='/kontakt'
-                                    className='bg-white/5 hover:bg-white/10 px-4 py-3 rounded-xl flex items-center gap-3 group transition-colors duration-200'
+                                    className='bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 px-4 py-3 rounded-xl flex items-center gap-3 group transition-colors duration-200'
                                 >
-                                    <ExternalLink className='w-5 h-5 text-white/70' />
-                                    <span className='text-white/70 group-hover:text-white text-sm'>
+                                    <ExternalLink className='w-5 h-5 text-gray-600 dark:text-white/70' />
+                                    <span className='text-gray-600 group-hover:text-gray-900 dark:text-white/70 dark:group-hover:text-white text-sm'>
                                         Kontaktformular
                                     </span>
                                 </a>
@@ -178,17 +178,17 @@ const Footer = () => {
                 </div>
 
                 {/* Bottom Bar */}
-                <div className='border-t border-white/10'>
+                <div className='border-t border-gray-200 dark:border-white/10'>
                     <div className='container mx-auto px-4 py-6'>
                         <div className='flex flex-col md:flex-row justify-between items-center gap-4'>
-                            <p className='text-white/40 text-sm'>
+                            <p className='text-gray-500 dark:text-white/40 text-sm'>
                                 © 2024 TrackMyGoal. Alle Rechte vorbehalten.
                             </p>
                             <div className='flex items-center gap-6'>
-                                <button className='text-white/40 hover:text-white/60 text-sm'>
+                                <button className='text-gray-500 hover:text-gray-700 dark:text-white/40 dark:hover:text-white/60 text-sm'>
                                     Deutsch
                                 </button>
-                                <button className='text-white/40 hover:text-white/60 text-sm'>
+                                <button className='text-gray-500 hover:text-gray-700 dark:text-white/40 dark:hover:text-white/60 text-sm'>
                                     English
                                 </button>
                             </div>
