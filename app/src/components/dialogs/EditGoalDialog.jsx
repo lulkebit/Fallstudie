@@ -103,13 +103,13 @@ const InputField = React.memo(
         <div className='space-y-1.5'>
             <label
                 htmlFor={id}
-                className='block text-sm font-medium text-gray-600'
+                className='block text-sm font-medium text-gray-700 dark:text-white/70'
             >
                 {label}
             </label>
             <div className='relative'>
                 <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-                    <Icon className='h-5 w-5 text-gray-400' />
+                    <Icon className='h-5 w-5 text-gray-400 dark:text-white/40' />
                 </div>
                 {type === 'textarea' ? (
                     <textarea
@@ -117,9 +117,15 @@ const InputField = React.memo(
                         name={id}
                         value={value}
                         onChange={onChange}
-                        className={`w-full pl-10 pr-4 py-3 rounded-lg border ${
-                            error ? 'border-red-500' : 'border-gray-200'
-                        } focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 outline-none`}
+                        className={`w-full pl-10 pr-4 py-3 rounded-xl bg-white dark:bg-white/5 border 
+                                  ${
+                                      error
+                                          ? 'border-red-500 dark:border-red-500/50'
+                                          : 'border-gray-200 dark:border-white/10'
+                                  } 
+                                  focus:border-[#4785FF] focus:ring-2 focus:ring-[#4785FF]/20 dark:focus:ring-[#4785FF]/10 
+                                  transition-all duration-200 outline-none
+                                  text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40`}
                         placeholder={`${label} eingeben`}
                         rows={3}
                     />
@@ -129,14 +135,25 @@ const InputField = React.memo(
                         name={id}
                         value={value}
                         onChange={onChange}
-                        className={`w-full pl-10 pr-4 py-3 rounded-lg border ${
-                            error ? 'border-red-500' : 'border-gray-200'
-                        } focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 outline-none
-                    appearance-none bg-white`}
+                        className={`w-full pl-10 pr-4 py-3 rounded-xl bg-white dark:bg-white/5 border 
+                                  ${
+                                      error
+                                          ? 'border-red-500 dark:border-red-500/50'
+                                          : 'border-gray-200 dark:border-white/10'
+                                  } 
+                                  focus:border-[#4785FF] focus:ring-2 focus:ring-[#4785FF]/20 dark:focus:ring-[#4785FF]/10 
+                                  transition-all duration-200 outline-none appearance-none
+                                  text-gray-900 dark:text-white`}
                     >
-                        <option value=''>Bitte auswählen</option>
+                        <option value='' className='dark:bg-gray-800'>
+                            Bitte auswählen
+                        </option>
                         {options.map((option) => (
-                            <option key={option} value={option}>
+                            <option
+                                key={option}
+                                value={option}
+                                className='dark:bg-gray-800'
+                            >
                                 {option}
                             </option>
                         ))}
@@ -148,14 +165,24 @@ const InputField = React.memo(
                         name={id}
                         value={value}
                         onChange={onChange}
-                        className={`w-full pl-10 pr-4 py-3 rounded-lg border ${
-                            error ? 'border-red-500' : 'border-gray-200'
-                        } focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 outline-none`}
+                        className={`w-full pl-10 pr-4 py-3 rounded-xl bg-white dark:bg-white/5 border 
+                                  ${
+                                      error
+                                          ? 'border-red-500 dark:border-red-500/50'
+                                          : 'border-gray-200 dark:border-white/10'
+                                  } 
+                                  focus:border-[#4785FF] focus:ring-2 focus:ring-[#4785FF]/20 dark:focus:ring-[#4785FF]/10 
+                                  transition-all duration-200 outline-none
+                                  text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40`}
                         placeholder={`${label} eingeben`}
                     />
                 )}
             </div>
-            {error && <p className='text-sm text-red-500'>{error}</p>}
+            {error && (
+                <p className='text-sm text-red-500 dark:text-red-400'>
+                    {error}
+                </p>
+            )}
         </div>
     )
 );
@@ -163,10 +190,12 @@ const InputField = React.memo(
 const ProgressInput = ({ value, onChange }) => (
     <div className='space-y-4'>
         <div className='flex justify-between items-center'>
-            <label className='block text-sm font-medium text-gray-600'>
+            <label className='block text-sm font-medium text-gray-700 dark:text-white/70'>
                 Fortschritt
             </label>
-            <span className='text-blue-600 font-medium'>{value}%</span>
+            <span className='text-transparent bg-clip-text bg-gradient-to-r from-[#4785FF] to-[#8c52ff] font-medium'>
+                {value}%
+            </span>
         </div>
         <input
             type='range'
@@ -174,10 +203,12 @@ const ProgressInput = ({ value, onChange }) => (
             name='progress'
             value={value}
             onChange={onChange}
-            className='w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer
-                     [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 
-                     [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-blue-600 
-                     [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:cursor-pointer'
+            className='w-full h-2 bg-gray-200 dark:bg-white/10 rounded-full appearance-none cursor-pointer
+                    [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 
+                    [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-gradient-to-r 
+                    [&::-webkit-slider-thumb]:from-[#4785FF] [&::-webkit-slider-thumb]:to-[#8c52ff]
+                    [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:cursor-pointer
+                    [&::-webkit-slider-thumb]:shadow-lg'
             min='0'
             max='100'
         />
@@ -185,20 +216,24 @@ const ProgressInput = ({ value, onChange }) => (
 );
 
 const PublicSwitch = ({ checked, onChange }) => (
-    <div className='flex items-center gap-3 p-4 bg-gray-50 rounded-lg'>
+    <div
+        className='flex items-center gap-3 p-4 bg-gray-50/50 dark:bg-white/5 rounded-xl
+                    border border-gray-200/50 dark:border-white/10'
+    >
         <input
             type='checkbox'
             id='public'
             name='public'
             checked={checked}
             onChange={onChange}
-            className='w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500'
+            className='w-4 h-4 text-[#4785FF] border-gray-300 dark:border-white/10 rounded 
+                     focus:ring-[#4785FF] dark:bg-white/5'
         />
         <div className='flex items-center gap-2'>
-            <Eye className='h-5 w-5 text-gray-400' />
+            <Eye className='h-5 w-5 text-gray-400 dark:text-white/40' />
             <label
                 htmlFor='public'
-                className='text-sm font-medium text-gray-600'
+                className='text-sm font-medium text-gray-700 dark:text-white/70'
             >
                 Öffentlich machen
             </label>
@@ -405,17 +440,22 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
 
     return (
         <div className='fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4'>
-            <div className='bg-white rounded-xl shadow-xl w-full max-w-3xl max-h-[80vh] h-[80vh] flex flex-col'>
-                <div className='p-6 border-b border-gray-100'>
-                    <div className='flex justify-between items-center mb-4'>
-                        <h2 className='text-xl font-bold text-gray-800'>
+            <div
+                className='bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200/50 
+                          dark:border-white/10 shadow-xl dark:shadow-none w-full max-w-3xl max-h-[80vh] h-[80vh] 
+                          flex flex-col'
+            >
+                <div className='p-6 border-b border-gray-200 dark:border-white/10'>
+                    <div className='flex justify-between items-center mb-6'>
+                        <h2 className='text-xl font-bold text-gray-900 dark:text-white'>
                             {goal ? 'Ziel bearbeiten' : 'Neues Ziel erstellen'}
                         </h2>
                         <button
                             onClick={onClose}
-                            className='p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200'
+                            className='p-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-xl 
+                                     transition-colors duration-200'
                         >
-                            <X className='h-5 w-5 text-gray-400' />
+                            <X className='h-5 w-5 text-gray-400 dark:text-white/40' />
                         </button>
                     </div>
 
@@ -423,18 +463,19 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                         {steps.map((step, index) => (
                             <React.Fragment key={step.title}>
                                 <div
-                                    className={`flex items-center gap-2 ${
+                                    className={`flex items-center gap-2 
+                                    ${
                                         index <= currentStep
-                                            ? 'text-blue-600'
-                                            : 'text-gray-400'
+                                            ? 'text-[#4785FF]'
+                                            : 'text-gray-400 dark:text-white/40'
                                     }`}
                                 >
                                     <div
                                         className={`w-8 h-8 rounded-full flex items-center justify-center font-medium
                                         ${
                                             index <= currentStep
-                                                ? 'bg-blue-100 text-blue-600'
-                                                : 'bg-gray-100 text-gray-400'
+                                                ? 'bg-gradient-to-r from-[#4785FF] to-[#8c52ff] text-white'
+                                                : 'bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-white/40'
                                         }`}
                                     >
                                         {index + 1}
@@ -445,10 +486,11 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                                 </div>
                                 {index < steps.length - 1 && (
                                     <div
-                                        className={`flex-grow h-0.5 ${
+                                        className={`flex-grow h-0.5 
+                                        ${
                                             index < currentStep
-                                                ? 'bg-blue-500'
-                                                : 'bg-gray-200'
+                                                ? 'bg-gradient-to-r from-[#4785FF] to-[#8c52ff]'
+                                                : 'bg-gray-200 dark:bg-white/10'
                                         }`}
                                     />
                                 )}
@@ -463,16 +505,17 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                     </div>
                 </div>
 
-                <div className='p-6 border-t border-gray-100'>
+                <div className='p-6 border-t border-gray-200 dark:border-white/10'>
                     <div className='flex justify-between items-center'>
                         <button
                             onClick={handlePrevious}
                             disabled={currentStep === 0}
-                            className={`px-6 py-2.5 rounded-lg font-medium transition-all duration-200 flex items-center gap-2
+                            className={`px-6 py-2.5 rounded-xl font-medium transition-all duration-200 
+                                      flex items-center gap-2
                                 ${
                                     currentStep === 0
-                                        ? 'opacity-50 cursor-not-allowed text-gray-400'
-                                        : 'text-gray-600 hover:bg-gray-100'
+                                        ? 'opacity-50 cursor-not-allowed text-gray-400 dark:text-white/40'
+                                        : 'text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5'
                                 }`}
                         >
                             <ChevronLeft className='h-5 w-5' />
@@ -482,16 +525,20 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                         {currentStep === steps.length - 1 ? (
                             <button
                                 onClick={handleSave}
-                                className='px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium shadow-lg 
-                                         hover:bg-blue-700 transition-all duration-200 hover:shadow-xl hover:scale-105'
+                                className='px-6 py-2.5 bg-gradient-to-r from-[#4785FF] to-[#8c52ff] 
+                                         text-white rounded-xl font-medium shadow-lg 
+                                         hover:shadow-xl hover:shadow-blue-500/25 dark:hover:shadow-blue-500/10
+                                         transition-all duration-200 hover:-translate-y-0.5'
                             >
                                 Speichern
                             </button>
                         ) : (
                             <button
                                 onClick={handleNext}
-                                className='px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium shadow-lg 
-                                         hover:bg-blue-700 transition-all duration-200 hover:shadow-xl hover:scale-105
+                                className='px-6 py-2.5 bg-gradient-to-r from-[#4785FF] to-[#8c52ff] 
+                                         text-white rounded-xl font-medium shadow-lg 
+                                         hover:shadow-xl hover:shadow-blue-500/25 dark:hover:shadow-blue-500/10
+                                         transition-all duration-200 hover:-translate-y-0.5
                                          flex items-center gap-2'
                             >
                                 Weiter

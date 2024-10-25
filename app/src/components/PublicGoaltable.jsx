@@ -9,13 +9,47 @@ import axios from 'axios';
 import { UserContext } from '../context/UserContext';
 import { useToast } from '../context/ToastContext';
 import { AlertOctagon, Users } from 'lucide-react';
-import Loader from './Loader';
 import GoalCard from './GoalCards';
 
-const usePublicGoals = (user, addToast) => {
+const EmptyState = () => (
+    <div className='text-center py-12'>
+        <div className='bg-gradient-to-r from-[#4785FF] to-[#8c52ff] w-16 h-16 rounded-xl mx-auto mb-4 flex items-center justify-center'>
+            <Users className='w-8 h-8 text-white' />
+        </div>
+        <h3 className='text-xl font-medium text-gray-900 dark:text-white mb-2'>
+            Keine öffentlichen Ziele
+        </h3>
+        <p className='text-gray-500 dark:text-white/60'>
+            Deine Freunde haben noch keine Ziele geteilt
+        </p>
+    </div>
+);
+
+const LoadingState = () => (
+    <div className='flex items-center justify-center py-12'>
+        <div className='w-10 h-10 border-4 border-[#4785FF] border-t-transparent rounded-full animate-spin'></div>
+    </div>
+);
+
+const ErrorState = ({ message }) => (
+    <div className='text-center py-12'>
+        <div className='bg-red-500/10 dark:bg-red-500/20 w-16 h-16 rounded-xl mx-auto mb-4 flex items-center justify-center'>
+            <AlertOctagon className='w-8 h-8 text-red-500' />
+        </div>
+        <h3 className='text-xl font-medium text-red-500 mb-2'>
+            Ein Fehler ist aufgetreten
+        </h3>
+        <p className='text-gray-500 dark:text-white/60'>{message}</p>
+    </div>
+);
+
+const PublicGoalTable = () => {
+    const { user } = useContext(UserContext);
+    const { addToast } = useToast();
     const [publicGoals, setPublicGoals] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [expandedGoals, setExpandedGoals] = useState({});
 
     const fetchPublicGoals = useCallback(async () => {
         if (!user) return;
@@ -26,13 +60,12 @@ const usePublicGoals = (user, addToast) => {
             setPublicGoals(response.data);
             setLoading(false);
         } catch (error) {
-            addToast('Error fetching public goals: ' + error, 'error');
             setError(
-                error.response?.data?.error || 'Error fetching public goals'
+                error.response?.data?.error || 'Fehler beim Laden der Ziele'
             );
             setLoading(false);
         }
-    }, [user, addToast]);
+    }, [user]);
 
     useEffect(() => {
         fetchPublicGoals();
@@ -46,38 +79,22 @@ const usePublicGoals = (user, addToast) => {
                     isPinned: goal.id === goalToPin.id ? !goal.isPinned : false,
                 }));
 
-                const response = await axios.post('/goals/pin-friend', {
+                await axios.post('/goals/pin-friend', {
                     userId: user._id,
                     goals: updatedGoals,
                 });
 
-                if (response.data) {
-                    setPublicGoals(updatedGoals);
-                    addToast(
-                        goalToPin.isPinned
-                            ? 'Goal unpinned successfully'
-                            : 'Goal pinned successfully',
-                        'success'
-                    );
-                }
+                setPublicGoals(updatedGoals);
+                addToast(
+                    goalToPin.isPinned ? 'Ziel losgelöst!' : 'Ziel angepinnt!',
+                    'success'
+                );
             } catch (error) {
-                addToast('Error updating goal pin status: ' + error, 'error');
+                addToast('Fehler beim Anpinnen des Ziels.', 'error');
             }
         },
         [user, addToast, publicGoals]
     );
-
-    return { publicGoals, loading, error, pinFriendGoal };
-};
-
-const PublicGoalTable = () => {
-    const { user } = useContext(UserContext);
-    const { addToast } = useToast();
-    const { publicGoals, loading, error, pinFriendGoal } = usePublicGoals(
-        user,
-        addToast
-    );
-    const [expandedGoals, setExpandedGoals] = useState({});
 
     const toggleGoalExpansion = useCallback((goalId) => {
         setExpandedGoals((prev) => ({ ...prev, [goalId]: !prev[goalId] }));
@@ -85,55 +102,29 @@ const PublicGoalTable = () => {
 
     const sortedGoals = useMemo(() => {
         return [...publicGoals].sort((a, b) => {
-            if (a.isPinned !== b.isPinned) {
-                return a.isPinned ? -1 : 1;
-            }
+            if (a.isPinned !== b.isPinned) return a.isPinned ? -1 : 1;
             return 0;
         });
     }, [publicGoals]);
 
-    if (error) {
-        return (
-            <div className='py-12 text-center'>
-                <AlertOctagon className='w-12 h-12 text-red-500 mx-auto mb-4' />
-                <p className='text-red-500 text-lg'>{error}</p>
-            </div>
-        );
-    }
+    if (error) return <ErrorState message={error} />;
+    if (loading) return <LoadingState />;
+    if (!sortedGoals.length) return <EmptyState />;
 
     return (
         <div className='space-y-4'>
-            {loading ? (
-                <div className='flex items-center justify-center py-12'>
-                    <Loader />
-                </div>
-            ) : sortedGoals.length === 0 ? (
-                <div className='text-center py-12'>
-                    <Users className='w-12 h-12 text-gray-400 mx-auto mb-4' />
-                    <p className='text-gray-500 text-lg'>
-                        Keine öffentlichen Ziele gefunden
-                    </p>
-                </div>
-            ) : (
-                <div className='space-y-4'>
-                    {sortedGoals.map((goal) => (
-                        <GoalCard
-                            key={`${goal.friendId}-${goal.id}`}
-                            goal={goal}
-                            onPin={pinFriendGoal}
-                            isExpanded={
-                                expandedGoals[`${goal.friendId}-${goal.id}`]
-                            }
-                            onToggle={() =>
-                                toggleGoalExpansion(
-                                    `${goal.friendId}-${goal.id}`
-                                )
-                            }
-                            showActions={false}
-                        />
-                    ))}
-                </div>
-            )}
+            {sortedGoals.map((goal) => (
+                <GoalCard
+                    key={`${goal.friendId}-${goal.id}`}
+                    goal={goal}
+                    onPin={pinFriendGoal}
+                    isExpanded={expandedGoals[`${goal.friendId}-${goal.id}`]}
+                    onToggle={() =>
+                        toggleGoalExpansion(`${goal.friendId}-${goal.id}`)
+                    }
+                    showActions={false}
+                />
+            ))}
         </div>
     );
 };

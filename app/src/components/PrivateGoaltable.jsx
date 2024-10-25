@@ -11,8 +11,7 @@ import { useDialog } from '../context/DialogContext';
 import { useToast } from '../context/ToastContext';
 import ConfirmationDialog from './dialogs/ConfirmationDialog';
 import EditGoalDialog from './dialogs/EditGoalDialog';
-import Loader from './Loader';
-import { Goal } from 'lucide-react';
+import { Goal, ArrowUpDown } from 'lucide-react';
 import GoalCard from './GoalCards';
 
 const useGoals = (user, addToast) => {
@@ -58,7 +57,7 @@ const useGoals = (user, addToast) => {
                     addToast(
                         `Fehler beim ${
                             goalToPin.isPinned ? 'Loslösen' : 'Anpinnen'
-                        } des Ziels. Bitte versuchen Sie es erneut.` + error,
+                        } des Ziels.`,
                         'error'
                     );
                 });
@@ -68,6 +67,44 @@ const useGoals = (user, addToast) => {
 
     return { goals, setGoals, loading, pinGoal };
 };
+
+const SortButton = ({ label, active, direction, onClick }) => (
+    <button
+        onClick={onClick}
+        className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-200
+            ${
+                active
+                    ? 'bg-gradient-to-r from-[#4785FF] to-[#8c52ff] text-white shadow-md hover:shadow-lg'
+                    : 'text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5'
+            }`}
+    >
+        {label}
+        <ArrowUpDown
+            className={`w-4 h-4 transition-transform duration-200
+            ${active && direction === 'desc' ? 'rotate-180' : ''}`}
+        />
+    </button>
+);
+
+const EmptyState = () => (
+    <div className='text-center py-12'>
+        <div className='bg-gradient-to-r from-[#4785FF] to-[#8c52ff] w-16 h-16 rounded-xl mx-auto mb-4 flex items-center justify-center'>
+            <Goal className='w-8 h-8 text-white' />
+        </div>
+        <h3 className='text-xl font-medium text-gray-900 dark:text-white mb-2'>
+            Keine Ziele vorhanden
+        </h3>
+        <p className='text-gray-500 dark:text-white/60'>
+            Erstelle dein erstes Ziel, um deinen Fortschritt zu tracken
+        </p>
+    </div>
+);
+
+const LoadingState = () => (
+    <div className='flex items-center justify-center py-12'>
+        <div className='w-10 h-10 border-4 border-[#4785FF] border-t-transparent rounded-full animate-spin'></div>
+    </div>
+);
 
 const Table = () => {
     const { user } = useContext(UserContext);
@@ -138,7 +175,7 @@ const Table = () => {
                     addToast(
                         `Fehler beim ${
                             currentGoal.id ? 'Aktualisieren' : 'Erstellen'
-                        } des Ziels. Bitte versuchen Sie es erneut.` + error,
+                        } des Ziels.`,
                         'error'
                     )
                 );
@@ -151,7 +188,10 @@ const Table = () => {
             addDialog({
                 component: ConfirmationDialog,
                 props: {
-                    message: 'Möchten Sie diesen Eintrag wirklich löschen?',
+                    title: 'Ziel löschen',
+                    message: 'Möchtest du dieses Ziel wirklich löschen?',
+                    confirmText: 'Ja, löschen',
+                    cancelText: 'Abbrechen',
                     onConfirm: () => {
                         axios
                             .delete(`/goals/${id}`, {
@@ -159,18 +199,17 @@ const Table = () => {
                             })
                             .then(({ data }) => {
                                 setGoals(data);
-                                removeDialog(id);
+                                removeDialog();
                                 addToast('Ziel gelöscht!', 'success');
                             })
                             .catch((error) =>
                                 addToast(
-                                    'Fehler beim Löschen des Ziels. Bitte versuchen Sie es erneut. ' +
-                                        error,
+                                    'Fehler beim Löschen des Ziels.',
                                     'error'
                                 )
                             );
                     },
-                    onClose: () => removeDialog(id),
+                    onClose: removeDialog,
                 },
             });
         },
@@ -192,9 +231,7 @@ const Table = () => {
 
     const sortedGoals = useMemo(() => {
         return [...goals].sort((a, b) => {
-            if (a.isPinned !== b.isPinned) {
-                return a.isPinned ? -1 : 1;
-            }
+            if (a.isPinned !== b.isPinned) return a.isPinned ? -1 : 1;
             if (a[sortField] < b[sortField])
                 return sortDirection === 'asc' ? -1 : 1;
             if (a[sortField] > b[sortField])
@@ -208,63 +245,36 @@ const Table = () => {
     }, []);
 
     return (
-        <div className='space-y-4'>
+        <div className='space-y-6'>
             <div className='flex flex-col sm:flex-row justify-between gap-4'>
                 <div className='flex flex-wrap gap-2'>
-                    <button
+                    <SortButton
+                        label='Nach Titel'
+                        active={sortField === 'title'}
+                        direction={sortDirection}
                         onClick={() => handleSort('title')}
-                        className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors duration-200
-                            ${
-                                sortField === 'title'
-                                    ? 'bg-blue-50 text-blue-600'
-                                    : 'text-gray-600 hover:bg-gray-100'
-                            }`}
-                    >
-                        Nach Titel
-                        {sortField === 'title' && (
-                            <span className='ml-1'>
-                                {sortDirection === 'asc' ? '↑' : '↓'}
-                            </span>
-                        )}
-                    </button>
-                    <button
+                    />
+                    <SortButton
+                        label='Nach Fortschritt'
+                        active={sortField === 'progress'}
+                        direction={sortDirection}
                         onClick={() => handleSort('progress')}
-                        className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors duration-200
-                            ${
-                                sortField === 'progress'
-                                    ? 'bg-blue-50 text-blue-600'
-                                    : 'text-gray-600 hover:bg-gray-100'
-                            }`}
-                    >
-                        Nach Fortschritt
-                        {sortField === 'progress' && (
-                            <span className='ml-1'>
-                                {sortDirection === 'asc' ? '↑' : '↓'}
-                            </span>
-                        )}
-                    </button>
+                    />
                 </div>
                 <button
                     onClick={handleAddGoal}
-                    className='px-4 py-2 bg-blue-600 text-white font-medium rounded-lg 
-                             shadow-lg hover:bg-blue-700 transition-all duration-200 
-                             hover:shadow-xl hover:scale-105'
+                    className='px-6 py-2.5 bg-gradient-to-r from-[#4785FF] to-[#8c52ff] text-white font-medium 
+                             rounded-xl shadow-md hover:shadow-lg hover:shadow-blue-500/25 dark:hover:shadow-blue-500/10
+                             transition-all duration-200 hover:-translate-y-0.5'
                 >
                     + Neues Ziel
                 </button>
             </div>
 
             {loading ? (
-                <div className='flex items-center justify-center py-12'>
-                    <Loader />
-                </div>
+                <LoadingState />
             ) : goals.length === 0 ? (
-                <div className='text-center py-12'>
-                    <Goal className='w-12 h-12 text-gray-400 mx-auto mb-4' />
-                    <p className='text-gray-500 text-lg'>
-                        Noch keine Ziele erstellt.
-                    </p>
-                </div>
+                <EmptyState />
             ) : (
                 <div className='space-y-4'>
                     {sortedGoals.map((goal) => (
