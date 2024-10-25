@@ -1,6 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import { UserPlus, UserCheck, UserX, Users, Globe, Search } from 'lucide-react';
+import {
+    UserPlus,
+    UserCheck,
+    UserX,
+    Users,
+    Globe,
+    Search,
+    Target,
+} from 'lucide-react';
 import Navbar from '../components/Navbar';
 import { UserContext } from '../context/UserContext';
 import { useToast } from '../context/ToastContext';
@@ -9,158 +17,23 @@ import ConfirmationDialog from '../components/dialogs/ConfirmationDialog';
 import FriendGoalsDialog from '../components/dialogs/FriendGoalsDialog';
 import Loader from '../components/Loader';
 import Waves from '../components/Waves';
+import { FriendCard, FriendRequestCard } from '../components/FriendRequestCard';
 
-const AddFriendSection = ({ username, setUsername, onSend }) => (
-    <div className='grid grid-cols-1 md:grid-cols-2 gap-4 items-center bg-white p-6 rounded-xl shadow-lg'>
-        <div className='flex items-center gap-3'>
-            <div className='w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center'>
-                <UserPlus className='w-5 h-5 text-blue-600' />
+const FriendsMetric = ({ title, value, icon: Icon }) => (
+    <div className='bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-white/10 p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1'>
+        <div className='flex items-center gap-4'>
+            <div className='h-12 w-12 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center flex-shrink-0'>
+                <Icon className='h-6 w-6 text-white' />
             </div>
-            <h2 className='text-lg font-bold text-gray-800'>
-                Freund hinzufügen
-            </h2>
-        </div>
-        <div className='flex gap-3'>
-            <input
-                type='text'
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder='Benutzername eingeben'
-                className='flex-1 px-4 py-2.5 rounded-lg border border-gray-200 
-                         focus:border-blue-500 focus:ring-2 focus:ring-blue-200 
-                         transition-all duration-200 outline-none'
-            />
-            <button
-                onClick={onSend}
-                className='px-4 py-2.5 bg-blue-600 text-white rounded-lg font-medium 
-                         shadow-lg hover:bg-blue-700 transition-all duration-200 
-                         hover:shadow-xl flex items-center gap-2 whitespace-nowrap'
-            >
-                <UserPlus className='w-5 h-5' />
-                Anfrage senden
-            </button>
-        </div>
-    </div>
-);
-
-const FriendRequestCard = ({ request, onAccept, onDecline }) => (
-    <div className='bg-white rounded-xl border border-gray-100 p-4 hover:shadow-md transition-shadow duration-200'>
-        <div className='flex items-center justify-between gap-4'>
-            <div className='flex items-center gap-3'>
-                {request.userId?.avatar ? (
-                    <img
-                        src={`data:image/jpeg;base64,${request.userId.avatar}`}
-                        alt={`${request.userId.firstname} ${request.userId.lastname}`}
-                        className='w-10 h-10 rounded-lg object-cover'
-                    />
-                ) : (
-                    <div className='w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center'>
-                        <span className='text-blue-600 font-medium'>
-                            {request.userId?.firstname?.[0] || '?'}
-                        </span>
-                    </div>
-                )}
-                <div>
-                    <p className='font-medium text-gray-900'>
-                        {request.userId?.username}
-                    </p>
-                    <p className='text-sm text-gray-500'>
-                        {request.userId?.firstname} {request.userId?.lastname}
-                    </p>
+            <div>
+                <h3 className='text-sm text-gray-500 dark:text-white/60'>
+                    {title}
+                </h3>
+                <div className='text-2xl font-bold text-gray-900 dark:text-white'>
+                    {value}
                 </div>
             </div>
-            <div className='flex gap-2'>
-                <button
-                    onClick={() => onAccept(request._id)}
-                    className='px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-sm font-medium 
-                             hover:bg-blue-100 transition-colors duration-200 flex items-center gap-1.5'
-                >
-                    <UserCheck className='w-4 h-4' />
-                    Annehmen
-                </button>
-                <button
-                    onClick={() => onDecline(request._id)}
-                    className='px-3 py-1.5 bg-red-50 text-red-600 rounded-lg text-sm font-medium 
-                             hover:bg-red-100 transition-colors duration-200 flex items-center gap-1.5'
-                >
-                    <UserX className='w-4 h-4' />
-                    Ablehnen
-                </button>
-            </div>
         </div>
-    </div>
-);
-
-const FriendCard = ({ friend, onShowGoals, onDelete }) => (
-    <div className='bg-white rounded-xl border border-gray-100 p-4 hover:shadow-md transition-shadow duration-200'>
-        <div className='flex items-center justify-between gap-4'>
-            <div className='flex items-center gap-3'>
-                {friend.friendId?.avatar ? (
-                    <img
-                        src={`data:image/jpeg;base64,${friend.friendId.avatar}`}
-                        alt={`${friend.friendId.firstname} ${friend.friendId.lastname}`}
-                        className='w-10 h-10 rounded-lg object-cover'
-                    />
-                ) : (
-                    <div className='w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center'>
-                        <span className='text-blue-600 font-medium'>
-                            {friend.friendId?.firstname?.[0] || '?'}
-                        </span>
-                    </div>
-                )}
-                <div>
-                    <p className='font-medium text-gray-900'>
-                        {friend.friendId?.username}
-                    </p>
-                    <p className='text-sm text-gray-500'>
-                        {friend.friendId?.firstname} {friend.friendId?.lastname}
-                    </p>
-                    <p className='text-xs text-gray-400 mt-0.5'>
-                        Freund seit:{' '}
-                        {new Date(friend.createdAt).toLocaleDateString()}
-                    </p>
-                </div>
-            </div>
-            <div className='flex gap-2'>
-                <button
-                    onClick={() => onShowGoals(friend.friendId._id)}
-                    className='px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-sm font-medium 
-                             hover:bg-blue-100 transition-colors duration-200 flex items-center gap-1.5'
-                >
-                    <Globe className='w-4 h-4' />
-                    Öffentliche Ziele
-                </button>
-                <button
-                    onClick={() => onDelete(friend.friendId._id)}
-                    className='px-3 py-1.5 bg-red-50 text-red-600 rounded-lg text-sm font-medium 
-                             hover:bg-red-100 transition-colors duration-200 flex items-center gap-1.5'
-                >
-                    <UserX className='w-4 h-4' />
-                    Entfernen
-                </button>
-            </div>
-        </div>
-    </div>
-);
-
-const SectionContainer = ({ title, icon: Icon, children }) => (
-    <div className='bg-white rounded-xl shadow-lg'>
-        <div className='p-4 border-b border-gray-100'>
-            <div className='flex items-center gap-3'>
-                <div className='w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center'>
-                    <Icon className='w-4 h-4 text-blue-600' />
-                </div>
-                <h2 className='text-lg font-bold text-gray-800'>{title}</h2>
-            </div>
-        </div>
-        <div className='p-4'>{children}</div>
-    </div>
-);
-
-const EmptyState = ({ icon: Icon, message }) => (
-    <div className='text-center py-8'>
-        <Icon className='w-12 h-12 text-gray-400 mx-auto mb-3' />
-        <p className='text-gray-500'>{message}</p>
     </div>
 );
 
@@ -276,120 +149,216 @@ const Friends = () => {
     );
 
     return (
-        <>
+        <div className='min-h-screen bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800'>
             <Navbar />
-            <div className='min-h-screen bg-gray-50 pt-16'>
-                <Waves />
-                <div className='container mx-auto px-4 py-8 relative z-10'>
-                    <h1 className='text-4xl font-bold mb-8 text-center text-gray-800'>
-                        Freunde
-                    </h1>
 
-                    <div className='space-y-6'>
-                        <AddFriendSection
-                            username={newFriendUsername}
-                            setUsername={setNewFriendUsername}
-                            onSend={sendFriendRequest}
-                        />
+            {/* Decorative Elements */}
+            <div className='absolute inset-0'>
+                <div className='absolute top-1/4 right-1/4 w-96 h-96 bg-[#4785FF]/10 rounded-full blur-3xl animate-pulse' />
+                <div className='absolute bottom-1/4 left-1/4 w-96 h-96 bg-[#8c52ff]/10 rounded-full blur-3xl animate-pulse delay-1000' />
+            </div>
 
-                        <div className='grid lg:grid-cols-2 gap-6'>
-                            <SectionContainer
-                                title='Freundschaftsanfragen'
-                                icon={Users}
+            <div className='container mx-auto px-4 py-8 relative z-10 pt-24'>
+                {/* Hero Section */}
+                <div className='text-center mb-12'>
+                    <div className='flex items-center justify-center gap-2 mb-6'>
+                        <div className='h-12 w-12 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center'>
+                            <Users className='h-6 w-6 text-white' />
+                        </div>
+                        <h1 className='text-4xl font-bold text-gray-900 dark:text-white'>
+                            Community
+                        </h1>
+                    </div>
+                    <p className='text-lg text-gray-600 dark:text-white/70 max-w-2xl mx-auto'>
+                        Verbinde dich mit Gleichgesinnten und erreiche gemeinsam
+                        eure Ziele
+                    </p>
+                </div>
+
+                {/* Metrics Grid */}
+                <div className='grid grid-cols-1 md:grid-cols-3 gap-6 mb-12'>
+                    <FriendsMetric
+                        title='Freunde'
+                        value={friends.length}
+                        icon={Users}
+                    />
+                    <FriendsMetric
+                        title='Anfragen'
+                        value={friendRequests.length}
+                        icon={UserPlus}
+                    />
+                    <FriendsMetric
+                        title='Geteilte Ziele'
+                        value={friends.reduce(
+                            (acc, friend) => acc + (friend.sharedGoals || 0),
+                            0
+                        )}
+                        icon={Target}
+                    />
+                </div>
+
+                {/* Add Friend Section */}
+                <div className='bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-white/10 p-8 mb-8'>
+                    <div className='flex flex-col md:flex-row items-center justify-between gap-6'>
+                        <div>
+                            <h2 className='text-2xl font-bold text-gray-900 dark:text-white mb-2'>
+                                Freund hinzufügen
+                            </h2>
+                            <p className='text-gray-600 dark:text-white/70'>
+                                Verbinde dich mit anderen TrackMyGoal Nutzern
+                            </p>
+                        </div>
+                        <div className='flex gap-4 w-full md:w-auto'>
+                            <input
+                                type='text'
+                                value={newFriendUsername}
+                                onChange={(e) =>
+                                    setNewFriendUsername(e.target.value)
+                                }
+                                placeholder='Benutzername eingeben'
+                                className='flex-1 md:w-64 px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 
+                              border border-gray-200 dark:border-white/10 
+                              focus:border-[#4785FF] focus:ring-2 focus:ring-[#4785FF]/20 
+                              transition-all duration-200 outline-none
+                              text-gray-900 dark:text-white
+                              placeholder:text-gray-400 dark:placeholder:text-white/40'
+                            />
+                            <button
+                                onClick={() => sendFriendRequest()}
+                                className='px-6 py-2.5 bg-gradient-to-r from-[#4785FF] to-[#8c52ff] 
+                            text-white rounded-xl font-medium shadow-lg 
+                            hover:shadow-xl hover:shadow-blue-500/25 dark:hover:shadow-blue-500/10
+                            transition-all duration-200 hover:-translate-y-0.5
+                            flex items-center gap-2 whitespace-nowrap'
                             >
-                                {loading ? (
-                                    <div className='flex items-center justify-center py-8'>
-                                        <Loader />
-                                    </div>
-                                ) : friendRequests.length === 0 ? (
-                                    <EmptyState
-                                        icon={Users}
-                                        message='Keine offenen Anfragen'
-                                    />
-                                ) : (
-                                    <div className='space-y-3'>
-                                        {friendRequests.map((request) => (
-                                            <FriendRequestCard
-                                                key={request._id}
-                                                request={request}
-                                                onAccept={acceptFriendRequest}
-                                                onDecline={declineFriendRequest}
-                                            />
-                                        ))}
-                                    </div>
-                                )}
-                            </SectionContainer>
-
-                            <SectionContainer
-                                title='Meine Freunde'
-                                icon={Users}
-                            >
-                                {loading ? (
-                                    <div className='flex items-center justify-center py-8'>
-                                        <Loader />
-                                    </div>
-                                ) : friends.length === 0 ? (
-                                    <EmptyState
-                                        icon={Users}
-                                        message='Du hast noch keine Freunde hinzugefügt'
-                                    />
-                                ) : (
-                                    <>
-                                        <div className='relative mb-4'>
-                                            <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4' />
-                                            <input
-                                                type='text'
-                                                placeholder='Freunde durchsuchen...'
-                                                value={searchQuery}
-                                                onChange={(e) =>
-                                                    setSearchQuery(
-                                                        e.target.value
-                                                    )
-                                                }
-                                                className='w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 
-                                                         focus:border-blue-500 focus:ring-2 focus:ring-blue-200 
-                                                         transition-all duration-200 outline-none'
-                                            />
-                                        </div>
-                                        <div className='space-y-3'>
-                                            {filteredFriends.map((friend) => (
-                                                <FriendCard
-                                                    key={friend._id}
-                                                    friend={friend}
-                                                    onShowGoals={() =>
-                                                        handleShowGoalsClick(
-                                                            friend.friendId._id
-                                                        )
-                                                    }
-                                                    onDelete={() =>
-                                                        handleDeleteClick(
-                                                            friend.friendId._id
-                                                        )
-                                                    }
-                                                />
-                                            ))}
-                                            {filteredFriends.length === 0 && (
-                                                <EmptyState
-                                                    icon={Search}
-                                                    message='Keine Freunde gefunden'
-                                                />
-                                            )}
-                                        </div>
-                                    </>
-                                )}
-                            </SectionContainer>
+                                <UserPlus className='w-5 h-5' />
+                                Hinzufügen
+                            </button>
                         </div>
                     </div>
                 </div>
 
-                {selectedFriendId && (
-                    <FriendGoalsDialog
-                        friendId={selectedFriendId}
-                        onClose={() => setSelectedFriendId(null)}
-                    />
-                )}
+                {/* Main Content Grid */}
+                <div className='grid lg:grid-cols-2 gap-8'>
+                    {/* Friend Requests */}
+                    <div className='bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-white/10'>
+                        <div className='p-6 border-b border-gray-200 dark:border-white/10'>
+                            <div className='flex items-center justify-between'>
+                                <div className='flex items-center gap-3'>
+                                    <div className='w-10 h-10 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center'>
+                                        <UserPlus className='w-5 h-5 text-white' />
+                                    </div>
+                                    <h2 className='text-xl font-bold text-gray-900 dark:text-white'>
+                                        Anfragen
+                                    </h2>
+                                </div>
+                                <span className='px-3 py-1 rounded-full text-sm font-medium bg-[#4785FF]/10 dark:bg-[#4785FF]/20 text-[#4785FF]'>
+                                    {friendRequests.length} neu
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className='p-6'>
+                            {loading ? (
+                                <div className='flex items-center justify-center py-12'>
+                                    <div className='w-10 h-10 border-4 border-[#4785FF] border-t-transparent rounded-full animate-spin' />
+                                </div>
+                            ) : friendRequests.length === 0 ? (
+                                <div className='text-center py-12'>
+                                    <div className='w-16 h-16 mx-auto mb-4 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center opacity-50'>
+                                        <Users className='w-8 h-8 text-white' />
+                                    </div>
+                                    <p className='text-gray-500 dark:text-white/60'>
+                                        Keine offenen Anfragen
+                                    </p>
+                                </div>
+                            ) : (
+                                <div className='space-y-4'>
+                                    {friendRequests.map((request) => (
+                                        <FriendRequestCard
+                                            key={request._id}
+                                            request={request}
+                                            onAccept={acceptFriendRequest}
+                                            onDecline={declineFriendRequest}
+                                        />
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Friends List */}
+                    <div className='bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-white/10'>
+                        <div className='p-6 border-b border-gray-200 dark:border-white/10'>
+                            <div className='flex items-center justify-between'>
+                                <div className='flex items-center gap-3'>
+                                    <div className='w-10 h-10 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center'>
+                                        <Users className='w-5 h-5 text-white' />
+                                    </div>
+                                    <h2 className='text-xl font-bold text-gray-900 dark:text-white'>
+                                        Meine Freunde
+                                    </h2>
+                                </div>
+                            </div>
+
+                            <div className='mt-4 relative'>
+                                <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-white/40 w-4 h-4' />
+                                <input
+                                    type='text'
+                                    placeholder='Freunde durchsuchen...'
+                                    value={searchQuery}
+                                    onChange={(e) =>
+                                        setSearchQuery(e.target.value)
+                                    }
+                                    className='w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-white/5 
+                                border border-gray-200 dark:border-white/10
+                                focus:border-[#4785FF] focus:ring-2 focus:ring-[#4785FF]/20 
+                                transition-all duration-200 outline-none
+                                text-gray-900 dark:text-white
+                                placeholder:text-gray-400 dark:placeholder:text-white/40'
+                                />
+                            </div>
+                        </div>
+
+                        <div className='p-6'>
+                            {loading ? (
+                                <div className='flex items-center justify-center py-12'>
+                                    <div className='w-10 h-10 border-4 border-[#4785FF] border-t-transparent rounded-full animate-spin' />
+                                </div>
+                            ) : friends.length === 0 ? (
+                                <div className='text-center py-12'>
+                                    <div className='w-16 h-16 mx-auto mb-4 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center opacity-50'>
+                                        <Users className='w-8 h-8 text-white' />
+                                    </div>
+                                    <p className='text-gray-500 dark:text-white/60'>
+                                        Noch keine Freunde hinzugefügt
+                                    </p>
+                                </div>
+                            ) : (
+                                <div className='space-y-4'>
+                                    {filteredFriends.map((friend) => (
+                                        <FriendCard
+                                            key={friend._id}
+                                            friend={friend}
+                                            onShowGoals={() =>
+                                                handleShowGoalsClick(
+                                                    friend.friendId._id
+                                                )
+                                            }
+                                            onDelete={() =>
+                                                handleDeleteClick(
+                                                    friend.friendId._id
+                                                )
+                                            }
+                                        />
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
             </div>
-        </>
+        </div>
     );
 };
 
