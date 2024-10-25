@@ -1,42 +1,88 @@
 import React, { useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { UserContext } from '../context/UserContext';
-import Navbar from '../components/Navbar';
 import { useToast } from '../context/ToastContext';
 import { useDialog } from '../context/DialogContext';
 import ChangePasswordDialog from '../components/dialogs/ChangePasswordDialog';
 import AvatarCropDialog from '../components/dialogs/AvatarCropDialog';
-import Waves from '../components/Waves';
-import { Camera, Lock, Mail, Save, User } from 'lucide-react';
+import {
+    Camera,
+    Lock,
+    Mail,
+    Save,
+    User,
+    Shield,
+    Bell,
+    Settings,
+    ChevronRight,
+} from 'lucide-react';
+import Navbar from '../components/Navbar';
 
-const InputField = ({
-    label,
-    id,
-    type = 'text',
-    value,
-    onChange,
-    icon: Icon,
-}) => (
-    <div>
-        <label className='block text-sm font-medium text-gray-600 mb-1.5'>
-            {label}
-        </label>
-        <div className='relative'>
-            <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-                <Icon className='h-5 w-5 text-gray-400' />
+const InputField = React.memo(
+    ({ label, id, type = 'text', value, onChange, icon: Icon }) => (
+        <div>
+            <label className='block text-sm font-medium text-gray-700 dark:text-white/70 mb-2'>
+                {label}
+            </label>
+            <div className='relative'>
+                <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
+                    <Icon className='h-5 w-5 text-gray-400 dark:text-white/40' />
+                </div>
+                <input
+                    type={type}
+                    id={id}
+                    name={id}
+                    value={value}
+                    onChange={onChange}
+                    className='w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-white/5 
+                border border-gray-200 dark:border-white/10
+                focus:border-[#4785FF] focus:ring-2 focus:ring-[#4785FF]/20 dark:focus:ring-[#4785FF]/10 
+                transition-all duration-200 outline-none
+                text-gray-900 dark:text-white
+                placeholder:text-gray-400 dark:placeholder:text-white/40'
+                />
             </div>
-            <input
-                type={type}
-                id={id}
-                name={id}
-                value={value}
-                onChange={onChange}
-                className='w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 
-                         focus:border-blue-500 focus:ring-2 focus:ring-blue-200 
-                         transition-all duration-200 outline-none'
-            />
         </div>
+    )
+);
+
+const ProfileSection = ({ title, icon: Icon, children }) => (
+    <div className='bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-white/10 overflow-hidden'>
+        <div className='p-6 border-b border-gray-200 dark:border-white/10'>
+            <div className='flex items-center gap-3'>
+                <div className='w-10 h-10 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center'>
+                    <Icon className='w-5 h-5 text-white' />
+                </div>
+                <h2 className='text-xl font-bold text-gray-900 dark:text-white'>
+                    {title}
+                </h2>
+            </div>
+        </div>
+        <div className='p-6'>{children}</div>
     </div>
+);
+
+const QuickAction = ({ icon: Icon, title, description, onClick }) => (
+    <button
+        onClick={onClick}
+        className='w-full p-4 bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-xl border border-gray-200/50 dark:border-white/10
+             hover:shadow-lg dark:shadow-none transition-all duration-300 hover:-translate-y-1 group'
+    >
+        <div className='flex items-center gap-4'>
+            <div className='w-10 h-10 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center'>
+                <Icon className='w-5 h-5 text-white' />
+            </div>
+            <div className='flex-1 text-left'>
+                <h3 className='text-gray-900 dark:text-white font-medium'>
+                    {title}
+                </h3>
+                <p className='text-sm text-gray-500 dark:text-white/60'>
+                    {description}
+                </p>
+            </div>
+            <ChevronRight className='w-5 h-5 text-gray-400 dark:text-white/40 group-hover:translate-x-1 transition-transform duration-200' />
+        </div>
+    </button>
 );
 
 const Profile = () => {
@@ -48,37 +94,23 @@ const Profile = () => {
         lastname: '',
         avatar: null,
     });
-    const [initialFormData, setInitialFormData] = useState({
-        username: '',
-        email: '',
-        firstname: '',
-        lastname: '',
-        avatar: null,
-    });
+    const [initialFormData, setInitialFormData] = useState({});
     const { addToast } = useToast();
-    const [isModified, setIsModified] = useState(false);
     const { addDialog } = useDialog();
-    const [avatarError, setAvatarError] = useState('');
-    const [showAvatarCropDialog, setShowAvatarCropDialog] = useState(false);
+    const [isModified, setIsModified] = useState(false);
     const [avatarFile, setAvatarFile] = useState(null);
 
     useEffect(() => {
         if (user) {
-            setFormData({
+            const userData = {
                 username: user.username,
                 email: user.email,
                 firstname: user.firstname,
                 lastname: user.lastname,
                 avatar: user.avatar,
-            });
-
-            setInitialFormData({
-                username: user.username,
-                email: user.email,
-                firstname: user.firstname,
-                lastname: user.lastname,
-                avatar: user.avatar,
-            });
+            };
+            setFormData(userData);
+            setInitialFormData(userData);
         }
     }, [user]);
 
@@ -86,72 +118,33 @@ const Profile = () => {
         const file = event.target.files[0];
         if (file) {
             setAvatarFile(file);
-            setShowAvatarCropDialog(true);
+            addDialog({
+                component: AvatarCropDialog,
+                props: {
+                    imageFile: file,
+                    onSave: handleAvatarSave,
+                },
+            });
         }
     };
 
     const handleAvatarSave = (croppedImageUrl) => {
-        setFormData((prevFormData) => ({
-            ...prevFormData,
+        setFormData((prev) => ({
+            ...prev,
             avatar: croppedImageUrl,
         }));
         setIsModified(true);
     };
 
-    const validateImage = (file) => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const img = new Image();
-                img.onload = () => {
-                    if (img.width >= 128 && img.height >= 128) {
-                        resolve(true);
-                    } else {
-                        reject(
-                            'Das Bild muss mindestens 128x128 Pixel groß sein.'
-                        );
-                    }
-                };
-                img.onerror = () => reject('Ungültiges Bildformat.');
-                img.src = e.target.result;
-            };
-            reader.onerror = () => reject('Fehler beim Lesen der Datei.');
-            reader.readAsDataURL(file);
+    const handleChange = (event) => {
+        const { name, value } = event.target;
+        setFormData((prev) => {
+            const newData = { ...prev, [name]: value };
+            setIsModified(
+                JSON.stringify(newData) !== JSON.stringify(initialFormData)
+            );
+            return newData;
         });
-    };
-
-    const handleChange = async (event) => {
-        const { name, value, files } = event.target;
-        let newValue = files ? files[0] : value;
-
-        if (name === 'avatar' && files) {
-            try {
-                if (!files[0].type.startsWith('image/')) {
-                    setIsModified(false);
-                    throw new Error('Bitte laden Sie nur Bilddateien hoch.');
-                }
-                await validateImage(files[0]);
-                setAvatarError('');
-            } catch (error) {
-                setAvatarError(error.message || 'Ungültiges Bild.');
-                newValue = null;
-                event.target.value = '';
-            }
-        }
-
-        if (!avatarError) {
-            setFormData((prevFormData) => {
-                const updatedFormData = {
-                    ...prevFormData,
-                    [name]: newValue,
-                };
-                setIsModified(
-                    JSON.stringify(updatedFormData) !==
-                        JSON.stringify(initialFormData)
-                );
-                return updatedFormData;
-            });
-        }
     };
 
     const handleSubmit = async (e) => {
@@ -159,11 +152,7 @@ const Profile = () => {
         const formDataToSend = new FormData();
         formDataToSend.append('userId', user._id);
         for (const key in formData) {
-            if (
-                key === 'avatar' &&
-                formData[key] &&
-                formData[key].startsWith('data:image')
-            ) {
+            if (key === 'avatar' && formData[key]?.startsWith('data:image')) {
                 const response = await fetch(formData[key]);
                 const blob = await response.blob();
                 formDataToSend.append(key, blob, 'avatar.jpg');
@@ -171,56 +160,79 @@ const Profile = () => {
                 formDataToSend.append(key, formData[key]);
             }
         }
+
         try {
             const { data } = await axios.put('/profile', formDataToSend, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
+                headers: { 'Content-Type': 'multipart/form-data' },
             });
             updateUser(data);
             addToast('Profil erfolgreich aktualisiert', 'success');
             setIsModified(false);
+            setInitialFormData(formData);
         } catch (error) {
             addToast('Fehler beim Aktualisieren des Profils', 'error');
         }
     };
 
     return (
-        <>
+        <div className='min-h-screen bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800'>
             <Navbar />
-            <div className='min-h-screen bg-gray-50 pt-16'>
-                <Waves />
-                <div className='container mx-auto px-4 py-8 relative z-10'>
-                    <div className='max-w-2xl mx-auto'>
-                        <div className='flex items-center gap-3 mb-8'>
-                            <div className='w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center'>
-                                <User className='w-6 h-6 text-blue-600' />
-                            </div>
-                            <h1 className='text-2xl font-bold text-gray-800'>
-                                Profil bearbeiten
-                            </h1>
-                        </div>
 
-                        <div className='bg-white rounded-xl shadow-lg p-6 space-y-8'>
-                            <div className='flex flex-col items-center'>
+            {/* Decorative Elements */}
+            <div className='absolute inset-0'>
+                <div className='absolute top-1/4 right-1/4 w-96 h-96 bg-[#4785FF]/10 rounded-full blur-3xl animate-pulse' />
+                <div className='absolute bottom-1/4 left-1/4 w-96 h-96 bg-[#8c52ff]/10 rounded-full blur-3xl animate-pulse delay-1000' />
+            </div>
+
+            <div className='container mx-auto px-4 py-8 relative z-10 pt-24'>
+                {/* Hero Section */}
+                <div className='text-center mb-12'>
+                    <div className='flex items-center justify-center gap-2 mb-6'>
+                        <div className='h-12 w-12 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center'>
+                            <User className='h-6 w-6 text-white' />
+                        </div>
+                        <h1 className='text-4xl font-bold text-gray-900 dark:text-white'>
+                            Profil
+                        </h1>
+                    </div>
+                    <p className='text-lg text-gray-600 dark:text-white/70 max-w-2xl mx-auto'>
+                        Verwalte deine persönlichen Informationen und
+                        Einstellungen
+                    </p>
+                </div>
+
+                <div className='grid lg:grid-cols-3 gap-6 max-w-6xl mx-auto'>
+                    {/* Main Profile Section */}
+                    <div className='lg:col-span-2 space-y-6'>
+                        <ProfileSection
+                            title='Persönliche Informationen'
+                            icon={User}
+                        >
+                            <div className='flex flex-col items-center mb-8'>
                                 <div className='relative group'>
                                     {formData.avatar ? (
                                         <img
-                                            src={`data:image/jpeg;base64,${formData.avatar}`}
+                                            src={
+                                                formData.avatar.startsWith(
+                                                    'data:'
+                                                )
+                                                    ? formData.avatar
+                                                    : `data:image/jpeg;base64,${formData.avatar}`
+                                            }
                                             alt='Avatar'
-                                            className='w-24 h-24 rounded-xl object-cover'
+                                            className='w-24 h-24 rounded-xl object-cover border-2 border-white dark:border-gray-800'
                                         />
                                     ) : (
-                                        <div className='w-24 h-24 bg-blue-50 rounded-xl flex items-center justify-center'>
-                                            <User className='w-8 h-8 text-blue-500' />
+                                        <div className='w-24 h-24 rounded-xl bg-gradient-to-br from-[#4785FF]/20 to-[#8c52ff]/20 flex items-center justify-center'>
+                                            <User className='w-8 h-8 text-[#4785FF]' />
                                         </div>
                                     )}
                                     <label
                                         htmlFor='avatar'
                                         className='absolute inset-0 flex items-center justify-center 
-                                                 bg-black/50 opacity-0 group-hover:opacity-100 
-                                                 transition-opacity duration-200 rounded-xl 
-                                                 cursor-pointer'
+                             bg-black/50 opacity-0 group-hover:opacity-100 
+                             transition-opacity duration-200 rounded-xl 
+                             cursor-pointer'
                                     >
                                         <Camera className='w-6 h-6 text-white' />
                                         <input
@@ -233,11 +245,6 @@ const Profile = () => {
                                         />
                                     </label>
                                 </div>
-                                {avatarError && (
-                                    <p className='mt-2 text-sm text-red-500'>
-                                        {avatarError}
-                                    </p>
-                                )}
                             </div>
 
                             <form onSubmit={handleSubmit} className='space-y-6'>
@@ -273,52 +280,60 @@ const Profile = () => {
                                     />
                                 </div>
 
-                                <div className='flex flex-col sm:flex-row gap-3 pt-6 border-t border-gray-100'>
-                                    <button
-                                        type='submit'
-                                        disabled={!isModified}
-                                        className={`
-                                            flex-1 py-2.5 rounded-lg font-medium flex items-center justify-center gap-2
-                                            ${
-                                                !isModified
-                                                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                                    : 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl hover:scale-105'
-                                            }
-                                            transition-all duration-200
-                                        `}
-                                    >
-                                        <Save className='w-5 h-5' />
-                                        Speichern
-                                    </button>
-                                    <button
-                                        type='button'
-                                        onClick={() =>
-                                            addDialog({
-                                                component: ChangePasswordDialog,
-                                            })
-                                        }
-                                        className='flex-1 py-2.5 bg-blue-50 text-blue-600 rounded-lg font-medium 
-                                                 hover:bg-blue-100 transition-colors duration-200 
-                                                 flex items-center justify-center gap-2'
-                                    >
-                                        <Lock className='w-5 h-5' />
-                                        Passwort ändern
-                                    </button>
-                                </div>
+                                <button
+                                    type='submit'
+                                    disabled={!isModified}
+                                    className={`w-full py-2.5 rounded-xl font-medium flex items-center justify-center gap-2
+                    ${
+                        !isModified
+                            ? 'bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-white/40 cursor-not-allowed'
+                            : 'bg-gradient-to-r from-[#4785FF] to-[#8c52ff] text-white shadow-lg hover:shadow-xl hover:shadow-blue-500/25 dark:hover:shadow-blue-500/10 hover:-translate-y-0.5'
+                    }
+                    transition-all duration-200`}
+                                >
+                                    <Save className='w-5 h-5' />
+                                    Speichern
+                                </button>
                             </form>
-                        </div>
+                        </ProfileSection>
+                    </div>
+
+                    {/* Quick Actions */}
+                    <div className='space-y-6'>
+                        <ProfileSection title='Schnellzugriff' icon={Settings}>
+                            <div className='space-y-4'>
+                                <QuickAction
+                                    icon={Lock}
+                                    title='Passwort ändern'
+                                    description='Aktualisiere dein Passwort regelmäßig'
+                                    onClick={() =>
+                                        addDialog({
+                                            component: ChangePasswordDialog,
+                                        })
+                                    }
+                                />
+                                <QuickAction
+                                    icon={Bell}
+                                    title='Benachrichtigungen'
+                                    description='Verwalte deine Benachrichtigungen'
+                                    onClick={() => {
+                                        /* TODO */
+                                    }}
+                                />
+                                <QuickAction
+                                    icon={Shield}
+                                    title='Privatsphäre'
+                                    description='Kontrolliere deine Datenschutzeinstellungen'
+                                    onClick={() => {
+                                        /* TODO */
+                                    }}
+                                />
+                            </div>
+                        </ProfileSection>
                     </div>
                 </div>
-
-                {showAvatarCropDialog && (
-                    <AvatarCropDialog
-                        onClose={() => setShowAvatarCropDialog(false)}
-                        onSave={handleAvatarSave}
-                        imageFile={avatarFile}
-                    />
-                )}
             </div>
-        </>
+        </div>
     );
 };
 

@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import Cropper from 'react-easy-crop';
-import { X, ZoomIn, ZoomOut, RotateCw } from 'lucide-react';
+import { X, ZoomIn, ZoomOut, RotateCw, Camera } from 'lucide-react';
 import DialogContainer from '../containers/DialogContainer';
 
 const createImage = (url) =>
@@ -50,6 +50,27 @@ const getRadianAngle = (degreeValue) => {
     return (degreeValue * Math.PI) / 180;
 };
 
+const CropperControl = ({ icon: Icon, onClick, label }) => (
+    <button
+        onClick={onClick}
+        className='p-3 rounded-xl bg-white/70 dark:bg-gray-900/50 backdrop-blur-xl
+                border border-gray-200/50 dark:border-white/10
+                hover:bg-gray-50 dark:hover:bg-white/5
+                transition-all duration-200 hover:-translate-y-0.5
+                group relative'
+        title={label}
+    >
+        <Icon className='w-5 h-5 text-gray-600 dark:text-white/70' />
+        <span
+            className='absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs
+                       bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded opacity-0 group-hover:opacity-100
+                       transition-opacity duration-200 whitespace-nowrap'
+        >
+            {label}
+        </span>
+    </button>
+);
+
 const AvatarCropDialog = ({ onClose, onSave, imageFile }) => {
     const [crop, setCrop] = useState({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(1);
@@ -67,7 +88,6 @@ const AvatarCropDialog = ({ onClose, onSave, imageFile }) => {
                 croppedAreaPixels,
                 rotation
             );
-
             onSave(croppedImageBase64);
             onClose();
         } catch (e) {
@@ -77,67 +97,95 @@ const AvatarCropDialog = ({ onClose, onSave, imageFile }) => {
 
     return (
         <DialogContainer onClose={onClose}>
-            <div className='p-6 border-b border-gray-100 flex justify-between items-center'>
-                <h3 className='text-xl font-bold text-gray-800'>
-                    Avatar zuschneiden
-                </h3>
-                <button
-                    onClick={onClose}
-                    className='p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200'
-                >
-                    <X className='h-5 w-5 text-gray-400' />
-                </button>
-            </div>
+            <div className='bg-white/70 dark:bg-gray-900/50 backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-white/10 overflow-hidden shadow-xl dark:shadow-2xl shadow-black/5 dark:shadow-black/20'>
+                <div className='p-6 border-b border-gray-200 dark:border-white/10'>
+                    <div className='flex justify-between items-center'>
+                        <div className='flex items-center gap-3'>
+                            <div className='w-10 h-10 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center'>
+                                <Camera className='w-5 h-5 text-white' />
+                            </div>
+                            <h3 className='text-xl font-bold text-gray-900 dark:text-white'>
+                                Profilbild zuschneiden
+                            </h3>
+                        </div>
+                        <button
+                            onClick={onClose}
+                            className='p-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-xl transition-colors duration-200'
+                        >
+                            <X className='h-5 w-5 text-gray-400 dark:text-white/40' />
+                        </button>
+                    </div>
+                </div>
 
-            <div className='relative w-full h-64'>
-                <Cropper
-                    image={URL.createObjectURL(imageFile)}
-                    crop={crop}
-                    zoom={zoom}
-                    aspect={1}
-                    onCropChange={setCrop}
-                    onCropComplete={onCropComplete}
-                    onZoomChange={setZoom}
-                    rotation={rotation}
-                />
-            </div>
+                <div className='relative w-full h-[400px] bg-gray-50 dark:bg-gray-800'>
+                    <Cropper
+                        image={URL.createObjectURL(imageFile)}
+                        crop={crop}
+                        zoom={zoom}
+                        aspect={1}
+                        onCropChange={setCrop}
+                        onCropComplete={onCropComplete}
+                        onZoomChange={setZoom}
+                        rotation={rotation}
+                        cropShape='round'
+                        showGrid={false}
+                        style={{
+                            containerStyle: {
+                                background: 'var(--container-background)',
+                            },
+                            mediaStyle: {
+                                background: 'var(--media-background)',
+                            },
+                        }}
+                    />
+                </div>
 
-            <div className='flex justify-center gap-3 p-4 bg-gray-50'>
-                <button
-                    onClick={() => setZoom(Math.max(1, zoom - 0.1))}
-                    className='p-2 rounded-lg hover:bg-gray-200 text-gray-600 transition-colors duration-200'
-                >
-                    <ZoomOut className='h-5 w-5' />
-                </button>
-                <button
-                    onClick={() => setZoom(Math.min(3, zoom + 0.1))}
-                    className='p-2 rounded-lg hover:bg-gray-200 text-gray-600 transition-colors duration-200'
-                >
-                    <ZoomIn className='h-5 w-5' />
-                </button>
-                <button
-                    onClick={() => setRotation((rotation + 90) % 360)}
-                    className='p-2 rounded-lg hover:bg-gray-200 text-gray-600 transition-colors duration-200'
-                >
-                    <RotateCw className='h-5 w-5' />
-                </button>
-            </div>
+                <div className='p-6 border-t border-gray-200 dark:border-white/10 bg-gray-50/50 dark:bg-gray-900/50'>
+                    <div className='flex flex-col gap-6'>
+                        <div className='flex justify-center gap-3'>
+                            <CropperControl
+                                icon={ZoomOut}
+                                onClick={() => setZoom(Math.max(1, zoom - 0.1))}
+                                label='Verkleinern'
+                            />
+                            <CropperControl
+                                icon={ZoomIn}
+                                onClick={() => setZoom(Math.min(3, zoom + 0.1))}
+                                label='Vergrößern'
+                            />
+                            <CropperControl
+                                icon={RotateCw}
+                                onClick={() =>
+                                    setRotation((rotation + 90) % 360)
+                                }
+                                label='Rotieren'
+                            />
+                        </div>
 
-            <div className='p-6 border-t border-gray-100 flex justify-end gap-3'>
-                <button
-                    onClick={onClose}
-                    className='px-6 py-2.5 border border-gray-200 rounded-lg font-medium text-gray-600 
-                            hover:bg-gray-50 transition-colors duration-200'
-                >
-                    Abbrechen
-                </button>
-                <button
-                    onClick={handleSave}
-                    className='px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium shadow-lg 
-                            hover:bg-blue-700 transition-all duration-200 hover:shadow-xl hover:scale-105'
-                >
-                    Speichern
-                </button>
+                        <div className='flex justify-end gap-3'>
+                            <button
+                                onClick={onClose}
+                                className='px-6 py-2.5 rounded-xl font-medium
+                           text-gray-700 dark:text-white/70 
+                           hover:bg-gray-100 dark:hover:bg-white/5
+                           border border-gray-200 dark:border-white/10
+                           transition-all duration-200'
+                            >
+                                Abbrechen
+                            </button>
+                            <button
+                                onClick={handleSave}
+                                className='px-6 py-2.5 rounded-xl font-medium
+                           bg-gradient-to-r from-[#4785FF] to-[#8c52ff]
+                           text-white shadow-lg 
+                           hover:shadow-xl hover:shadow-blue-500/25 dark:hover:shadow-blue-500/10
+                           transition-all duration-200 hover:-translate-y-0.5'
+                            >
+                                Speichern
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </DialogContainer>
     );
