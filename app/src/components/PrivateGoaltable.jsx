@@ -14,7 +14,7 @@ import EditGoalDialog from './dialogs/EditGoalDialog';
 import { Goal, ArrowUpDown } from 'lucide-react';
 import GoalCard from './GoalCards';
 
-const useGoals = (user, addToast) => {
+const useGoals = (user, addToast, onGoalsUpdate) => {
     const [goals, setGoals] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -26,13 +26,14 @@ const useGoals = (user, addToast) => {
                 .then(({ data }) => {
                     setGoals(data);
                     setLoading(false);
+                    if (onGoalsUpdate) onGoalsUpdate();
                 })
                 .catch((error) => {
                     addToast('Fehler beim Abrufen der Ziele.' + error, 'error');
                     setLoading(false);
                 });
         }
-    }, [user, addToast]);
+    }, [user, addToast, onGoalsUpdate]);
 
     const pinGoal = useCallback(
         (goalToPin) => {
@@ -45,6 +46,7 @@ const useGoals = (user, addToast) => {
                 .post(`/goals/pin`, { userId: user._id, goals: updatedGoals })
                 .then(({ data }) => {
                     setGoals(data);
+                    if (onGoalsUpdate) onGoalsUpdate();
                     addToast(
                         goalToPin.isPinned
                             ? 'Ziel losgelöst!'
@@ -62,7 +64,7 @@ const useGoals = (user, addToast) => {
                     );
                 });
         },
-        [goals, user._id, addToast]
+        [goals, user._id, addToast, onGoalsUpdate]
     );
 
     return { goals, setGoals, loading, pinGoal };
@@ -106,11 +108,15 @@ const LoadingState = () => (
     </div>
 );
 
-const Table = () => {
+const Table = ({ onGoalsUpdate }) => {
     const { user } = useContext(UserContext);
     const { addDialog, removeDialog } = useDialog();
     const { addToast } = useToast();
-    const { goals, setGoals, loading, pinGoal } = useGoals(user, addToast);
+    const { goals, setGoals, loading, pinGoal } = useGoals(
+        user,
+        addToast,
+        onGoalsUpdate
+    );
     const [sortField, setSortField] = useState('title');
     const [sortDirection, setSortDirection] = useState('asc');
     const [expandedGoals, setExpandedGoals] = useState({});
@@ -164,6 +170,7 @@ const Table = () => {
             apiCall
                 .then(({ data }) => {
                     setGoals(data);
+                    if (onGoalsUpdate) onGoalsUpdate();
                     addToast(
                         currentGoal.id
                             ? 'Ziel aktualisiert!'
@@ -180,7 +187,7 @@ const Table = () => {
                     )
                 );
         },
-        [user._id, addToast, setGoals]
+        [user._id, addToast, setGoals, onGoalsUpdate]
     );
 
     const handleDeleteGoal = useCallback(
@@ -199,6 +206,7 @@ const Table = () => {
                             })
                             .then(({ data }) => {
                                 setGoals(data);
+                                if (onGoalsUpdate) onGoalsUpdate();
                                 removeDialog();
                                 addToast('Ziel gelöscht!', 'success');
                             })
@@ -213,7 +221,7 @@ const Table = () => {
                 },
             });
         },
-        [addDialog, removeDialog, user._id, addToast, setGoals]
+        [addDialog, removeDialog, user._id, addToast, setGoals, onGoalsUpdate]
     );
 
     const handleSort = useCallback((field) => {

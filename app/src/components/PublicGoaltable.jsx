@@ -43,7 +43,7 @@ const ErrorState = ({ message }) => (
     </div>
 );
 
-const PublicGoalTable = () => {
+const PublicGoalTable = ({ onGoalsUpdate }) => {
     const { user } = useContext(UserContext);
     const { addToast } = useToast();
     const [publicGoals, setPublicGoals] = useState([]);
@@ -59,13 +59,14 @@ const PublicGoalTable = () => {
             const response = await axios.get(`/goals/friends/${user._id}`);
             setPublicGoals(response.data);
             setLoading(false);
+            if (onGoalsUpdate) onGoalsUpdate();
         } catch (error) {
             setError(
                 error.response?.data?.error || 'Fehler beim Laden der Ziele'
             );
             setLoading(false);
         }
-    }, [user]);
+    }, [user, onGoalsUpdate]);
 
     useEffect(() => {
         fetchPublicGoals();
@@ -85,6 +86,7 @@ const PublicGoalTable = () => {
                 });
 
                 setPublicGoals(updatedGoals);
+                if (onGoalsUpdate) onGoalsUpdate();
                 addToast(
                     goalToPin.isPinned ? 'Ziel losgelöst!' : 'Ziel angepinnt!',
                     'success'
@@ -93,7 +95,7 @@ const PublicGoalTable = () => {
                 addToast('Fehler beim Anpinnen des Ziels.', 'error');
             }
         },
-        [user, addToast, publicGoals]
+        [user, addToast, publicGoals, onGoalsUpdate]
     );
 
     const toggleGoalExpansion = useCallback((goalId) => {
