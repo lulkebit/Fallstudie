@@ -17,15 +17,19 @@ import { useNavigate } from 'react-router-dom';
 const getNotificationIcon = (title) => {
     switch (title) {
         case 'Freundschaftsanfrage':
-            return <UserPlus className='h-5 w-5 text-blue-500' />;
+            return <UserPlus className='h-5 w-5 text-[#4785FF]' />;
         case 'Freundschaftsanfrage akzeptiert':
             return <UserCheck className='h-5 w-5 text-green-500' />;
         case 'Freundschaftsanfrage abgelehnt':
             return <UserX className='h-5 w-5 text-red-500' />;
         case 'Freundschaft beendet':
-            return <UserMinus className='h-5 w-5 text-gray-500' />;
+            return (
+                <UserMinus className='h-5 w-5 text-gray-400 dark:text-white/40' />
+            );
         default:
-            return <Bell className='h-5 w-5 text-gray-500' />;
+            return (
+                <Bell className='h-5 w-5 text-gray-400 dark:text-white/40' />
+            );
     }
 };
 
@@ -44,19 +48,20 @@ const NotificationItem = ({ notification, onMarkAsRead }) => {
     return (
         <div
             onClick={handleClick}
-            className='group flex items-start gap-4 p-4 hover:bg-gray-50 transition-colors duration-200 cursor-pointer'
+            className='group flex items-start gap-4 p-4 hover:bg-gray-100 dark:hover:bg-white/5 
+                     transition-all duration-200 cursor-pointer'
         >
             <div className='flex-shrink-0'>
                 {getNotificationIcon(notification.title)}
             </div>
             <div className='flex-1 min-w-0 space-y-1.5'>
-                <p className='text-sm font-medium text-gray-900 line-clamp-1'>
+                <p className='text-sm font-medium text-gray-900 dark:text-white line-clamp-1'>
                     {notification.title}
                 </p>
-                <p className='text-sm text-gray-600 line-clamp-2'>
+                <p className='text-sm text-gray-600 dark:text-white/70 line-clamp-2'>
                     {notification.message}
                 </p>
-                <p className='text-xs text-gray-400'>
+                <p className='text-xs text-gray-400 dark:text-white/40'>
                     {notification.formattedDate}
                 </p>
             </div>
@@ -65,8 +70,8 @@ const NotificationItem = ({ notification, onMarkAsRead }) => {
                     e.stopPropagation();
                     onMarkAsRead(notification._id);
                 }}
-                className='p-1.5 rounded-lg text-blue-500 opacity-0 group-hover:opacity-100 
-                         hover:bg-blue-50 transition-all duration-200'
+                className='p-1.5 rounded-xl text-[#4785FF] opacity-0 group-hover:opacity-100 
+                         hover:bg-[#4785FF]/10 transition-all duration-200'
                 aria-label='Als gelesen markieren'
             >
                 <CheckCircle className='h-4 w-4' />
@@ -85,9 +90,7 @@ const NotificationCard = () => {
 
     useEffect(() => {
         fetchNotifications();
-
         const intervalId = setInterval(fetchNotifications, 1000);
-
         return () => clearInterval(intervalId);
     }, [user]);
 
@@ -99,9 +102,8 @@ const NotificationCard = () => {
         };
 
         document.addEventListener('mousedown', handleClickOutside);
-        return () => {
+        return () =>
             document.removeEventListener('mousedown', handleClickOutside);
-        };
     }, []);
 
     const fetchNotifications = async () => {
@@ -119,7 +121,10 @@ const NotificationCard = () => {
             fetchNotifications();
             addToast('Benachrichtigung als gelesen markiert.', 'success');
         } catch (error) {
-            addToast('Error marking notification as read: ' + error, 'error');
+            addToast(
+                'Fehler beim Markieren der Benachrichtigung: ' + error,
+                'error'
+            );
         }
     };
 
@@ -140,36 +145,44 @@ const NotificationCard = () => {
     };
 
     return (
-        <div
-            className='relative'
-            ref={cardRef}
-            onMouseEnter={() => setIsOpen(true)}
-            onMouseLeave={() => setIsOpen(false)}
-        >
+        <div className='relative' ref={cardRef}>
             <button
-                className='relative p-2 text-gray-600 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 rounded-full'
+                onClick={() => setIsOpen(!isOpen)}
+                className='relative p-2 text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5
+                         rounded-xl transition-all duration-200'
                 aria-label='Toggle notifications'
             >
                 <Bell className='h-5 w-5' />
                 {notifications.length > 0 && (
-                    <span className='absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full'>
+                    <span
+                        className='absolute top-0 right-0 inline-flex items-center justify-center w-5 h-5
+                                   text-xs font-bold text-white bg-gradient-to-r from-[#4785FF] to-[#8c52ff] 
+                                   rounded-full shadow-lg transform -translate-y-1 translate-x-1'
+                    >
                         {notifications.length}
                     </span>
                 )}
             </button>
-            <div className='absolute w-full h-4 bottom-0 left-0' />
+
             {isOpen && (
-                <div className='absolute right-0 mt-2 w-96 bg-white border border-gray-200 rounded-xl shadow-lg z-50'>
-                    <div className='absolute w-full h-4 -top-4 left-0' />
-                    <div className='px-6 py-4 border-b border-gray-100 flex items-center justify-between'>
-                        <h3 className='font-medium text-gray-900'>
+                <div
+                    className='absolute right-0 mt-2 w-96 bg-white/70 dark:bg-white/5 backdrop-blur-xl 
+                              border border-gray-200/50 dark:border-white/10 rounded-2xl 
+                              shadow-xl dark:shadow-none'
+                >
+                    <div
+                        className='px-6 py-4 border-b border-gray-200 dark:border-white/10 
+                                  flex items-center justify-between'
+                    >
+                        <h3 className='font-medium text-gray-900 dark:text-white'>
                             Benachrichtigungen
                         </h3>
                         {notifications.length > 0 && (
                             <button
                                 onClick={markAllAsRead}
-                                className='flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-blue-600 
-                                         hover:bg-blue-50 rounded-md transition-colors duration-200'
+                                className='flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium 
+                                         text-[#4785FF] hover:bg-[#4785FF]/10 rounded-xl 
+                                         transition-all duration-200'
                             >
                                 <CheckCheck className='h-3.5 w-3.5' />
                                 Alle lesen
@@ -179,7 +192,7 @@ const NotificationCard = () => {
 
                     <div className='max-h-[420px] overflow-y-auto'>
                         {notifications.length > 0 ? (
-                            <div className='divide-y divide-gray-100'>
+                            <div className='divide-y divide-gray-200 dark:divide-white/10'>
                                 {notifications.map((notification) => (
                                     <NotificationItem
                                         key={notification._id}
@@ -190,20 +203,23 @@ const NotificationCard = () => {
                             </div>
                         ) : (
                             <div className='py-16 px-4 text-center'>
-                                <Bell className='mx-auto h-6 w-6 text-gray-400 mb-3' />
-                                <p className='text-gray-500 text-sm'>
+                                <Bell className='mx-auto h-6 w-6 text-gray-400 dark:text-white/40 mb-3' />
+                                <p className='text-gray-500 dark:text-white/60 text-sm'>
                                     Keine neuen Benachrichtigungen
                                 </p>
                             </div>
                         )}
                     </div>
 
-                    <div className='px-4 py-3 border-t border-gray-100 bg-gray-50'>
+                    <div
+                        className='px-4 py-3 border-t border-gray-200 dark:border-white/10 
+                                  bg-gray-50/50 dark:bg-white/5 rounded-b-2xl'
+                    >
                         <button
                             onClick={() => navigate('/notifications')}
                             className='w-full px-4 py-2 flex items-center justify-center gap-2 text-sm 
-                                     text-gray-600 hover:bg-white rounded-lg 
-                                     transition-colors duration-200'
+                                     text-gray-600 dark:text-white/70 hover:bg-white dark:hover:bg-white/5 
+                                     rounded-xl transition-all duration-200'
                         >
                             Alle anzeigen
                             <ChevronRight className='h-4 w-4' />
