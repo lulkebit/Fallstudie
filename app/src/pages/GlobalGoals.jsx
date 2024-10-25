@@ -9,129 +9,166 @@ import {
     Check,
     ChevronLeft,
     ChevronRight,
+    Globe,
+    Award,
+    TrendingUp,
 } from 'lucide-react';
 import Loader from '../components/Loader';
 import Navbar from '../components/Navbar';
 import Waves from '../components/Waves';
 
-const GlobalGoalCard = React.memo(({ goal, onParticipate }) => {
+const GlobalMetric = ({ title, value, icon: Icon, change }) => (
+    <div className='bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-white/10 p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1'>
+        <div className='flex items-center gap-4'>
+            <div className='h-12 w-12 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center flex-shrink-0'>
+                <Icon className='h-6 w-6 text-white' />
+            </div>
+            <div>
+                <h3 className='text-sm text-gray-500 dark:text-white/60'>
+                    {title}
+                </h3>
+                <div className='flex items-baseline gap-2'>
+                    <span className='text-2xl font-bold text-gray-900 dark:text-white'>
+                        {value}
+                    </span>
+                    {change && (
+                        <span className='text-sm font-medium text-green-500'>
+                            +{change}%
+                        </span>
+                    )}
+                </div>
+            </div>
+        </div>
+    </div>
+);
+
+const GlobalGoalCard = ({ goal, onParticipate }) => {
     const progressPercentage = (goal.currentValue / goal.targetValue) * 100;
     const isCompleted = progressPercentage === 100;
 
     return (
-        <div className='bg-white rounded-xl border border-gray-100 hover:shadow-md transition-shadow duration-200'>
-            <div className='p-5'>
-                <div className='flex items-center gap-3 mb-4'>
-                    <div
-                        className={`w-10 h-10 rounded-lg flex items-center justify-center 
-                        ${isCompleted ? 'bg-green-50' : 'bg-blue-50'}`}
-                    >
-                        <Target
-                            className={`w-5 h-5 ${
-                                isCompleted ? 'text-green-500' : 'text-blue-500'
-                            }`}
-                        />
-                    </div>
-                    <div>
-                        <h2 className='font-bold text-gray-900'>
-                            {goal.title}
-                        </h2>
-                        <p className='text-sm text-gray-500'>
-                            {goal.participationCount} Teilnahmen
-                        </p>
-                    </div>
+        <div className='bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-white/10 p-6 group hover:shadow-lg transition-all duration-300 hover:-translate-y-1'>
+            <div className='flex justify-between items-start mb-4'>
+                <div>
+                    <span className='text-sm text-gray-500 dark:text-white/60'>
+                        {goal.category}
+                    </span>
+                    <h3 className='text-xl font-medium text-gray-900 dark:text-white'>
+                        {goal.title}
+                    </h3>
                 </div>
 
-                <p className='text-sm text-gray-600 bg-gray-50 p-3 rounded-lg mb-4'>
-                    {goal.description}
-                </p>
-
-                <div className='mb-4'>
-                    <div className='flex justify-between items-center mb-1.5'>
-                        <span className='text-sm font-medium text-gray-700'>
-                            Fortschritt
-                        </span>
-                        <span
-                            className={`text-sm font-medium ${
-                                isCompleted ? 'text-green-500' : 'text-blue-500'
-                            }`}
-                        >
-                            {Math.round(progressPercentage)}%
-                        </span>
+                {isCompleted ? (
+                    <div className='h-8 w-8 rounded-full bg-green-500/20 flex items-center justify-center'>
+                        <Check className='h-5 w-5 text-green-500' />
                     </div>
-                    <div className='w-full bg-gray-100 rounded-full h-2'>
-                        <div
-                            className={`${
-                                isCompleted ? 'bg-green-500' : 'bg-blue-500'
-                            } 
-                                    h-2 rounded-full transition-all duration-300`}
-                            style={{ width: `${progressPercentage}%` }}
-                        />
+                ) : (
+                    <div className='h-8 w-8 rounded-full bg-gray-100 dark:bg-white/10 flex items-center justify-center'>
+                        <TrendingUp className='h-5 w-5 text-gray-500 dark:text-white/80' />
                     </div>
-                </div>
-
-                <div className='grid grid-cols-2 gap-3 mb-4'>
-                    <div className='bg-gray-50 p-2 rounded-lg text-center'>
-                        <p className='text-xs text-gray-500'>Aktuell</p>
-                        <p className='font-medium text-gray-900'>
-                            {goal.currentValue} {goal.unit}
-                        </p>
-                    </div>
-                    <div className='bg-gray-50 p-2 rounded-lg text-center'>
-                        <p className='text-xs text-gray-500'>Ziel</p>
-                        <p className='font-medium text-gray-900'>
-                            {goal.targetValue} {goal.unit}
-                        </p>
-                    </div>
-                </div>
-
-                <button
-                    onClick={() => onParticipate(goal._id)}
-                    disabled={isCompleted}
-                    className={`w-full py-2.5 rounded-lg font-medium flex items-center justify-center gap-2
-                        ${
-                            isCompleted
-                                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                : 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl transition-all duration-200'
-                        }`}
-                >
-                    {isCompleted ? (
-                        <>
-                            <Check className='w-4 h-4' />
-                            Abgeschlossen
-                        </>
-                    ) : (
-                        <>
-                            <Users className='w-4 h-4' />
-                            Teilnehmen
-                        </>
-                    )}
-                </button>
+                )}
             </div>
+
+            <p className='text-gray-600 dark:text-white/70 mb-4'>
+                {goal.description}
+            </p>
+
+            <div className='relative h-2 bg-gray-100 dark:bg-white/10 rounded-full mb-4'>
+                <div
+                    className='absolute left-0 top-0 h-full rounded-full bg-gradient-to-r from-[#4785FF] to-[#8c52ff] transition-all duration-1000'
+                    style={{ width: `${progressPercentage}%` }}
+                />
+            </div>
+
+            <div className='flex justify-between text-sm mb-4'>
+                <span className='text-gray-500 dark:text-white/60'>
+                    Fortschritt
+                </span>
+                <span className='text-gray-900 dark:text-white font-medium'>
+                    {Math.round(progressPercentage)}%
+                </span>
+            </div>
+
+            <div className='grid grid-cols-3 gap-2 mb-6'>
+                <div className='bg-gray-50 dark:bg-white/5 rounded-lg p-2'>
+                    <div className='text-gray-400 dark:text-white/40 text-xs'>
+                        Aktuell
+                    </div>
+                    <div className='text-gray-900 dark:text-white text-sm font-medium'>
+                        {goal.currentValue} {goal.unit}
+                    </div>
+                </div>
+                <div className='bg-gray-50 dark:bg-white/5 rounded-lg p-2'>
+                    <div className='text-gray-400 dark:text-white/40 text-xs'>
+                        Ziel
+                    </div>
+                    <div className='text-gray-900 dark:text-white text-sm font-medium'>
+                        {goal.targetValue} {goal.unit}
+                    </div>
+                </div>
+                <div className='bg-gray-50 dark:bg-white/5 rounded-lg p-2'>
+                    <div className='text-gray-400 dark:text-white/40 text-xs'>
+                        Teilnehmer
+                    </div>
+                    <div className='text-gray-900 dark:text-white text-sm font-medium'>
+                        {goal.participationCount}
+                    </div>
+                </div>
+            </div>
+
+            <button
+                onClick={() => onParticipate(goal._id)}
+                disabled={isCompleted}
+                className={`w-full py-2.5 rounded-xl font-medium flex items-center justify-center gap-2
+            ${
+                isCompleted
+                    ? 'bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-white/40 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-[#4785FF] to-[#8c52ff] text-white shadow-lg hover:shadow-xl hover:shadow-blue-500/25 dark:hover:shadow-blue-500/10 transition-all duration-200 hover:-translate-y-0.5'
+            }`}
+            >
+                {isCompleted ? (
+                    <>
+                        <Check className='w-4 h-4' />
+                        Abgeschlossen
+                    </>
+                ) : (
+                    <>
+                        <Users className='w-4 h-4' />
+                        Teilnehmen
+                    </>
+                )}
+            </button>
         </div>
     );
-});
+};
 
-const PaginationControls = ({ currentPage, totalPages, onPageChange }) => (
-    <div className='flex items-center justify-center gap-4 mt-8'>
-        <button
-            onClick={() => onPageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className='p-2 rounded-lg border border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors'
-        >
-            <ChevronLeft className='w-5 h-5 text-gray-600' />
-        </button>
-        <span className='text-sm font-medium text-gray-600'>
-            Seite {currentPage} von {totalPages}
-        </span>
-        <button
-            onClick={() => onPageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className='p-2 rounded-lg border border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors'
-        >
-            <ChevronRight className='w-5 h-5 text-gray-600' />
-        </button>
-    </div>
+const PaginationButton = ({ onClick, disabled, direction, children }) => (
+    <button
+        onClick={onClick}
+        disabled={disabled}
+        className='p-2 rounded-xl border border-gray-200 dark:border-white/10 
+               disabled:opacity-50 disabled:cursor-not-allowed 
+               hover:bg-gray-50 dark:hover:bg-white/5 
+               transition-all duration-200 hover:-translate-y-0.5'
+    >
+        {children}
+    </button>
+);
+
+const SortButton = ({ active, icon: Icon, label, onClick }) => (
+    <button
+        onClick={onClick}
+        className={`px-4 py-2.5 rounded-xl font-medium transition-all duration-200 flex items-center gap-2
+        ${
+            active
+                ? 'bg-gradient-to-r from-[#4785FF] to-[#8c52ff] text-white shadow-md hover:shadow-lg'
+                : 'text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5'
+        }`}
+    >
+        <Icon className='w-4 h-4' />
+        {label}
+        {active && <ArrowUpDown className='w-4 h-4' />}
+    </button>
 );
 
 const GlobalGoals = () => {
@@ -218,31 +255,74 @@ const GlobalGoals = () => {
     );
 
     return (
-        <>
+        <div className='min-h-screen bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800'>
             <Navbar />
-            <div className='min-h-screen bg-gray-50 pt-16'>
-                <Waves />
-                <div className='container mx-auto px-4 py-8 relative z-10'>
-                    <h1 className='text-4xl font-bold mb-8 text-center text-gray-800'>
-                        Globale Ziele
-                    </h1>
 
-                    {loading ? (
-                        <div className='flex items-center justify-center py-12'>
-                            <Loader />
+            {/* Decorative Elements */}
+            <div className='absolute inset-0'>
+                <div className='absolute top-1/4 right-1/4 w-96 h-96 bg-[#4785FF]/10 rounded-full blur-3xl animate-pulse' />
+                <div className='absolute bottom-1/4 left-1/4 w-96 h-96 bg-[#8c52ff]/10 rounded-full blur-3xl animate-pulse delay-1000' />
+            </div>
+
+            <div className='container mx-auto px-4 py-8 relative z-10 pt-24'>
+                {/* Hero Section */}
+                <div className='text-center mb-12'>
+                    <div className='flex items-center justify-center gap-2 mb-6'>
+                        <div className='h-12 w-12 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center'>
+                            <Globe className='h-6 w-6 text-white' />
                         </div>
-                    ) : globalGoals.length === 0 ? (
-                        <div className='text-center py-12'>
-                            <Target className='w-12 h-12 text-gray-400 mx-auto mb-3' />
-                            <p className='text-gray-500 text-lg'>
-                                Keine globalen Ziele verfügbar.
-                            </p>
-                        </div>
-                    ) : (
-                        <div className='space-y-6'>
-                            <div className='flex flex-col sm:flex-row gap-4 justify-between'>
-                                <div className='relative flex-1 max-w-md'>
-                                    <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5' />
+                        <h1 className='text-4xl font-bold text-gray-900 dark:text-white'>
+                            Globale Ziele
+                        </h1>
+                    </div>
+                    <p className='text-lg text-gray-600 dark:text-white/70 max-w-2xl mx-auto'>
+                        Gemeinsam erreichen wir mehr. Nimm an Community-Zielen
+                        teil und werde Teil von etwas Größerem.
+                    </p>
+                </div>
+
+                {/* Metrics Grid */}
+                <div className='grid grid-cols-1 md:grid-cols-3 gap-6 mb-12'>
+                    <GlobalMetric
+                        title='Aktive Ziele'
+                        value={globalGoals.length}
+                        icon={Target}
+                        change={12}
+                    />
+                    <GlobalMetric
+                        title='Teilnahmen gesamt'
+                        value={globalGoals.reduce(
+                            (acc, goal) => acc + goal.participationCount,
+                            0
+                        )}
+                        icon={Users}
+                        change={8}
+                    />
+                    <GlobalMetric
+                        title='Abgeschlossene Ziele'
+                        value={
+                            globalGoals.filter(
+                                (goal) =>
+                                    (goal.currentValue / goal.targetValue) *
+                                        100 ===
+                                    100
+                            ).length
+                        }
+                        icon={Award}
+                    />
+                </div>
+
+                {loading ? (
+                    <div className='flex items-center justify-center py-12'>
+                        <div className='w-10 h-10 border-4 border-[#4785FF] border-t-transparent rounded-full animate-spin' />
+                    </div>
+                ) : (
+                    <div className='space-y-6'>
+                        {/* Search and Sort Controls */}
+                        <div className='bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-white/10 p-6'>
+                            <div className='flex flex-col md:flex-row gap-4'>
+                                <div className='relative flex-1'>
+                                    <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-white/40 w-5 h-5' />
                                     <input
                                         type='text'
                                         placeholder='Ziele durchsuchen...'
@@ -250,86 +330,97 @@ const GlobalGoals = () => {
                                         onChange={(e) =>
                                             setSearchQuery(e.target.value)
                                         }
-                                        className='w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 
-                                                 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 
-                                                 transition-all duration-200 outline-none'
+                                        className='w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-white/5 
+                                 border border-gray-200 dark:border-white/10
+                                 focus:border-[#4785FF] focus:ring-2 focus:ring-[#4785FF]/20 
+                                 transition-all duration-200 outline-none
+                                 text-gray-900 dark:text-white
+                                 placeholder:text-gray-400 dark:placeholder:text-white/40'
                                     />
                                 </div>
                                 <div className='flex gap-2'>
-                                    <button
+                                    <SortButton
+                                        active={sortBy === 'participationCount'}
+                                        icon={Users}
+                                        label='Teilnahmen'
                                         onClick={() => {
                                             setSortBy('participationCount');
                                             setSortOrder((prev) =>
                                                 prev === 'asc' ? 'desc' : 'asc'
                                             );
                                         }}
-                                        className={`px-3 py-2 rounded-lg flex items-center gap-2 font-medium
-                                            ${
-                                                sortBy === 'participationCount'
-                                                    ? 'bg-blue-50 text-blue-600'
-                                                    : 'text-gray-600 hover:bg-gray-100'
-                                            }`}
-                                    >
-                                        <Users className='w-4 h-4' />
-                                        Teilnahmen
-                                        {sortBy === 'participationCount' && (
-                                            <ArrowUpDown className='w-4 h-4' />
-                                        )}
-                                    </button>
-                                    <button
+                                    />
+                                    <SortButton
+                                        active={sortBy === 'progress'}
+                                        icon={Target}
+                                        label='Fortschritt'
                                         onClick={() => {
                                             setSortBy('progress');
                                             setSortOrder((prev) =>
                                                 prev === 'asc' ? 'desc' : 'asc'
                                             );
                                         }}
-                                        className={`px-3 py-2 rounded-lg flex items-center gap-2 font-medium
-                                            ${
-                                                sortBy === 'progress'
-                                                    ? 'bg-blue-50 text-blue-600'
-                                                    : 'text-gray-600 hover:bg-gray-100'
-                                            }`}
-                                    >
-                                        <Target className='w-4 h-4' />
-                                        Fortschritt
-                                        {sortBy === 'progress' && (
-                                            <ArrowUpDown className='w-4 h-4' />
-                                        )}
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3'>
-                                {paginatedGoals.map((goal) => (
-                                    <GlobalGoalCard
-                                        key={goal._id}
-                                        goal={goal}
-                                        onParticipate={handleParticipate}
                                     />
-                                ))}
-                            </div>
-
-                            {sortedAndFilteredGoals.length > 0 && (
-                                <PaginationControls
-                                    currentPage={currentPage}
-                                    totalPages={totalPages}
-                                    onPageChange={setCurrentPage}
-                                />
-                            )}
-
-                            {sortedAndFilteredGoals.length === 0 && (
-                                <div className='text-center py-12'>
-                                    <Search className='w-12 h-12 text-gray-400 mx-auto mb-3' />
-                                    <p className='text-gray-500 text-lg'>
-                                        Keine Ziele gefunden.
-                                    </p>
                                 </div>
-                            )}
+                            </div>
                         </div>
-                    )}
-                </div>
+
+                        {/* Goals Grid */}
+                        <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3'>
+                            {paginatedGoals.map((goal) => (
+                                <GlobalGoalCard
+                                    key={goal._id}
+                                    goal={goal}
+                                    onParticipate={handleParticipate}
+                                />
+                            ))}
+                        </div>
+
+                        {/* Pagination */}
+                        {sortedAndFilteredGoals.length > goalsPerPage && (
+                            <div className='flex items-center justify-center gap-4 mt-8'>
+                                <PaginationButton
+                                    onClick={() =>
+                                        setCurrentPage((prev) => prev - 1)
+                                    }
+                                    disabled={currentPage === 1}
+                                    direction='left'
+                                >
+                                    <ChevronLeft className='w-5 h-5 text-gray-600 dark:text-white/70' />
+                                </PaginationButton>
+                                <span className='text-sm font-medium text-gray-600 dark:text-white/70'>
+                                    Seite {currentPage} von {totalPages}
+                                </span>
+                                <PaginationButton
+                                    onClick={() =>
+                                        setCurrentPage((prev) => prev + 1)
+                                    }
+                                    disabled={currentPage === totalPages}
+                                    direction='right'
+                                >
+                                    <ChevronRight className='w-5 h-5 text-gray-600 dark:text-white/70' />
+                                </PaginationButton>
+                            </div>
+                        )}
+
+                        {/* Empty State */}
+                        {sortedAndFilteredGoals.length === 0 && (
+                            <div className='text-center py-12'>
+                                <div className='w-16 h-16 mx-auto mb-4 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center opacity-50'>
+                                    <Search className='w-8 h-8 text-white' />
+                                </div>
+                                <h3 className='text-xl font-medium text-gray-900 dark:text-white mb-2'>
+                                    Keine Ziele gefunden
+                                </h3>
+                                <p className='text-gray-500 dark:text-white/60'>
+                                    Versuche es mit anderen Suchbegriffen
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
-        </>
+        </div>
     );
 };
 
