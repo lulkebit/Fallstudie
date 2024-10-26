@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, LogIn, Sun, Moon } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import { useNavigate } from 'react-router-dom';
 
 const LandingNavbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { isDarkMode, toggleTheme } = useTheme();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -91,11 +93,17 @@ const LandingNavbar = () => {
                         >
                             {isDarkMode ? <Sun /> : <Moon />}
                         </button>
-                        <button className='px-4 py-2 text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white transition-colors duration-200 text-sm font-medium flex items-center gap-2'>
+                        <button
+                            onClick={() => navigate('/login')}
+                            className='px-4 py-2 text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white transition-colors duration-200 text-sm font-medium flex items-center gap-2'
+                        >
                             <LogIn className='w-4 h-4' />
                             Login
                         </button>
-                        <button className='bg-gradient-to-r from-[#4785FF] to-[#8c52ff] text-white px-4 py-2 rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-blue-500/25 transition-all duration-300 hover:-translate-y-0.5'>
+                        <button
+                            onClick={() => navigate('/register')}
+                            className='bg-gradient-to-r from-[#4785FF] to-[#8c52ff] text-white px-4 py-2 rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-blue-500/25 transition-all duration-300 hover:-translate-y-0.5'
+                        >
                             Kostenlos starten
                         </button>
                     </div>

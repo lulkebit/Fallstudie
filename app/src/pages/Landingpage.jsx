@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Check, ChevronRight, Target, TrendingUp } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import LandingNavbar from '../components/LandingNavbar';
 import Footer from '../components/Footer';
 import Arman from '../images/Arman.jpg';
@@ -32,6 +33,7 @@ const Landingpage = () => {
     const [activeGoal, setActiveGoal] = useState(0);
     const [goals, setGoals] = useState([]);
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchGoals = async () => {
@@ -119,12 +121,11 @@ const Landingpage = () => {
                     </p>
 
                     <div className='flex flex-col sm:flex-row gap-4 mb-12'>
-                        <button className='px-8 py-4 rounded-xl font-medium text-white bg-gradient-to-r from-[#4785FF] to-[#8c52ff] hover:shadow-lg hover:shadow-[#4785FF]/20 transition-all duration-300 hover:-translate-y-1'>
+                        <button
+                            onClick={() => navigate('/register')}
+                            className='px-8 py-4 rounded-xl font-medium text-white bg-gradient-to-r from-[#4785FF] to-[#8c52ff] hover:shadow-lg hover:shadow-[#4785FF]/20 transition-all duration-300 hover:-translate-y-1'
+                        >
                             Kostenlos starten
-                        </button>
-                        <button className='group px-8 py-4 rounded-xl font-medium text-gray-700 dark:text-white border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/5 transition-all duration-300 flex items-center justify-center gap-2'>
-                            Demo ansehen
-                            <ChevronRight className='w-4 h-4 group-hover:translate-x-1 transition-transform' />
                         </button>
                     </div>
 
