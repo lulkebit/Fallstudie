@@ -1,178 +1,200 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
-    Pencil,
-    Trash2,
-    Search,
     Goal,
+    Search,
     Clock,
     Users,
     CheckCircle2,
     AlertCircle,
+    Target,
+    TrendingUp,
+    Calendar,
     ChevronDown,
     ChevronUp,
+    Pencil,
+    Trash2,
+    Filter,
+    ArrowUpDown,
 } from 'lucide-react';
 import EditGoalDialog from './dialogs/EditGoalDialog';
 import { useToast } from '../context/ToastContext';
 import { useDialog } from '../context/DialogContext';
-import Loader from './Loader';
+
+const GoalMetric = ({ title, value, subtitle, icon: Icon, change }) => (
+    <div className='bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-white/10 p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1'>
+        <div className='flex items-center gap-4'>
+            <div className='h-12 w-12 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center flex-shrink-0'>
+                <Icon className='h-6 w-6 text-white' />
+            </div>
+            <div>
+                <h3 className='text-sm text-gray-500 dark:text-white/60'>
+                    {title}
+                </h3>
+                <div className='flex items-baseline gap-2'>
+                    <span className='text-2xl font-bold text-gray-900 dark:text-white'>
+                        {value}
+                    </span>
+                    {change && (
+                        <span className='text-sm font-medium text-green-500'>
+                            +{change}%
+                        </span>
+                    )}
+                </div>
+                {subtitle && (
+                    <p className='text-sm text-gray-500 dark:text-white/60'>
+                        {subtitle}
+                    </p>
+                )}
+            </div>
+        </div>
+    </div>
+);
 
 const GoalCard = ({ goal, onEdit, onDelete, isExpanded, onToggle }) => {
-    const getStatusColor = (status) => {
-        switch (status) {
-            case 'Completed':
-                return 'bg-green-100 text-green-800 border-green-200';
-            case 'In Progress':
-                return 'bg-blue-100 text-blue-800 border-blue-200';
-            case 'Not Started':
-                return 'bg-gray-100 text-gray-800 border-gray-200';
-            default:
-                return 'bg-gray-100 text-gray-800 border-gray-200';
-        }
-    };
-
-    const getStatusIcon = (status) => {
-        switch (status) {
-            case 'Completed':
-                return <CheckCircle2 className='w-4 h-4' />;
-            case 'In Progress':
-                return <Clock className='w-4 h-4' />;
-            case 'Not Started':
-                return <AlertCircle className='w-4 h-4' />;
-            default:
-                return <AlertCircle className='w-4 h-4' />;
-        }
-    };
-
     const progressPercentage = (goal.currentValue / goal.targetValue) * 100;
-    const formattedProgress = progressPercentage.toFixed(1);
+    const isCompleted = goal.status === 'Completed';
+
+    const StatusBadge = ({ status }) => {
+        const getStatusConfig = (status) => {
+            switch (status) {
+                case 'Completed':
+                    return {
+                        bg: 'bg-green-500/20',
+                        text: 'text-green-500',
+                        icon: CheckCircle2,
+                    };
+                case 'In Progress':
+                    return {
+                        bg: 'bg-[#4785FF]/20',
+                        text: 'text-[#4785FF]',
+                        icon: Clock,
+                    };
+                default:
+                    return {
+                        bg: 'bg-gray-500/20',
+                        text: 'text-gray-500',
+                        icon: AlertCircle,
+                    };
+            }
+        };
+
+        const config = getStatusConfig(status);
+        const Icon = config.icon;
+
+        return (
+            <div
+                className={`px-3 py-1 rounded-full flex items-center gap-2 ${config.bg} ${config.text}`}
+            >
+                <Icon className='w-4 h-4' />
+                <span className='text-sm font-medium'>{status}</span>
+            </div>
+        );
+    };
 
     return (
-        <div className='bg-white rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl border border-gray-100'>
-            <div className='p-6' onClick={onToggle}>
-                {/* Header Section */}
-                <div className='flex items-center justify-between mb-4'>
-                    <div className='flex items-center gap-4'>
-                        <div className='w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center'>
-                            <Goal className='w-6 h-6 text-blue-600' />
-                        </div>
-                        <div>
-                            <h3 className='text-xl font-bold text-gray-800'>
-                                {goal.title}
-                            </h3>
-                            <div className='flex items-center gap-2 text-sm text-gray-500'>
+        <div className='bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-white/10 hover:shadow-lg transition-all duration-300 hover:-translate-y-1'>
+            <div className='p-6'>
+                <div className='flex justify-between items-start mb-4'>
+                    <div>
+                        <div className='flex items-center gap-2 mb-1'>
+                            <div className='flex items-center gap-2 text-sm text-gray-500 dark:text-white/60'>
                                 <Users className='w-4 h-4' />
                                 <span>{goal.user.username}</span>
                             </div>
+                            <StatusBadge status={goal.status} />
+                        </div>
+                        <h3 className='text-xl font-medium text-gray-900 dark:text-white'>
+                            {goal.title}
+                        </h3>
+                    </div>
+
+                    {isCompleted ? (
+                        <div className='h-8 w-8 rounded-full bg-green-500/20 flex items-center justify-center'>
+                            <CheckCircle2 className='h-5 w-5 text-green-500' />
+                        </div>
+                    ) : (
+                        <div className='h-8 w-8 rounded-full bg-gray-100 dark:bg-white/10 flex items-center justify-center'>
+                            <TrendingUp className='h-5 w-5 text-gray-500 dark:text-white/80' />
+                        </div>
+                    )}
+                </div>
+
+                <div className='relative h-2 bg-gray-100 dark:bg-white/10 rounded-full mb-4'>
+                    <div
+                        className='absolute left-0 top-0 h-full rounded-full bg-gradient-to-r from-[#4785FF] to-[#8c52ff] transition-all duration-1000'
+                        style={{ width: `${progressPercentage}%` }}
+                    />
+                </div>
+
+                <div className='grid grid-cols-3 gap-2 mb-4'>
+                    <div className='bg-gray-50 dark:bg-white/5 rounded-lg p-2'>
+                        <div className='text-gray-400 dark:text-white/40 text-xs'>
+                            Aktuell
+                        </div>
+                        <div className='text-gray-900 dark:text-white text-sm font-medium'>
+                            {goal.currentValue} {goal.unit}
                         </div>
                     </div>
-                    <div className='flex items-center gap-3'>
-                        <div
-                            className={`px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-2 border ${getStatusColor(
-                                goal.status
-                            )}`}
-                        >
-                            {getStatusIcon(goal.status)}
-                            {goal.status}
+                    <div className='bg-gray-50 dark:bg-white/5 rounded-lg p-2'>
+                        <div className='text-gray-400 dark:text-white/40 text-xs'>
+                            Ziel
                         </div>
-                        <button className='p-2 hover:bg-gray-100 rounded-lg transition-colors'>
-                            {isExpanded ? (
-                                <ChevronUp className='w-5 h-5 text-gray-400' />
-                            ) : (
-                                <ChevronDown className='w-5 h-5 text-gray-400' />
-                            )}
-                        </button>
+                        <div className='text-gray-900 dark:text-white text-sm font-medium'>
+                            {goal.targetValue} {goal.unit}
+                        </div>
+                    </div>
+                    <div className='bg-gray-50 dark:bg-white/5 rounded-lg p-2'>
+                        <div className='text-gray-400 dark:text-white/40 text-xs'>
+                            Fortschritt
+                        </div>
+                        <div className='text-gray-900 dark:text-white text-sm font-medium'>
+                            {Math.round(progressPercentage)}%
+                        </div>
                     </div>
                 </div>
 
-                {/* Progress Bar */}
-                <div className='space-y-2'>
-                    <div className='flex justify-between text-sm'>
-                        <span className='text-gray-600'>Fortschritt</span>
-                        <span className='font-medium'>
-                            {formattedProgress}%
+                <div className='flex items-center justify-between'>
+                    <div className='flex items-center gap-2 text-sm text-gray-500 dark:text-white/60'>
+                        <Calendar className='w-4 h-4' />
+                        <span>
+                            {new Date(goal.startDate).toLocaleDateString()} -{' '}
+                            {new Date(goal.endDate).toLocaleDateString()}
                         </span>
                     </div>
-                    <div className='relative w-full h-3 bg-gray-100 rounded-full overflow-hidden'>
-                        <div
-                            className={`absolute left-0 top-0 h-full transition-all duration-500 ${
-                                goal.status === 'Completed'
-                                    ? 'bg-green-500'
-                                    : 'bg-blue-500'
-                            }`}
-                            style={{ width: `${progressPercentage}%` }}
-                        />
-                    </div>
+                    <button
+                        onClick={onToggle}
+                        className='p-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-xl transition-colors duration-200'
+                    >
+                        {isExpanded ? (
+                            <ChevronUp className='w-5 h-5 text-gray-400 dark:text-white/40' />
+                        ) : (
+                            <ChevronDown className='w-5 h-5 text-gray-400 dark:text-white/40' />
+                        )}
+                    </button>
                 </div>
 
-                {/* Expanded Content */}
                 {isExpanded && (
-                    <div className='mt-6 space-y-6'>
-                        <div className='bg-gray-50 rounded-xl p-4'>
-                            <p className='text-gray-600'>{goal.description}</p>
-                        </div>
+                    <div className='mt-6 pt-6 border-t border-gray-200 dark:border-white/10'>
+                        <p className='text-gray-600 dark:text-white/70 mb-6'>
+                            {goal.description}
+                        </p>
 
-                        <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-                            <div className='bg-gray-50 p-4 rounded-xl'>
-                                <div className='text-sm text-gray-500 mb-1'>
-                                    Aktueller Stand
-                                </div>
-                                <div className='font-medium text-gray-900'>
-                                    {goal.currentValue} / {goal.targetValue}{' '}
-                                    {goal.unit}
-                                </div>
-                            </div>
-
-                            <div className='bg-gray-50 p-4 rounded-xl'>
-                                <div className='text-sm text-gray-500 mb-1'>
-                                    Zeitraum
-                                </div>
-                                <div className='font-medium text-gray-900'>
-                                    {new Date(
-                                        goal.startDate
-                                    ).toLocaleDateString()}{' '}
-                                    -
-                                    {new Date(
-                                        goal.endDate
-                                    ).toLocaleDateString()}
-                                </div>
-                            </div>
-
-                            <div className='bg-gray-50 p-4 rounded-xl'>
-                                <div className='text-sm text-gray-500 mb-1'>
-                                    Status
-                                </div>
-                                <div
-                                    className={`inline-flex items-center gap-2 px-3 py-1 rounded-lg ${getStatusColor(
-                                        goal.status
-                                    )}`}
-                                >
-                                    {getStatusIcon(goal.status)}
-                                    <span className='font-medium'>
-                                        {goal.status}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Action Buttons */}
-                        <div className='flex justify-end gap-3 pt-4'>
+                        <div className='flex justify-end gap-3'>
                             <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    onEdit(goal);
-                                }}
-                                className='inline-flex items-center px-4 py-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors duration-200 font-medium gap-2'
+                                onClick={() => onEdit(goal)}
+                                className='px-4 py-2 rounded-xl font-medium text-[#4785FF] bg-[#4785FF]/10 
+                        hover:bg-[#4785FF]/20 transition-all duration-200
+                        flex items-center gap-2'
                             >
                                 <Pencil className='w-4 h-4' />
                                 Bearbeiten
                             </button>
                             <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    onDelete(goal._id);
-                                }}
-                                className='inline-flex items-center px-4 py-2 text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors duration-200 font-medium gap-2'
+                                onClick={() => onDelete(goal._id)}
+                                className='px-4 py-2 rounded-xl font-medium text-red-500 bg-red-500/10 
+                        hover:bg-red-500/20 transition-all duration-200
+                        flex items-center gap-2'
                             >
                                 <Trash2 className='w-4 h-4' />
                                 Löschen
@@ -184,6 +206,22 @@ const GoalCard = ({ goal, onEdit, onDelete, isExpanded, onToggle }) => {
         </div>
     );
 };
+
+const FilterButton = ({ active, icon: Icon, label, onClick }) => (
+    <button
+        onClick={onClick}
+        className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium transition-all duration-200
+      ${
+          active
+              ? 'bg-gradient-to-r from-[#4785FF] to-[#8c52ff] text-white shadow-lg hover:shadow-xl hover:shadow-blue-500/25 dark:hover:shadow-blue-500/10'
+              : 'text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5'
+      }`}
+    >
+        <Icon className='w-4 h-4' />
+        {label}
+        {active && <ArrowUpDown className='w-4 h-4' />}
+    </button>
+);
 
 const UserGoalsManagement = () => {
     const [goals, setGoals] = useState([]);
@@ -287,145 +325,121 @@ const UserGoalsManagement = () => {
         (goal) => goal.status === 'In Progress'
     ).length;
 
-    const SortButton = ({ field, children }) => (
-        <button
-            onClick={() => handleSort(field)}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors duration-200
-                ${
-                    sortField === field
-                        ? 'bg-blue-100 text-blue-600'
-                        : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
-                }`}
-        >
-            {children}
-            {sortField === field && (
-                <span className='ml-2'>
-                    {sortDirection === 'asc' ? '↑' : '↓'}
-                </span>
-            )}
-        </button>
-    );
-
-    if (loading) {
-        return (
-            <div className='flex items-center justify-center min-h-[400px]'>
-                <Loader />
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className='flex items-center justify-center min-h-[400px] text-red-500'>
-                <AlertCircle className='w-6 h-6 mr-2' />
-                {error}
-            </div>
-        );
-    }
-
     return (
-        <div className='bg-gray-50 p-6 rounded-xl'>
-            <h2 className='text-2xl font-bold text-gray-800 mb-6'>
-                Ziel Verwaltung
-            </h2>
-
-            <div className='grid grid-cols-1 md:grid-cols-3 gap-6 mb-8'>
-                <div className='bg-white p-6 rounded-xl shadow-lg'>
-                    <div className='flex items-center gap-4'>
-                        <div className='w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center'>
-                            <Goal className='w-6 h-6 text-blue-600' />
-                        </div>
-                        <div>
-                            <p className='text-sm text-gray-500'>
-                                Gesamt Ziele
-                            </p>
-                            <p className='text-2xl font-bold text-gray-900'>
-                                {totalGoals}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div className='bg-white p-6 rounded-xl shadow-lg'>
-                    <div className='flex items-center gap-4'>
-                        <div className='w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center'>
-                            <CheckCircle2 className='w-6 h-6 text-green-600' />
-                        </div>
-                        <div>
-                            <p className='text-sm text-gray-500'>
-                                Abgeschlossen
-                            </p>
-                            <p className='text-2xl font-bold text-gray-900'>
-                                {completedGoals}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div className='bg-white p-6 rounded-xl shadow-lg'>
-                    <div className='flex items-center gap-4'>
-                        <div className='w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center'>
-                            <Clock className='w-6 h-6 text-yellow-600' />
-                        </div>
-                        <div>
-                            <p className='text-sm text-gray-500'>
-                                In Bearbeitung
-                            </p>
-                            <p className='text-2xl font-bold text-gray-900'>
-                                {inProgressGoals}
-                            </p>
-                        </div>
-                    </div>
-                </div>
+        <div className='space-y-8'>
+            {/* Metrics Grid */}
+            <div className='grid grid-cols-1 md:grid-cols-4 gap-6'>
+                <GoalMetric
+                    title='Gesamt Ziele'
+                    value={goals.length}
+                    icon={Goal}
+                    change={8}
+                />
+                <GoalMetric
+                    title='Abgeschlossene Ziele'
+                    value={goals.filter((g) => g.status === 'Completed').length}
+                    icon={CheckCircle2}
+                />
+                <GoalMetric
+                    title='In Bearbeitung'
+                    value={
+                        goals.filter((g) => g.status === 'In Progress').length
+                    }
+                    icon={Clock}
+                />
+                <GoalMetric
+                    title='Durchschnittlicher Fortschritt'
+                    value={`${Math.round(
+                        goals.reduce(
+                            (acc, goal) =>
+                                acc +
+                                (goal.currentValue / goal.targetValue) * 100,
+                            0
+                        ) / goals.length
+                    )}%`}
+                    icon={TrendingUp}
+                />
             </div>
 
-            <div className='space-y-6'>
-                <div className='flex flex-col md:flex-row gap-4 justify-between'>
+            {/* Search and Filters */}
+            <div className='bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-white/10 p-6'>
+                <div className='flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between'>
                     <div className='relative flex-1'>
-                        <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5' />
+                        <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-white/40 w-5 h-5' />
                         <input
                             type='text'
-                            placeholder='Suche nach Zielen, Beschreibungen oder Benutzern...'
-                            className='w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-lg
-                                     text-gray-900 placeholder:text-gray-400
-                                     focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                            placeholder='Ziele oder Benutzer suchen...'
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
+                            className='w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-white/5 
+                      border border-gray-200 dark:border-white/10
+                      focus:border-[#4785FF] focus:ring-2 focus:ring-[#4785FF]/20 
+                      transition-all duration-200 outline-none
+                      text-gray-900 dark:text-white
+                      placeholder:text-gray-400 dark:placeholder:text-white/40'
                         />
                     </div>
-
-                    <div className='flex gap-3'>
-                        <SortButton field='title'>Nach Titel</SortButton>
-                        <SortButton field='status'>Nach Status</SortButton>
-                        <SortButton field='endDate'>Nach Datum</SortButton>
+                    <div className='flex gap-2 overflow-x-auto'>
+                        <FilterButton
+                            active={sortField === 'title'}
+                            icon={Target}
+                            label='Nach Titel'
+                            onClick={() => handleSort('title')}
+                        />
+                        <FilterButton
+                            active={sortField === 'status'}
+                            icon={Filter}
+                            label='Nach Status'
+                            onClick={() => handleSort('status')}
+                        />
+                        <FilterButton
+                            active={sortField === 'endDate'}
+                            icon={Calendar}
+                            label='Nach Datum'
+                            onClick={() => handleSort('endDate')}
+                        />
                     </div>
                 </div>
-
-                <div className='space-y-4'>
-                    {filteredAndSortedGoals.length === 0 ? (
-                        <div className='text-center py-12'>
-                            <Goal className='mx-auto h-12 w-12 text-gray-400' />
-                            <h3 className='mt-4 text-lg font-medium text-gray-900'>
-                                Keine Ziele gefunden
-                            </h3>
-                            <p className='mt-2 text-gray-500'>
-                                Versuchen Sie andere Suchbegriffe oder Filter.
-                            </p>
-                        </div>
-                    ) : (
-                        filteredAndSortedGoals.map((goal) => (
-                            <GoalCard
-                                key={goal._id}
-                                goal={goal}
-                                onEdit={handleEdit}
-                                onDelete={handleDelete}
-                                isExpanded={expandedGoals[goal._id]}
-                                onToggle={() => toggleGoalExpansion(goal._id)}
-                            />
-                        ))
-                    )}
-                </div>
             </div>
+
+            {/* Goals List */}
+            {loading ? (
+                <div className='flex items-center justify-center py-12'>
+                    <div className='flex flex-col items-center gap-4'>
+                        <div className='w-10 h-10 border-4 border-[#4785FF] border-t-transparent rounded-full animate-spin' />
+                        <p className='text-gray-500 dark:text-white/60'>
+                            Ziele werden geladen...
+                        </p>
+                    </div>
+                </div>
+            ) : filteredAndSortedGoals.length === 0 ? (
+                <div className='text-center py-12'>
+                    <div className='w-16 h-16 mx-auto mb-4 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center opacity-50'>
+                        <Goal className='w-8 h-8 text-white' />
+                    </div>
+                    <h3 className='text-xl font-medium text-gray-900 dark:text-white mb-2'>
+                        Keine Ziele gefunden
+                    </h3>
+                    <p className='text-gray-500 dark:text-white/60'>
+                        {searchTerm
+                            ? 'Versuche es mit anderen Suchbegriffen'
+                            : 'Erstelle neue Ziele für deine Benutzer'}
+                    </p>
+                </div>
+            ) : (
+                <div className='space-y-6'>
+                    {filteredAndSortedGoals.map((goal) => (
+                        <GoalCard
+                            key={goal._id}
+                            goal={goal}
+                            onEdit={handleEdit}
+                            onDelete={handleDelete}
+                            isExpanded={expandedGoals[goal._id]}
+                            onToggle={() => toggleGoalExpansion(goal._id)}
+                        />
+                    ))}
+                </div>
+            )}
         </div>
     );
 };

@@ -9,7 +9,7 @@ const StatCard = ({
     chartData,
     chartOptions,
     highlight = false,
-    goalDetails = null, // Neue Prop für die zusätzlichen Ziel-Details
+    goalDetails = null,
 }) => {
     return (
         <div
@@ -48,7 +48,7 @@ const StatCard = ({
             </div>
 
             {goalDetails && (
-                <div className='space-y-6'>
+                <div className='space-y-4'>
                     <p
                         className={
                             highlight ? 'text-blue-100' : 'text-gray-500'
@@ -107,23 +107,35 @@ const StatCard = ({
             )}
 
             {chartData ? (
-                <div className='mt-4 h-[150px]'>
-                    <Pie
-                        data={chartData}
-                        options={{
-                            ...chartOptions,
-                            plugins: {
-                                ...chartOptions.plugins,
-                                legend: {
-                                    ...chartOptions.plugins.legend,
-                                    labels: {
-                                        ...chartOptions.plugins.legend.labels,
-                                        color: highlight ? 'white' : undefined,
+                <div className='mt-6'>
+                    <div className='relative aspect-square w-full max-w-xs mx-auto'>
+                        <Pie
+                            data={chartData}
+                            options={{
+                                ...chartOptions,
+                                responsive: true,
+                                maintainAspectRatio: true,
+                                plugins: {
+                                    ...chartOptions.plugins,
+                                    legend: {
+                                        ...chartOptions.plugins.legend,
+                                        position: 'bottom',
+                                        labels: {
+                                            ...chartOptions.plugins.legend
+                                                .labels,
+                                            color: highlight
+                                                ? 'white'
+                                                : undefined,
+                                            padding: 20,
+                                            font: {
+                                                size: 14,
+                                            },
+                                        },
                                     },
                                 },
-                            },
-                        }}
-                    />
+                            }}
+                        />
+                    </div>
                 </div>
             ) : (
                 subvalue && (
