@@ -1,60 +1,84 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Waves from '../components/Waves';
-import { Home, Search } from 'lucide-react';
+import { Home, Search, MoveLeft, ExternalLink } from 'lucide-react';
 
 const NotFound = () => {
     return (
-        <div className='min-h-screen bg-gray-50 flex items-center justify-center'>
-            <Waves />
+        <div className='min-h-screen bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800'>
+            {/* Decorative Elements */}
+            <div className='absolute inset-0'>
+                <div className='absolute top-1/4 right-1/4 w-96 h-96 bg-[#4785FF]/10 rounded-full blur-3xl animate-pulse' />
+                <div className='absolute bottom-1/4 left-1/4 w-96 h-96 bg-[#8c52ff]/10 rounded-full blur-3xl animate-pulse delay-1000' />
+            </div>
 
-            <div className='relative z-10 w-full max-w-lg px-4'>
-                <div className='bg-white rounded-xl shadow-lg overflow-hidden'>
-                    <div className='p-8 text-center'>
-                        <div className='w-24 h-24 rounded-xl flex items-center justify-center mx-auto mb-6'>
-                            <Search className='w-12 h-12 text-blue-500' />
+            <div className='relative z-10 min-h-screen flex flex-col items-center justify-center p-4'>
+                <div className='w-full max-w-2xl'>
+                    <div className='bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-white/10 p-12 text-center'>
+                        {/* Icon */}
+                        <div className='mb-8'>
+                            <div className='w-24 h-24 rounded-2xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center mx-auto'>
+                                <Search className='w-12 h-12 text-white' />
+                            </div>
                         </div>
 
-                        <div className='relative mb-4'>
+                        {/* 404 Number */}
+                        <div className='relative mb-6 group'>
                             <div className='absolute -inset-1'>
                                 <div className='w-full h-full mx-auto rotate-180'>
-                                    <div className='absolute inset-0 -z-10 animate-[pulse_2.5s_infinite]'>
-                                        <div className='absolute inset-0 translate-x-0 blur-lg bg-gradient-to-r from-blue-500/30 to-blue-600/30'></div>
+                                    <div className='absolute inset-0 -z-10 group-hover:animate-[pulse_2s_infinite]'>
+                                        <div className='absolute inset-0 translate-x-0 blur-2xl bg-gradient-to-r from-[#4785FF]/30 to-[#8c52ff]/30' />
                                     </div>
                                 </div>
                             </div>
-                            <h1 className='text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-400'>
+                            <h1 className='text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#4785FF] to-[#8c52ff]'>
                                 404
                             </h1>
                         </div>
 
-                        <h2 className='text-2xl font-bold text-gray-800 mb-2'>
+                        {/* Text Content */}
+                        <h2 className='text-2xl font-bold text-gray-900 dark:text-white mb-4'>
                             Seite nicht gefunden
                         </h2>
-                        <p className='text-gray-500 mb-8 max-w-sm mx-auto'>
+                        <p className='text-gray-600 dark:text-white/70 mb-8 max-w-md mx-auto'>
                             Die von Ihnen gesuchte Seite existiert leider nicht
                             oder wurde möglicherweise verschoben.
                         </p>
 
-                        <Link
-                            to='/'
-                            className='inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg 
-                                     font-medium shadow-lg hover:bg-blue-700 transition-all duration-200 
-                                     hover:shadow-xl hover:scale-105'
-                        >
-                            <Home className='w-5 h-5' />
-                            Zurück zur Startseite
-                        </Link>
+                        {/* Actions */}
+                        <div className='flex flex-col sm:flex-row gap-4 justify-center'>
+                            <Link
+                                to='/'
+                                className='inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[#4785FF] to-[#8c52ff]
+                         text-white rounded-xl font-medium shadow-lg 
+                         hover:shadow-xl hover:shadow-blue-500/25 dark:hover:shadow-blue-500/10
+                         transition-all duration-200 hover:-translate-y-0.5'
+                            >
+                                <MoveLeft className='w-5 h-5' />
+                                Zurück zur Startseite
+                            </Link>
+                            <a
+                                href='/kontakt'
+                                className='inline-flex items-center justify-center gap-2 px-6 py-3
+                         text-gray-700 dark:text-white/70 
+                         hover:bg-gray-100 dark:hover:bg-white/5
+                         border border-gray-200 dark:border-white/10
+                         rounded-xl font-medium
+                         transition-all duration-200 hover:-translate-y-0.5'
+                            >
+                                <ExternalLink className='w-5 h-5' />
+                                Support kontaktieren
+                            </a>
+                        </div>
 
-                        <div className='flex justify-center gap-2 mt-8'>
+                        {/* Animated Dots */}
+                        <div className='flex justify-center gap-3 mt-12'>
                             {[...Array(3)].map((_, i) => (
                                 <div
                                     key={i}
-                                    className='w-2 h-2 rounded-full bg-blue-500 animate-[bounce_1.4s_infinite]'
+                                    className='w-3 h-3 rounded-full bg-gradient-to-r from-[#4785FF] to-[#8c52ff] animate-bounce'
                                     style={{
-                                        opacity: 0.3,
                                         animationDelay: `${i * 0.2}s`,
-                                        animationFillMode: 'both',
+                                        animationDuration: '1.4s',
                                     }}
                                 />
                             ))}
