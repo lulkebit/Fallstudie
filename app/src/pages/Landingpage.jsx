@@ -1157,7 +1157,10 @@ const Landingpage = () => {
                                     Noch Fragen? Unser Support-Team ist für dich
                                     da.
                                 </p>
-                                <button className='bg-gradient-to-r from-[#4785FF] to-[#8c52ff] text-white px-8 py-4 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group flex items-center gap-2 mx-auto'>
+                                <button
+                                    onClick={() => navigate('/kontakt')}
+                                    className='bg-gradient-to-r from-[#4785FF] to-[#8c52ff] text-white px-8 py-4 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group flex items-center gap-2 mx-auto'
+                                >
                                     <span>Kontaktiere unseren Support</span>
                                     <svg
                                         className='w-5 h-5 group-hover:translate-x-1 transition-transform duration-300'

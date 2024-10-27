@@ -156,15 +156,15 @@ const Footer = () => {
                                         contact@trackmygoal.de
                                     </span>
                                 </a>
-                                <a
-                                    href='/kontakt'
-                                    className='bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 px-4 py-3 rounded-xl flex items-center gap-3 group transition-colors duration-200'
+                                <button
+                                    onClick={() => navigate('/kontakt')}
+                                    className='bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 px-4 py-3 rounded-xl flex items-center gap-3 group transition-colors duration-200 w-full'
                                 >
                                     <ExternalLink className='w-5 h-5 text-gray-600 dark:text-white/70' />
                                     <span className='text-gray-600 group-hover:text-gray-900 dark:text-white/70 dark:group-hover:text-white text-sm'>
                                         Kontaktformular
                                     </span>
-                                </a>
+                                </button>
                                 <a
                                     href='https://www.instagram.com/trackmygoal2024/'
                                     target='_blank'
@@ -188,14 +188,6 @@ const Footer = () => {
                             <p className='text-gray-500 dark:text-white/40 text-sm'>
                                 © 2024 TrackMyGoal. Alle Rechte vorbehalten.
                             </p>
-                            <div className='flex items-center gap-6'>
-                                <button className='text-gray-500 hover:text-gray-700 dark:text-white/40 dark:hover:text-white/60 text-sm'>
-                                    Deutsch
-                                </button>
-                                <button className='text-gray-500 hover:text-gray-700 dark:text-white/40 dark:hover:text-white/60 text-sm'>
-                                    English
-                                </button>
-                            </div>
                         </div>
                     </div>
                 </div>

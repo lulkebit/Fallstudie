@@ -23,6 +23,7 @@ import LegalNotice from './pages/LegalNotice';
 import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
 import CookieBanner from './components/CookieBanner';
+import Kontakt from './pages/Kontakt';
 
 function MyRoutes() {
     const { user, loading } = useContext(UserContext);
@@ -39,6 +40,7 @@ function MyRoutes() {
                 <Route path='/impressum' element={<LegalNotice />} />
                 <Route path='/datenschutz' element={<Privacy />} />
                 <Route path='/agb' element={<Terms />} />
+                <Route path='/kontakt' element={<Kontakt />} />
                 <Route
                     path='/login'
                     element={
