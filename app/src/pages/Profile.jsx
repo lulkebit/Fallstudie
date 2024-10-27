@@ -15,6 +15,9 @@ import {
     Bell,
     Settings,
     ChevronRight,
+    ScrollText,
+    FileSpreadsheet,
+    Cookie,
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 
@@ -82,6 +85,31 @@ const QuickAction = ({ icon: Icon, title, description, onClick }) => (
             </div>
             <ChevronRight className='w-5 h-5 text-gray-400 dark:text-white/40 group-hover:translate-x-1 transition-transform duration-200' />
         </div>
+    </button>
+);
+
+const LegalLink = ({ icon: Icon, title, onClick }) => (
+    <button
+        onClick={onClick}
+        className='flex items-center gap-3 p-3 rounded-xl 
+                 bg-white/50 dark:bg-white/5 
+                 border border-gray-200/50 dark:border-white/10 
+                 hover:bg-white dark:hover:bg-white/10
+                 transition-all duration-200 w-full group'
+    >
+        <div
+            className='w-8 h-8 rounded-lg bg-gradient-to-br from-[#4785FF]/10 to-[#8c52ff]/10 
+                      flex items-center justify-center'
+        >
+            <Icon className='w-4 h-4 text-[#4785FF]' />
+        </div>
+        <span className='text-sm font-medium text-gray-900 dark:text-white flex-grow text-left'>
+            {title}
+        </span>
+        <ChevronRight
+            className='w-4 h-4 text-gray-400 dark:text-white/40 
+                               group-hover:translate-x-1 transition-transform duration-200'
+        />
     </button>
 );
 
@@ -230,9 +258,9 @@ const Profile = () => {
                                     <label
                                         htmlFor='avatar'
                                         className='absolute inset-0 flex items-center justify-center 
-                             bg-black/50 opacity-0 group-hover:opacity-100 
-                             transition-opacity duration-200 rounded-xl 
-                             cursor-pointer'
+                                                 bg-black/50 opacity-0 group-hover:opacity-100 
+                                                 transition-opacity duration-200 rounded-xl 
+                                                 cursor-pointer'
                                     >
                                         <Camera className='w-6 h-6 text-white' />
                                         <input
@@ -284,12 +312,12 @@ const Profile = () => {
                                     type='submit'
                                     disabled={!isModified}
                                     className={`w-full py-2.5 rounded-xl font-medium flex items-center justify-center gap-2
-                    ${
-                        !isModified
-                            ? 'bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-white/40 cursor-not-allowed'
-                            : 'bg-gradient-to-r from-[#4785FF] to-[#8c52ff] text-white shadow-lg hover:shadow-xl hover:shadow-blue-500/25 dark:hover:shadow-blue-500/10 hover:-translate-y-0.5'
-                    }
-                    transition-all duration-200`}
+                                             ${
+                                                 !isModified
+                                                     ? 'bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-white/40 cursor-not-allowed'
+                                                     : 'bg-gradient-to-r from-[#4785FF] to-[#8c52ff] text-white shadow-lg hover:shadow-xl hover:shadow-blue-500/25 dark:hover:shadow-blue-500/10 hover:-translate-y-0.5'
+                                             }
+                                             transition-all duration-200`}
                                 >
                                     <Save className='w-5 h-5' />
                                     Speichern
@@ -298,8 +326,9 @@ const Profile = () => {
                         </ProfileSection>
                     </div>
 
-                    {/* Quick Actions */}
+                    {/* Right Sidebar */}
                     <div className='space-y-6'>
+                        {/* Account Quick Actions */}
                         <ProfileSection title='Schnellzugriff' icon={Settings}>
                             <div className='space-y-4'>
                                 <QuickAction
@@ -320,10 +349,36 @@ const Profile = () => {
                                         /* TODO */
                                     }}
                                 />
-                                <QuickAction
+                            </div>
+                        </ProfileSection>
+
+                        {/* Legal Links Section */}
+                        <ProfileSection title='Rechtliches' icon={ScrollText}>
+                            <div className='space-y-4'>
+                                <LegalLink
+                                    icon={ScrollText}
+                                    title='Impressum'
+                                    onClick={() => {
+                                        /* TODO */
+                                    }}
+                                />
+                                <LegalLink
                                     icon={Shield}
-                                    title='Privatsphäre'
-                                    description='Kontrolliere deine Datenschutzeinstellungen'
+                                    title='Datenschutz'
+                                    onClick={() => {
+                                        /* TODO */
+                                    }}
+                                />
+                                <LegalLink
+                                    icon={FileSpreadsheet}
+                                    title='AGB'
+                                    onClick={() => {
+                                        /* TODO */
+                                    }}
+                                />
+                                <LegalLink
+                                    icon={Cookie}
+                                    title='Cookie-Einstellungen'
                                     onClick={() => {
                                         /* TODO */
                                     }}
