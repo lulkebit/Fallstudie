@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, LogIn, Sun, Moon } from 'lucide-react';
+import { Menu, X, LogIn, Sun, Moon, Rocket } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useNavigate } from 'react-router-dom';
 
-const LandingNavbar = () => {
+const LandingNavbar = ({ hideNavItems = false, customActions = null }) => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { isDarkMode, toggleTheme } = useTheme();
@@ -22,7 +22,7 @@ const LandingNavbar = () => {
         setIsMobileMenuOpen(false);
         document
             .getElementById(sectionId)
-            .scrollIntoView({ behavior: 'smooth' });
+            ?.scrollIntoView({ behavior: 'smooth' });
     };
 
     const navItems = [
@@ -32,6 +32,32 @@ const LandingNavbar = () => {
         { id: 'fifth-section', label: 'Team' },
         { id: 'last-section', label: 'FAQ' },
     ];
+
+    const defaultActions = (
+        <div className='hidden lg:flex items-center gap-4'>
+            {/* Theme Toggle */}
+            <button
+                onClick={toggleTheme}
+                className='text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white transition-colors duration-200 text-sm font-medium'
+            >
+                {isDarkMode ? <Sun /> : <Moon />}
+            </button>
+            <button
+                onClick={() => navigate('/login')}
+                className='px-4 py-2 text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white transition-colors duration-200 text-sm font-medium flex items-center gap-2'
+            >
+                <LogIn className='w-4 h-4' />
+                Login
+            </button>
+            <button
+                onClick={() => navigate('/register')}
+                className='bg-gradient-to-r from-[#4785FF] to-[#8c52ff] text-white px-4 py-2 rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-blue-500/25 transition-all duration-300 hover:-translate-y-0.5 flex items-center gap-2'
+            >
+                <Rocket className='w-4 h-4' />
+                Kostenlos starten
+            </button>
+        </div>
+    );
 
     return (
         <nav
@@ -46,7 +72,7 @@ const LandingNavbar = () => {
                     {/* Logo */}
                     <div className='flex items-center'>
                         <div
-                            onClick={() => navigateToSection('first-section')}
+                            onClick={() => navigate('/')}
                             className='h-10 w-10 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center mr-3 cursor-pointer'
                         >
                             <svg
@@ -64,7 +90,7 @@ const LandingNavbar = () => {
                             </svg>
                         </div>
                         <button
-                            onClick={() => navigateToSection('first-section')}
+                            onClick={() => navigate('/')}
                             className='text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#4785FF] to-[#8c52ff]'
                         >
                             TrackMyGoal
@@ -72,41 +98,22 @@ const LandingNavbar = () => {
                     </div>
 
                     {/* Desktop Navigation */}
-                    <div className='hidden lg:flex items-center gap-8'>
-                        {navItems.map((item) => (
-                            <button
-                                key={item.id}
-                                onClick={() => navigateToSection(item.id)}
-                                className='text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white transition-colors duration-200 text-sm font-medium'
-                            >
-                                {item.label}
-                            </button>
-                        ))}
-                    </div>
+                    {!hideNavItems && (
+                        <div className='hidden lg:flex items-center gap-8'>
+                            {navItems.map((item) => (
+                                <button
+                                    key={item.id}
+                                    onClick={() => navigateToSection(item.id)}
+                                    className='text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white transition-colors duration-200 text-sm font-medium'
+                                >
+                                    {item.label}
+                                </button>
+                            ))}
+                        </div>
+                    )}
 
                     {/* Desktop Actions */}
-                    <div className='hidden lg:flex items-center gap-4'>
-                        {/* Theme Toggle */}
-                        <button
-                            onClick={toggleTheme}
-                            className='text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white transition-colors duration-200 text-sm font-medium'
-                        >
-                            {isDarkMode ? <Sun /> : <Moon />}
-                        </button>
-                        <button
-                            onClick={() => navigate('/login')}
-                            className='px-4 py-2 text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white transition-colors duration-200 text-sm font-medium flex items-center gap-2'
-                        >
-                            <LogIn className='w-4 h-4' />
-                            Login
-                        </button>
-                        <button
-                            onClick={() => navigate('/register')}
-                            className='bg-gradient-to-r from-[#4785FF] to-[#8c52ff] text-white px-4 py-2 rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-blue-500/25 transition-all duration-300 hover:-translate-y-0.5'
-                        >
-                            Kostenlos starten
-                        </button>
-                    </div>
+                    {customActions || defaultActions}
                 </div>
 
                 {/* Mobile Menu Button */}
@@ -124,46 +131,60 @@ const LandingNavbar = () => {
                         )}
                     </button>
 
-                    <button
-                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                        className='text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white transition-colors duration-200'
-                    >
-                        {isMobileMenuOpen ? (
-                            <X className='w-6 h-6' />
-                        ) : (
-                            <Menu className='w-6 h-6' />
-                        )}
-                    </button>
+                    {!hideNavItems && (
+                        <button
+                            onClick={() =>
+                                setIsMobileMenuOpen(!isMobileMenuOpen)
+                            }
+                            className='text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white transition-colors duration-200'
+                        >
+                            {isMobileMenuOpen ? (
+                                <X className='w-6 h-6' />
+                            ) : (
+                                <Menu className='w-6 h-6' />
+                            )}
+                        </button>
+                    )}
                 </div>
             </div>
 
             {/* Mobile Menu */}
-            <div
-                className={`lg:hidden ${isMobileMenuOpen ? 'block' : 'hidden'}`}
-            >
-                <div className='bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-t border-gray-200 dark:border-white/10'>
-                    <div className='px-4 pt-2 pb-6 space-y-4'>
-                        {navItems.map((item) => (
-                            <button
-                                key={item.id}
-                                onClick={() => navigateToSection(item.id)}
-                                className='block w-full text-left px-4 py-2 text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white transition-colors duration-200 text-sm font-medium'
-                            >
-                                {item.label}
-                            </button>
-                        ))}
-                        <div className='pt-4 space-y-2'>
-                            <button className='w-full px-4 py-2 text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white transition-colors duration-200 text-sm font-medium flex items-center gap-2'>
-                                <LogIn className='w-4 h-4' />
-                                Login
-                            </button>
-                            <button className='w-full bg-gradient-to-r from-[#4785FF] to-[#8c52ff] text-white px-4 py-2 rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-blue-500/25 transition-all duration-300'>
-                                Kostenlos starten
-                            </button>
+            {!hideNavItems && (
+                <div
+                    className={`lg:hidden ${
+                        isMobileMenuOpen ? 'block' : 'hidden'
+                    }`}
+                >
+                    <div className='bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-t border-gray-200 dark:border-white/10'>
+                        <div className='px-4 pt-2 pb-6 space-y-4'>
+                            {navItems.map((item) => (
+                                <button
+                                    key={item.id}
+                                    onClick={() => navigateToSection(item.id)}
+                                    className='block w-full text-left px-4 py-2 text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white transition-colors duration-200 text-sm font-medium'
+                                >
+                                    {item.label}
+                                </button>
+                            ))}
+                            <div className='pt-4 space-y-2'>
+                                <button
+                                    onClick={() => navigate('/login')}
+                                    className='w-full px-4 py-2 text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white transition-colors duration-200 text-sm font-medium flex items-center gap-2'
+                                >
+                                    <LogIn className='w-4 h-4' />
+                                    Login
+                                </button>
+                                <button
+                                    onClick={() => navigate('/register')}
+                                    className='w-full bg-gradient-to-r from-[#4785FF] to-[#8c52ff] text-white px-4 py-2 rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-blue-500/25 transition-all duration-300'
+                                >
+                                    Kostenlos starten
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            )}
         </nav>
     );
 };

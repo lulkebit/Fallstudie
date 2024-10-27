@@ -3,7 +3,19 @@ import { UserContext } from '../../context/UserContext';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useToast } from '../../context/ToastContext';
-import { Lock, LogIn, User, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { useTheme } from '../../context/ThemeContext';
+import {
+    Lock,
+    LogIn,
+    User,
+    Eye,
+    EyeOff,
+    ArrowRight,
+    Sun,
+    Moon,
+    Rocket,
+} from 'lucide-react';
+import LandingNavbar from '../../components/LandingNavbar';
 
 const InputField = ({
     label,
@@ -59,6 +71,34 @@ const InputField = ({
     </div>
 );
 
+const AuthNavbar = () => {
+    const navigate = useNavigate();
+    const { isDarkMode, toggleTheme } = useTheme();
+
+    return (
+        <LandingNavbar
+            hideNavItems={true}
+            customActions={
+                <div className='hidden lg:flex items-center gap-4'>
+                    <button
+                        onClick={toggleTheme}
+                        className='text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white transition-colors duration-200 text-sm font-medium'
+                    >
+                        {isDarkMode ? <Sun /> : <Moon />}
+                    </button>
+                    <button
+                        onClick={() => navigate('/register')}
+                        className='bg-gradient-to-r from-[#4785FF] to-[#8c52ff] text-white px-4 py-2 rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-blue-500/25 transition-all duration-300 hover:-translate-y-0.5 flex items-center gap-2'
+                    >
+                        <Rocket className='w-4 h-4' />
+                        Kostenlos starten
+                    </button>
+                </div>
+            }
+        />
+    );
+};
+
 const Login = () => {
     const [data, setData] = useState({
         emailOrUsername: '',
@@ -96,13 +136,15 @@ const Login = () => {
 
     return (
         <div className='min-h-screen bg-gradient-to-br from-white to-gray-100 dark:from-gray-900 dark:to-gray-800 relative overflow-hidden'>
+            <AuthNavbar />
+
             {/* Decorative Elements */}
             <div className='absolute inset-0'>
                 <div className='absolute top-1/4 right-1/4 w-96 h-96 bg-[#4785FF]/5 dark:bg-[#4785FF]/10 rounded-full blur-3xl animate-pulse'></div>
                 <div className='absolute bottom-1/4 left-1/4 w-96 h-96 bg-[#8c52ff]/5 dark:bg-[#8c52ff]/10 rounded-full blur-3xl animate-pulse delay-1000'></div>
             </div>
 
-            <div className='flex min-h-screen items-center justify-center px-4 py-12 relative z-10'>
+            <div className='flex min-h-screen items-center justify-center px-4 pt-20 relative z-10'>
                 <div className='w-full max-w-md'>
                     <div className='bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-white/10 shadow-xl dark:shadow-none'>
                         <div className='px-8 pt-8 pb-6'>

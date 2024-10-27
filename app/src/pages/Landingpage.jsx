@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Check, ChevronRight, Target, TrendingUp } from 'lucide-react';
+import { Check, ChevronRight, Rocket, Target, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LandingNavbar from '../components/LandingNavbar';
 import Footer from '../components/Footer';
@@ -123,8 +123,9 @@ const Landingpage = () => {
                     <div className='flex flex-col sm:flex-row gap-4 mb-12'>
                         <button
                             onClick={() => navigate('/register')}
-                            className='px-8 py-4 rounded-xl font-medium text-white bg-gradient-to-r from-[#4785FF] to-[#8c52ff] hover:shadow-lg hover:shadow-[#4785FF]/20 transition-all duration-300 hover:-translate-y-1'
+                            className='px-8 py-4 rounded-xl font-medium text-white bg-gradient-to-r from-[#4785FF] to-[#8c52ff] hover:shadow-lg hover:shadow-[#4785FF]/20 transition-all duration-300 hover:-translate-y-1 flex items-center gap-2'
                         >
+                            <Rocket className='w-4 h-4' />
                             Kostenlos starten
                         </button>
                     </div>
