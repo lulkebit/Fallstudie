@@ -1,15 +1,11 @@
 import React from 'react';
-import {
-    Instagram,
-    Twitter,
-    Facebook,
-    Mail,
-    ExternalLink,
-    ChevronRight,
-} from 'lucide-react';
+import { Instagram, Mail, ExternalLink, ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Footer = () => {
-    const navigate = (sectionId) => {
+    const navigate = useNavigate();
+
+    const navigateToSection = (sectionId) => {
         document
             .getElementById(sectionId)
             ?.scrollIntoView({ behavior: 'smooth' });
@@ -53,32 +49,6 @@ const Footer = () => {
                                 Your Journey, Your Success! Erreiche deine Ziele
                                 mit System und Community.
                             </p>
-                            <div className='flex gap-4'>
-                                <a
-                                    href='https://www.instagram.com/trackmygoal2024/'
-                                    target='_blank'
-                                    rel='noopener noreferrer'
-                                    className='bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 p-2 rounded-lg transition-colors duration-200'
-                                >
-                                    <Instagram className='w-5 h-5 text-gray-600 dark:text-white/70' />
-                                </a>
-                                <a
-                                    href='#'
-                                    target='_blank'
-                                    rel='noopener noreferrer'
-                                    className='bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 p-2 rounded-lg transition-colors duration-200'
-                                >
-                                    <Twitter className='w-5 h-5 text-gray-600 dark:text-white/70' />
-                                </a>
-                                <a
-                                    href='#'
-                                    target='_blank'
-                                    rel='noopener noreferrer'
-                                    className='bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 p-2 rounded-lg transition-colors duration-200'
-                                >
-                                    <Facebook className='w-5 h-5 text-gray-600 dark:text-white/70' />
-                                </a>
-                            </div>
                         </div>
 
                         {/* Quick Links */}
@@ -105,7 +75,7 @@ const Footer = () => {
                                     <li key={index}>
                                         <button
                                             onClick={() =>
-                                                navigate(link.section)
+                                                navigateToSection(link.section)
                                             }
                                             className='text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white flex items-center gap-2 group'
                                         >
@@ -123,28 +93,42 @@ const Footer = () => {
                                 Rechtliches
                             </h3>
                             <ul className='space-y-4'>
-                                {[
-                                    { label: 'Impressum', href: '/impressum' },
-                                    {
-                                        label: 'Datenschutz',
-                                        href: '/datenschutz',
-                                    },
-                                    { label: 'AGB', href: '/agb' },
-                                    {
-                                        label: 'Cookie-Einstellungen',
-                                        href: '#',
-                                    },
-                                ].map((link, index) => (
-                                    <li key={index}>
-                                        <a
-                                            href={link.href}
-                                            className='text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white flex items-center gap-2 group'
-                                        >
-                                            <ChevronRight className='w-4 h-4 group-hover:translate-x-1 transition-transform duration-200' />
-                                            {link.label}
-                                        </a>
-                                    </li>
-                                ))}
+                                <li>
+                                    <button
+                                        onClick={() => navigate('/impressum')}
+                                        className='text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white flex items-center gap-2 group'
+                                    >
+                                        <ChevronRight className='w-4 h-4 group-hover:translate-x-1 transition-transform duration-200' />
+                                        Impressum
+                                    </button>
+                                </li>
+                                <li>
+                                    <button
+                                        onClick={() => navigate('/datenschutz')}
+                                        className='text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white flex items-center gap-2 group'
+                                    >
+                                        <ChevronRight className='w-4 h-4 group-hover:translate-x-1 transition-transform duration-200' />
+                                        Datenschutz
+                                    </button>
+                                </li>
+                                <li>
+                                    <button
+                                        onClick={() => navigate('/agb')}
+                                        className='text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white flex items-center gap-2 group'
+                                    >
+                                        <ChevronRight className='w-4 h-4 group-hover:translate-x-1 transition-transform duration-200' />
+                                        AGB
+                                    </button>
+                                </li>
+                                <li>
+                                    <button
+                                        onClick={() => navigate('/cookie')}
+                                        className='text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white flex items-center gap-2 group'
+                                    >
+                                        <ChevronRight className='w-4 h-4 group-hover:translate-x-1 transition-transform duration-200' />
+                                        Cookie-Einstellungen
+                                    </button>
+                                </li>
                             </ul>
                         </div>
 
@@ -170,6 +154,17 @@ const Footer = () => {
                                     <ExternalLink className='w-5 h-5 text-gray-600 dark:text-white/70' />
                                     <span className='text-gray-600 group-hover:text-gray-900 dark:text-white/70 dark:group-hover:text-white text-sm'>
                                         Kontaktformular
+                                    </span>
+                                </a>
+                                <a
+                                    href='https://www.instagram.com/trackmygoal2024/'
+                                    target='_blank'
+                                    rel='noopener noreferrer'
+                                    className='bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 px-4 py-3 rounded-xl flex items-center gap-3 group transition-colors duration-200'
+                                >
+                                    <Instagram className='w-5 h-5 text-gray-600 dark:text-white/70' />
+                                    <span className='text-gray-600 group-hover:text-gray-900 dark:text-white/70 dark:group-hover:text-white text-sm'>
+                                        Intagram
                                     </span>
                                 </a>
                             </div>

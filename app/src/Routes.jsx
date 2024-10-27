@@ -19,6 +19,9 @@ import LoadingPage from './pages/LoadingPage';
 import AdminRoute from './components/AdminRoute';
 import AdminPanel from './pages/AdminPanel';
 import GlobalGoals from './pages/GlobalGoals';
+import LegalNotice from './pages/LegalNotice';
+import Privacy from './pages/Privacy';
+import Terms from './pages/Terms';
 
 function MyRoutes() {
     const { user, loading } = useContext(UserContext);
@@ -31,6 +34,9 @@ function MyRoutes() {
         <Router>
             <Routes>
                 <Route path='/' element={<Landingpage />} />
+                <Route path='/impressum' element={<LegalNotice />} />
+                <Route path='/datenschutz' element={<Privacy />} />
+                <Route path='/agb' element={<Terms />} />
                 <Route
                     path='/login'
                     element={
