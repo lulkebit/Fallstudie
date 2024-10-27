@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
-import { Target, Users, ChevronRight, Pin, Eye, EyeOff } from 'lucide-react';
+import { Target, Users } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Table from '../components/PrivateGoaltable';
 import PublicGoalTable from '../components/PublicGoaltable';

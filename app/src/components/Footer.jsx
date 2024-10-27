@@ -1,14 +1,23 @@
 import React from 'react';
 import { Instagram, Mail, ExternalLink, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useDialog } from '../context/DialogContext';
+import CookieSettingsDialog from './dialogs/CookieSettingsDialog';
 
 const Footer = () => {
     const navigate = useNavigate();
+    const { addDialog } = useDialog();
 
     const navigateToSection = (sectionId) => {
         document
             .getElementById(sectionId)
             ?.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    const openCookieSettings = () => {
+        addDialog({
+            component: CookieSettingsDialog,
+        });
     };
 
     return (
@@ -122,7 +131,7 @@ const Footer = () => {
                                 </li>
                                 <li>
                                     <button
-                                        onClick={() => navigate('/cookie')}
+                                        onClick={openCookieSettings}
                                         className='text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white flex items-center gap-2 group'
                                     >
                                         <ChevronRight className='w-4 h-4 group-hover:translate-x-1 transition-transform duration-200' />
