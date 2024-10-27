@@ -28,6 +28,7 @@ const InputField = ({
     error,
     showPassword,
     onTogglePassword,
+    onBlur,
 }) => (
     <div className='space-y-1.5'>
         <label
@@ -46,12 +47,16 @@ const InputField = ({
                 type={type}
                 value={value}
                 onChange={onChange}
+                onBlur={onBlur}
                 placeholder={placeholder}
-                required
-                className='w-full pl-10 pr-12 py-2.5 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl
+                className={`w-full pl-10 pr-12 py-2.5 bg-white dark:bg-white/5 border rounded-xl
                          text-gray-900 dark:text-white text-sm placeholder:text-gray-400 dark:placeholder:text-white/40
                          focus:ring-2 focus:ring-[#4785FF] focus:border-transparent dark:focus:ring-[#4785FF]/50
-                         transition-all duration-200'
+                         transition-all duration-200 ${
+                             error
+                                 ? 'border-red-500 dark:border-red-500/50'
+                                 : 'border-gray-200 dark:border-white/10'
+                         }`}
             />
             {type === 'password' && (
                 <button
@@ -67,7 +72,11 @@ const InputField = ({
                 </button>
             )}
         </div>
-        {error && <p className='text-sm text-red-500 mt-1'>{error}</p>}
+        {error && (
+            <p className='text-sm text-red-500 dark:text-red-400 mt-1'>
+                {error}
+            </p>
+        )}
     </div>
 );
 
@@ -104,14 +113,91 @@ const Login = () => {
         emailOrUsername: '',
         password: '',
     });
+    const [errors, setErrors] = useState({
+        emailOrUsername: '',
+        password: '',
+    });
+    const [touched, setTouched] = useState({
+        emailOrUsername: false,
+        password: false,
+    });
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const { setUser } = useContext(UserContext);
     const navigate = useNavigate();
     const { addToast } = useToast();
 
+    const validateField = (name, value) => {
+        let error = '';
+        switch (name) {
+            case 'emailOrUsername':
+                if (!value.trim()) {
+                    error =
+                        'Bitte geben Sie Ihre E-Mail oder Ihren Benutzernamen ein';
+                } else if (
+                    value.includes('@') &&
+                    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+                ) {
+                    error = 'Bitte geben Sie eine gültige E-Mail-Adresse ein';
+                }
+                break;
+            case 'password':
+                if (!value) {
+                    error = 'Bitte geben Sie Ihr Passwort ein';
+                }
+                break;
+            default:
+                break;
+        }
+        return error;
+    };
+
+    const handleBlur = (e) => {
+        const { name } = e.target;
+        setTouched((prev) => ({ ...prev, [name]: true }));
+        setErrors((prev) => ({
+            ...prev,
+            [name]: validateField(name, data[name]),
+        }));
+    };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setData((prev) => ({ ...prev, [name]: value }));
+        if (touched[name]) {
+            setErrors((prev) => ({
+                ...prev,
+                [name]: validateField(name, value),
+            }));
+        }
+    };
+
+    const validateForm = () => {
+        const newErrors = {
+            emailOrUsername: validateField(
+                'emailOrUsername',
+                data.emailOrUsername
+            ),
+            password: validateField('password', data.password),
+        };
+        setErrors(newErrors);
+        return !Object.values(newErrors).some((error) => error);
+    };
+
     const loginUser = async (event) => {
         event.preventDefault();
+
+        // Set all fields as touched
+        setTouched({
+            emailOrUsername: true,
+            password: true,
+        });
+
+        if (!validateForm()) {
+            addToast('Bitte füllen Sie alle Felder korrekt aus', 'error');
+            return;
+        }
+
         setLoading(true);
         try {
             const { data: responseData } = await axios.post('/login', data);
@@ -176,33 +262,35 @@ const Login = () => {
                                 <InputField
                                     label='E-Mail oder Benutzername'
                                     id='emailOrUsername'
+                                    name='emailOrUsername'
                                     value={data.emailOrUsername}
-                                    onChange={(e) =>
-                                        setData({
-                                            ...data,
-                                            emailOrUsername: e.target.value,
-                                        })
-                                    }
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
                                     icon={User}
                                     placeholder='max.mustermann@beispiel.de'
+                                    error={
+                                        touched.emailOrUsername
+                                            ? errors.emailOrUsername
+                                            : ''
+                                    }
                                 />
 
                                 <InputField
                                     label='Passwort'
                                     id='password'
+                                    name='password'
                                     type={showPassword ? 'text' : 'password'}
                                     value={data.password}
-                                    onChange={(e) =>
-                                        setData({
-                                            ...data,
-                                            password: e.target.value,
-                                        })
-                                    }
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
                                     icon={Lock}
                                     placeholder='••••••••'
                                     showPassword={showPassword}
                                     onTogglePassword={() =>
                                         setShowPassword(!showPassword)
+                                    }
+                                    error={
+                                        touched.password ? errors.password : ''
                                     }
                                 />
 

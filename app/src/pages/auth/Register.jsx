@@ -29,6 +29,7 @@ const InputField = ({
     error,
     showPassword,
     onTogglePassword,
+    onBlur,
 }) => (
     <div className='space-y-1.5'>
         <label
@@ -47,12 +48,16 @@ const InputField = ({
                 type={type}
                 value={value}
                 onChange={onChange}
+                onBlur={onBlur}
                 placeholder={placeholder}
-                required
-                className='w-full pl-10 pr-12 py-2.5 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl
+                className={`w-full pl-10 pr-12 py-2.5 bg-white dark:bg-white/5 border rounded-xl
                          text-gray-900 dark:text-white text-sm placeholder:text-gray-400 dark:placeholder:text-white/40
                          focus:ring-2 focus:ring-[#4785FF] focus:border-transparent dark:focus:ring-[#4785FF]/50
-                         transition-all duration-200'
+                         transition-all duration-200 ${
+                             error
+                                 ? 'border-red-500 dark:border-red-500/50'
+                                 : 'border-gray-200 dark:border-white/10'
+                         }`}
             />
             {type === 'password' && (
                 <button
@@ -184,28 +189,122 @@ const Register = () => {
         username: '',
         password: '',
     });
+    const [errors, setErrors] = useState({});
+    const [touched, setTouched] = useState({
+        firstname: false,
+        lastname: false,
+        email: false,
+        username: false,
+        password: false,
+    });
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [errors, setErrors] = useState({});
     const navigate = useNavigate();
     const { addToast } = useToast();
 
+    const validateField = (name, value) => {
+        let error = '';
+        switch (name) {
+            case 'firstname':
+                if (!value.trim()) {
+                    error = 'Bitte geben Sie Ihren Vornamen ein';
+                } else if (value.trim().length < 2) {
+                    error = 'Der Vorname muss mindestens 2 Zeichen lang sein';
+                } else if (!/^[a-zA-ZäöüßÄÖÜ\s-]+$/.test(value)) {
+                    error =
+                        'Der Vorname darf nur Buchstaben und Bindestriche enthalten';
+                }
+                break;
+            case 'lastname':
+                if (!value.trim()) {
+                    error = 'Bitte geben Sie Ihren Nachnamen ein';
+                } else if (value.trim().length < 2) {
+                    error = 'Der Nachname muss mindestens 2 Zeichen lang sein';
+                } else if (!/^[a-zA-ZäöüßÄÖÜ\s-]+$/.test(value)) {
+                    error =
+                        'Der Nachname darf nur Buchstaben und Bindestriche enthalten';
+                }
+                break;
+            case 'email':
+                if (!value) {
+                    error = 'Bitte geben Sie Ihre E-Mail-Adresse ein';
+                } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                    error = 'Bitte geben Sie eine gültige E-Mail-Adresse ein';
+                }
+                break;
+            case 'username':
+                if (!value) {
+                    error = 'Bitte geben Sie einen Benutzernamen ein';
+                } else if (value.length < 3) {
+                    error =
+                        'Der Benutzername muss mindestens 3 Zeichen lang sein';
+                } else if (!/^[a-zA-Z0-9._-]+$/.test(value)) {
+                    error =
+                        'Der Benutzername darf nur Buchstaben, Zahlen, Punkte, Unterstriche und Bindestriche enthalten';
+                }
+                break;
+            case 'password':
+                if (!value) {
+                    error = 'Bitte geben Sie ein Passwort ein';
+                } else {
+                    const requirements = [
+                        value.length >= 8,
+                        /[A-Z]/.test(value),
+                        /[a-z]/.test(value),
+                        /[0-9]/.test(value),
+                        /[^A-Za-z0-9]/.test(value),
+                    ];
+
+                    if (!requirements[0]) {
+                        error =
+                            'Das Passwort muss mindestens 8 Zeichen lang sein';
+                    } else if (!requirements[1]) {
+                        error =
+                            'Das Passwort muss mindestens einen Großbuchstaben enthalten';
+                    } else if (!requirements[2]) {
+                        error =
+                            'Das Passwort muss mindestens einen Kleinbuchstaben enthalten';
+                    } else if (!requirements[3]) {
+                        error =
+                            'Das Passwort muss mindestens eine Zahl enthalten';
+                    } else if (!requirements[4]) {
+                        error =
+                            'Das Passwort muss mindestens ein Sonderzeichen enthalten';
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+        return error;
+    };
+
+    const handleBlur = (e) => {
+        const { name } = e.target;
+        setTouched((prev) => ({ ...prev, [name]: true }));
+        setErrors((prev) => ({
+            ...prev,
+            [name]: validateField(name, data[name]),
+        }));
+    };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setData((prev) => ({ ...prev, [name]: value }));
+        if (touched[name]) {
+            setErrors((prev) => ({
+                ...prev,
+                [name]: validateField(name, value),
+            }));
+        }
+    };
+
     const validateForm = () => {
         const newErrors = {};
-
-        if (data.password.length < 8) {
-            newErrors.password = 'Passwort muss mindestens 8 Zeichen lang sein';
-        }
-
-        if (!data.email.includes('@')) {
-            newErrors.email = 'Bitte geben Sie eine gültige E-Mail-Adresse ein';
-        }
-
-        if (data.username.length < 3) {
-            newErrors.username =
-                'Benutzername muss mindestens 3 Zeichen lang sein';
-        }
-
+        Object.keys(data).forEach((key) => {
+            const error = validateField(key, data[key]);
+            if (error) newErrors[key] = error;
+        });
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -213,8 +312,17 @@ const Register = () => {
     const registerUser = async (event) => {
         event.preventDefault();
 
+        // Alle Felder als berührt markieren
+        setTouched({
+            firstname: true,
+            lastname: true,
+            email: true,
+            username: true,
+            password: true,
+        });
+
         if (!validateForm()) {
-            addToast('Bitte überprüfen Sie Ihre Eingaben.', 'error');
+            addToast('Bitte füllen Sie alle Felder korrekt aus', 'error');
             return;
         }
 
@@ -285,85 +393,84 @@ const Register = () => {
                                     <InputField
                                         label='Vorname'
                                         id='firstname'
+                                        name='firstname'
                                         value={data.firstname}
-                                        onChange={(e) =>
-                                            setData({
-                                                ...data,
-                                                firstname: e.target.value,
-                                            })
-                                        }
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
                                         icon={User}
                                         placeholder='Max'
-                                        error={errors.firstname}
+                                        error={
+                                            touched.firstname
+                                                ? errors.firstname
+                                                : ''
+                                        }
                                     />
                                     <InputField
                                         label='Nachname'
                                         id='lastname'
+                                        name='lastname'
                                         value={data.lastname}
-                                        onChange={(e) =>
-                                            setData({
-                                                ...data,
-                                                lastname: e.target.value,
-                                            })
-                                        }
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
                                         icon={User}
                                         placeholder='Mustermann'
-                                        error={errors.lastname}
+                                        error={
+                                            touched.lastname
+                                                ? errors.lastname
+                                                : ''
+                                        }
                                     />
                                 </div>
 
                                 <InputField
                                     label='E-Mail'
                                     id='email'
+                                    name='email'
                                     type='email'
                                     value={data.email}
-                                    onChange={(e) =>
-                                        setData({
-                                            ...data,
-                                            email: e.target.value,
-                                        })
-                                    }
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
                                     icon={Mail}
                                     placeholder='max.mustermann@beispiel.de'
-                                    error={errors.email}
+                                    error={touched.email ? errors.email : ''}
                                 />
 
                                 <InputField
                                     label='Benutzername'
                                     id='username'
+                                    name='username'
                                     value={data.username}
-                                    onChange={(e) =>
-                                        setData({
-                                            ...data,
-                                            username: e.target.value,
-                                        })
-                                    }
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
                                     icon={User}
                                     placeholder='maxmustermann'
-                                    error={errors.username}
+                                    error={
+                                        touched.username ? errors.username : ''
+                                    }
                                 />
 
                                 <div>
                                     <InputField
                                         label='Passwort'
                                         id='password'
+                                        name='password'
                                         type={
                                             showPassword ? 'text' : 'password'
                                         }
                                         value={data.password}
-                                        onChange={(e) =>
-                                            setData({
-                                                ...data,
-                                                password: e.target.value,
-                                            })
-                                        }
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
                                         icon={Lock}
                                         placeholder='••••••••'
                                         showPassword={showPassword}
                                         onTogglePassword={() =>
                                             setShowPassword(!showPassword)
                                         }
-                                        error={errors.password}
+                                        error={
+                                            touched.password
+                                                ? errors.password
+                                                : ''
+                                        }
                                     />
                                     <PasswordStrengthIndicator
                                         password={data.password}
