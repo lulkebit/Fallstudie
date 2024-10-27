@@ -22,6 +22,7 @@ import GlobalGoals from './pages/GlobalGoals';
 import LegalNotice from './pages/LegalNotice';
 import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
+import CookieBanner from './components/CookieBanner';
 
 function MyRoutes() {
     const { user, loading } = useContext(UserContext);
@@ -32,6 +33,7 @@ function MyRoutes() {
 
     return (
         <Router>
+            <CookieBanner />
             <Routes>
                 <Route path='/' element={<Landingpage />} />
                 <Route path='/impressum' element={<LegalNotice />} />

@@ -18,16 +18,26 @@ export const DialogProvider = ({ children }) => {
         );
     }, []);
 
+    // Create a wrapper component that will render the dialog component
+    // This ensures the dialog component is rendered within all providers
+    const DialogWrapper = ({ component: Component, props, id }) => {
+        return <Component {...props} onClose={() => removeDialog(id)} />;
+    };
+
     return (
         <DialogContext.Provider value={{ addDialog, removeDialog }}>
             {children}
-            {dialogs.map((dialog) => (
-                <dialog.component
-                    key={dialog.id}
-                    {...dialog.props}
-                    onClose={() => removeDialog(dialog.id)}
-                />
-            ))}
+            {/* Render dialogs within the provider hierarchy */}
+            <div className='dialog-container'>
+                {dialogs.map((dialog) => (
+                    <DialogWrapper
+                        key={dialog.id}
+                        component={dialog.component}
+                        props={dialog.props}
+                        id={dialog.id}
+                    />
+                ))}
+            </div>
         </DialogContext.Provider>
     );
 };
