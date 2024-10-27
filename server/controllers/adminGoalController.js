@@ -77,25 +77,19 @@ exports.getAdminStats = async (req, res) => {
 
         try {
             totalUsers = await User.countDocuments();
-            console.log('Total users:', totalUsers);
         } catch (error) {
-            console.error('Error counting users:', error);
             throw error;
         }
 
         try {
             totalGlobalGoals = await GlobalGoal.countDocuments();
-            console.log('Total global goals:', totalGlobalGoals);
         } catch (error) {
-            console.error('Error counting global goals:', error);
             throw error;
         }
 
         try {
             users = await User.find().sort({ createdAt: -1 });
-            console.log('Users found:', users.length);
         } catch (error) {
-            console.error('Error finding users:', error);
             throw error;
         }
 
@@ -103,16 +97,13 @@ exports.getAdminStats = async (req, res) => {
             (sum, user) => sum + (user.goals ? user.goals.length : 0),
             0
         );
-        console.log('Total user goals:', totalUserGoals);
 
         const activeUsers = users.filter(
             (user) => user.goals && user.goals.length > 0
         ).length;
-        console.log('Active users:', activeUsers);
 
         const averageGoalsPerUser =
             totalUsers > 0 ? totalUserGoals / totalUsers : 0;
-        console.log('Average goals per user:', averageGoalsPerUser);
 
         const completedUserGoals = users.reduce(
             (sum, user) =>
@@ -123,19 +114,15 @@ exports.getAdminStats = async (req, res) => {
                     : 0),
             0
         );
-        console.log('Completed user goals:', completedUserGoals);
 
         const completionRate =
             totalUserGoals > 0
                 ? (completedUserGoals / totalUserGoals) * 100
                 : 0;
-        console.log('Completion rate:', completionRate);
 
         try {
             globalGoals = await GlobalGoal.find();
-            console.log('Global goals found:', globalGoals.length);
         } catch (error) {
-            console.error('Error finding global goals:', error);
             throw error;
         }
 
@@ -153,15 +140,12 @@ exports.getAdminStats = async (req, res) => {
                     : current
             );
         }
-        console.log('Most popular global goal:', mostPopularGlobalGoal.title);
 
-        // Get upcoming goals with details
         const now = new Date();
         const oneWeekFromNow = new Date(
             now.getTime() + 7 * 24 * 60 * 60 * 1000
         );
 
-        // Collect all upcoming goals with user information
         const upcomingGoals = users.reduce((goals, user) => {
             if (user.goals) {
                 const userUpcomingGoals = user.goals
@@ -182,10 +166,7 @@ exports.getAdminStats = async (req, res) => {
             return goals;
         }, []);
 
-        // Sort upcoming goals by endDate
         upcomingGoals.sort((a, b) => a.endDate - b.endDate);
-
-        console.log('Upcoming goals:', upcomingGoals.length);
 
         const stats = {
             totalUsers,
@@ -203,12 +184,11 @@ exports.getAdminStats = async (req, res) => {
                 currentValue: mostPopularGlobalGoal.currentValue || 0,
                 unit: mostPopularGlobalGoal.unit || 'Fortschritt',
             },
-            upcomingGoals, // Jetzt senden wir das Array mit detaillierten Informationen
+            upcomingGoals,
         };
 
         res.json(stats);
     } catch (error) {
-        console.error('Error in getAdminStats:', error);
         res.status(500).json({
             message: 'Error fetching admin statistics',
             error: error.message,
@@ -221,7 +201,6 @@ exports.getUserGrowthStats = async (req, res) => {
         const { interval = 'month', range = 6 } = req.query;
         const stats = [];
 
-        // Current date in UTC
         const now = new Date();
 
         const intervalConfigs = {
@@ -296,17 +275,10 @@ exports.getUserGrowthStats = async (req, res) => {
             return res.status(400).json({ error: 'Invalid interval' });
         }
 
-        // Generate time periods for the requested number of periods
         for (let i = range - 1; i >= 0; i--) {
             const periodStart = config.getStart(now, i);
             const periodEnd = config.getEnd(now, i);
 
-            // Debug output
-            console.log(`Period ${range - i}/${range}:`);
-            console.log('Start:', periodStart.toISOString());
-            console.log('End:', periodEnd.toISOString());
-
-            // Count new users in this period
             const newUsers = await User.countDocuments({
                 createdAt: {
                     $gte: periodStart,
@@ -314,16 +286,11 @@ exports.getUserGrowthStats = async (req, res) => {
                 },
             });
 
-            // Count total users up to this point
             const totalUsers = await User.countDocuments({
                 createdAt: {
                     $lte: periodEnd,
                 },
             });
-
-            // Debug output
-            console.log('New users:', newUsers);
-            console.log('Total users:', totalUsers);
 
             stats.push({
                 period: periodEnd.toLocaleString('de-DE', {
@@ -336,7 +303,6 @@ exports.getUserGrowthStats = async (req, res) => {
             });
         }
 
-        // Sort stats by timestamp
         stats.sort((a, b) => a.timestamp - b.timestamp);
 
         res.json({
@@ -344,8 +310,6 @@ exports.getUserGrowthStats = async (req, res) => {
             stats,
         });
     } catch (error) {
-        console.error('Error in getUserGrowthStats:', error);
-        console.error('Stack:', error.stack);
         res.status(500).json({
             message: 'Error fetching user growth statistics',
             error: error.message,

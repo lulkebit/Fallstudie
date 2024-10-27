@@ -1,39 +1,60 @@
 import React from 'react';
-import Waves from '../components/Waves';
+import { Loader2 } from 'lucide-react';
 
 const LoadingPage = () => {
     return (
-        <div className='min-h-screen bg-gray-50 flex items-center justify-center'>
-            <Waves />
+        <div className='min-h-screen bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800'>
+            {/* Decorative Elements */}
+            <div className='absolute inset-0'>
+                <div className='absolute top-1/4 right-1/4 w-96 h-96 bg-[#4785FF]/10 rounded-full blur-3xl animate-pulse' />
+                <div className='absolute bottom-1/4 left-1/4 w-96 h-96 bg-[#8c52ff]/10 rounded-full blur-3xl animate-pulse delay-1000' />
+            </div>
 
-            <div className='relative z-10 px-4 w-full max-w-lg'>
-                <div className='bg-white rounded-xl shadow-lg p-8 sm:p-10'>
-                    <div className='flex flex-col items-center'>
-                        <div className='w-32 h-32  rounded-xl flex items-center justify-center mb-8'>
-                            <img
-                                src='/Logo.png'
-                                alt='TrackMyGoal Logo'
-                                className='h-20 w-20 object-contain animate-pulse'
-                            />
+            <div className='relative z-10 min-h-screen flex flex-col items-center justify-center p-4'>
+                <div className='w-full max-w-2xl'>
+                    <div className='bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-white/10 p-12 text-center'>
+                        {/* Icon */}
+                        <div className='mb-8'>
+                            <div className='w-24 h-24 rounded-2xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center mx-auto'>
+                                <img
+                                    src='/Logo.png'
+                                    alt='TrackMyGoal Logo'
+                                    className='h-12 w-12 object-contain'
+                                />
+                            </div>
                         </div>
 
-                        <div className='text-center space-y-2'>
-                            <h2 className='text-xl font-bold text-gray-800 mb-2'>
-                                Einen Moment bitte
-                            </h2>
-                            <p className='text-gray-500'>
-                                Wir laden Ihre Daten...
-                            </p>
+                        {/* Loading Text */}
+                        <div className='relative mb-6 group'>
+                            <div className='absolute -inset-1'>
+                                <div className='w-full h-full mx-auto rotate-180'>
+                                    <div className='absolute inset-0 -z-10 group-hover:animate-[pulse_2s_infinite]'>
+                                        <div className='absolute inset-0 translate-x-0 blur-2xl bg-gradient-to-r from-[#4785FF]/30 to-[#8c52ff]/30' />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className='flex items-center justify-center gap-2'>
+                                <Loader2 className='w-8 h-8 text-[#4785FF] animate-spin' />
+                            </div>
                         </div>
 
-                        <div className='flex gap-2 mt-6'>
+                        {/* Text Content */}
+                        <h2 className='text-2xl font-bold text-gray-900 dark:text-white mb-4'>
+                            Einen Moment bitte
+                        </h2>
+                        <p className='text-gray-600 dark:text-white/70 mb-8 max-w-md mx-auto'>
+                            Wir laden Ihre Daten...
+                        </p>
+
+                        {/* Animated Dots */}
+                        <div className='flex justify-center gap-3 mt-8'>
                             {[...Array(3)].map((_, i) => (
                                 <div
                                     key={i}
-                                    className='w-2 h-2 rounded-full bg-blue-500 opacity-0 animate-[bounce_1.4s_infinite]'
+                                    className='w-3 h-3 rounded-full bg-gradient-to-r from-[#4785FF] to-[#8c52ff] animate-bounce'
                                     style={{
                                         animationDelay: `${i * 0.2}s`,
-                                        animationFillMode: 'both',
+                                        animationDuration: '1.4s',
                                     }}
                                 />
                             ))}
