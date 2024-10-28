@@ -11,8 +11,11 @@ import {
     Eye,
     ChevronLeft,
     ChevronRight,
+    Flag,
 } from 'lucide-react';
+import DialogContainer from '../containers/DialogContainer';
 
+// Constants bleiben gleich
 const CATEGORIES = [
     'Gesundheit',
     'Fitness',
@@ -43,6 +46,7 @@ const UNITS = [
     'Sonstiges',
 ];
 
+// useForm Hook bleibt gleich
 const useForm = (initialState, onChangeCallback) => {
     const [formData, setFormData] = useState(initialState);
     const [errors, setErrors] = useState({});
@@ -53,10 +57,9 @@ const useForm = (initialState, onChangeCallback) => {
             const newValue = type === 'checkbox' ? checked : value;
             setFormData((prev) => {
                 const updatedData = { ...prev, [name]: newValue };
-                onChangeCallback(updatedData);
+                onChangeCallback?.(updatedData);
                 return updatedData;
             });
-
             setErrors((prev) => ({ ...prev, [name]: '' }));
         },
         [onChangeCallback]
@@ -89,6 +92,7 @@ const useForm = (initialState, onChangeCallback) => {
     };
 };
 
+// InputField Component
 const InputField = React.memo(
     ({
         label,
@@ -117,15 +121,15 @@ const InputField = React.memo(
                         name={id}
                         value={value}
                         onChange={onChange}
-                        className={`w-full pl-10 pr-4 py-3 rounded-xl bg-white dark:bg-white/5 border 
-                                  ${
-                                      error
-                                          ? 'border-red-500 dark:border-red-500/50'
-                                          : 'border-gray-200 dark:border-white/10'
-                                  } 
-                                  focus:border-[#4785FF] focus:ring-2 focus:ring-[#4785FF]/20 dark:focus:ring-[#4785FF]/10 
-                                  transition-all duration-200 outline-none
-                                  text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40`}
+                        className={`w-full pl-10 pr-4 py-3 rounded-xl bg-white/50 dark:bg-white/5 border 
+                              ${
+                                  error
+                                      ? 'border-red-500 dark:border-red-500/50'
+                                      : 'border-gray-200/50 dark:border-white/10'
+                              } 
+                              focus:border-[#4785FF] focus:ring-2 focus:ring-[#4785FF]/20 dark:focus:ring-[#4785FF]/10 
+                              transition-all duration-200 outline-none backdrop-blur-sm
+                              text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40`}
                         placeholder={`${label} eingeben`}
                         rows={3}
                     />
@@ -135,15 +139,15 @@ const InputField = React.memo(
                         name={id}
                         value={value}
                         onChange={onChange}
-                        className={`w-full pl-10 pr-4 py-3 rounded-xl bg-white dark:bg-white/5 border 
-                                  ${
-                                      error
-                                          ? 'border-red-500 dark:border-red-500/50'
-                                          : 'border-gray-200 dark:border-white/10'
-                                  } 
-                                  focus:border-[#4785FF] focus:ring-2 focus:ring-[#4785FF]/20 dark:focus:ring-[#4785FF]/10 
-                                  transition-all duration-200 outline-none appearance-none
-                                  text-gray-900 dark:text-white`}
+                        className={`w-full pl-10 pr-4 py-3 rounded-xl bg-white/50 dark:bg-white/5 border 
+                              ${
+                                  error
+                                      ? 'border-red-500 dark:border-red-500/50'
+                                      : 'border-gray-200/50 dark:border-white/10'
+                              } 
+                              focus:border-[#4785FF] focus:ring-2 focus:ring-[#4785FF]/20 dark:focus:ring-[#4785FF]/10 
+                              transition-all duration-200 outline-none appearance-none backdrop-blur-sm
+                              text-gray-900 dark:text-white`}
                     >
                         <option value='' className='dark:bg-gray-800'>
                             Bitte auswählen
@@ -165,15 +169,15 @@ const InputField = React.memo(
                         name={id}
                         value={value}
                         onChange={onChange}
-                        className={`w-full pl-10 pr-4 py-3 rounded-xl bg-white dark:bg-white/5 border 
-                                  ${
-                                      error
-                                          ? 'border-red-500 dark:border-red-500/50'
-                                          : 'border-gray-200 dark:border-white/10'
-                                  } 
-                                  focus:border-[#4785FF] focus:ring-2 focus:ring-[#4785FF]/20 dark:focus:ring-[#4785FF]/10 
-                                  transition-all duration-200 outline-none
-                                  text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40`}
+                        className={`w-full pl-10 pr-4 py-3 rounded-xl bg-white/50 dark:bg-white/5 border 
+                              ${
+                                  error
+                                      ? 'border-red-500 dark:border-red-500/50'
+                                      : 'border-gray-200/50 dark:border-white/10'
+                              } 
+                              focus:border-[#4785FF] focus:ring-2 focus:ring-[#4785FF]/20 dark:focus:ring-[#4785FF]/10 
+                              transition-all duration-200 outline-none backdrop-blur-sm
+                              text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40`}
                         placeholder={`${label} eingeben`}
                     />
                 )}
@@ -187,6 +191,7 @@ const InputField = React.memo(
     )
 );
 
+// ProgressInput Component
 const ProgressInput = ({ value, onChange }) => (
     <div className='space-y-4'>
         <div className='flex justify-between items-center'>
@@ -215,10 +220,11 @@ const ProgressInput = ({ value, onChange }) => (
     </div>
 );
 
+// PublicSwitch Component
 const PublicSwitch = ({ checked, onChange }) => (
     <div
-        className='flex items-center gap-3 p-4 bg-gray-50/50 dark:bg-white/5 rounded-xl
-                    border border-gray-200/50 dark:border-white/10'
+        className='flex items-center gap-3 p-4 bg-white/30 dark:bg-white/5 rounded-xl
+                    border border-gray-200/50 dark:border-white/10 backdrop-blur-sm'
     >
         <input
             type='checkbox'
@@ -439,17 +445,39 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
     };
 
     return (
-        <div className='fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4'>
+        <DialogContainer onClose={onClose}>
+            <div className='fixed inset-0 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 opacity-90' />
+
+            {/* Decorative Elements */}
+            <div className='absolute -inset-x-20 -inset-y-20 pointer-events-none'>
+                <div className='absolute top-1/4 right-1/4 w-96 h-96 bg-[#4785FF]/10 rounded-full blur-3xl animate-pulse' />
+                <div className='absolute bottom-1/4 left-1/4 w-96 h-96 bg-[#8c52ff]/10 rounded-full blur-3xl animate-pulse delay-1000' />
+            </div>
+
             <div
-                className='bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200/50 
-                          dark:border-white/10 shadow-xl dark:shadow-none w-full max-w-3xl max-h-[80vh] h-[80vh] 
-                          flex flex-col'
+                className='relative bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200/50 
+                dark:border-white/10 shadow-xl dark:shadow-2xl shadow-black/5 dark:shadow-black/20 
+                w-[780px] h-[700px] flex flex-col overflow-hidden'
             >
-                <div className='p-6 border-b border-gray-200 dark:border-white/10'>
+                {/* Header */}
+                <div className='p-6 border-b border-gray-200/50 dark:border-white/10'>
                     <div className='flex justify-between items-center mb-6'>
-                        <h2 className='text-xl font-bold text-gray-900 dark:text-white'>
-                            {goal ? 'Ziel bearbeiten' : 'Neues Ziel erstellen'}
-                        </h2>
+                        <div className='flex items-center gap-4'>
+                            <div className='w-12 h-12 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center'>
+                                <Flag className='w-6 h-6 text-white' />
+                            </div>
+                            <div>
+                                <h2 className='text-2xl font-bold text-gray-900 dark:text-white'>
+                                    {goal
+                                        ? 'Ziel bearbeiten'
+                                        : 'Neues Ziel erstellen'}
+                                </h2>
+                                <p className='text-sm text-gray-500 dark:text-white/60'>
+                                    {currentStep + 1} von {steps.length}{' '}
+                                    Schritten
+                                </p>
+                            </div>
+                        </div>
                         <button
                             onClick={onClose}
                             className='p-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-xl 
@@ -459,6 +487,7 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                         </button>
                     </div>
 
+                    {/* Progress Steps */}
                     <div className='flex items-center gap-2'>
                         {steps.map((step, index) => (
                             <React.Fragment key={step.title}>
@@ -499,23 +528,25 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                     </div>
                 </div>
 
+                {/* Content */}
                 <div className='flex-1 min-h-0'>
                     <div className='h-full p-6 overflow-y-auto'>
                         {renderStepContent(currentStep)}
                     </div>
                 </div>
 
-                <div className='p-6 border-t border-gray-200 dark:border-white/10'>
+                {/* Footer */}
+                <div className='p-6 border-t border-gray-200/50 dark:border-white/10'>
                     <div className='flex justify-between items-center'>
                         <button
                             onClick={handlePrevious}
                             disabled={currentStep === 0}
-                            className={`px-6 py-2.5 rounded-xl font-medium transition-all duration-200 
+                            className={`px-6 py-3 rounded-xl font-medium transition-all duration-200 
                                       flex items-center gap-2
                                 ${
                                     currentStep === 0
                                         ? 'opacity-50 cursor-not-allowed text-gray-400 dark:text-white/40'
-                                        : 'text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5'
+                                        : 'text-gray-700 dark:text-white/70 hover:bg-gray-100/50 dark:hover:bg-white/5'
                                 }`}
                         >
                             <ChevronLeft className='h-5 w-5' />
@@ -525,7 +556,7 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                         {currentStep === steps.length - 1 ? (
                             <button
                                 onClick={handleSave}
-                                className='px-6 py-2.5 bg-gradient-to-r from-[#4785FF] to-[#8c52ff] 
+                                className='px-6 py-3 bg-gradient-to-r from-[#4785FF] to-[#8c52ff] 
                                          text-white rounded-xl font-medium shadow-lg 
                                          hover:shadow-xl hover:shadow-blue-500/25 dark:hover:shadow-blue-500/10
                                          transition-all duration-200 hover:-translate-y-0.5'
@@ -535,7 +566,7 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                         ) : (
                             <button
                                 onClick={handleNext}
-                                className='px-6 py-2.5 bg-gradient-to-r from-[#4785FF] to-[#8c52ff] 
+                                className='px-6 py-3 bg-gradient-to-r from-[#4785FF] to-[#8c52ff] 
                                          text-white rounded-xl font-medium shadow-lg 
                                          hover:shadow-xl hover:shadow-blue-500/25 dark:hover:shadow-blue-500/10
                                          transition-all duration-200 hover:-translate-y-0.5
@@ -548,7 +579,7 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                     </div>
                 </div>
             </div>
-        </div>
+        </DialogContainer>
     );
 };
 
