@@ -175,7 +175,10 @@ const UserManagement = () => {
         addDialog({
             component: ConfirmationDialog,
             props: {
+                title: 'Löschen bestätigen',
                 message: `Sind Sie sicher, dass Sie den Benutzer "${username}" löschen möchten?`,
+                variant: 'danger',
+                confirmText: 'Löschen',
                 onConfirm: async () => {
                     try {
                         await axios.delete(`/users/${userId}`);
@@ -310,18 +313,6 @@ const UserManagement = () => {
                       placeholder:text-gray-400 dark:placeholder:text-white/40'
                         />
                     </div>
-                    <button
-                        onClick={() => {
-                            /* TODO: Add new user functionality */
-                        }}
-                        className='px-4 py-2.5 rounded-xl font-medium bg-gradient-to-r from-[#4785FF] to-[#8c52ff]
-                     text-white shadow-lg hover:shadow-xl hover:shadow-blue-500/25 dark:hover:shadow-blue-500/10
-                     transition-all duration-200 hover:-translate-y-0.5
-                     flex items-center gap-2'
-                    >
-                        <UserPlus className='w-4 h-4' />
-                        Neuer Benutzer
-                    </button>
                 </div>
             </div>
 

@@ -286,8 +286,11 @@ const GlobalGoalTable = () => {
             addDialog({
                 component: ConfirmationDialog,
                 props: {
+                    title: 'Ziel löschen',
                     message:
                         'Möchten Sie dieses globale Ziel wirklich löschen?',
+                    variant: 'danger',
+                    confirmText: 'Löschen',
                     onConfirm: async () => {
                         try {
                             await axios.delete(`/global-goals/${id}`);

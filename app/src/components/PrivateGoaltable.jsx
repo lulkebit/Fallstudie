@@ -197,8 +197,8 @@ const Table = ({ onGoalsUpdate }) => {
                 props: {
                     title: 'Ziel löschen',
                     message: 'Möchtest du dieses Ziel wirklich löschen?',
-                    confirmText: 'Ja, löschen',
-                    cancelText: 'Abbrechen',
+                    variant: 'danger',
+                    confirmText: 'Löschen',
                     onConfirm: () => {
                         axios
                             .delete(`/goals/${id}`, {

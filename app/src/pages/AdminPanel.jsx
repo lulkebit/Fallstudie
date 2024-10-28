@@ -406,18 +406,6 @@ const AdminPanel = () => {
                                         Berechtigungen
                                     </p>
                                 </div>
-                                <button
-                                    onClick={() => {
-                                        /* TODO: Add new user */
-                                    }}
-                                    className='px-4 py-2 rounded-xl font-medium bg-gradient-to-r from-[#4785FF] to-[#8c52ff]
-                           text-white shadow-lg hover:shadow-xl hover:shadow-blue-500/25 dark:hover:shadow-blue-500/10
-                           transition-all duration-200 hover:-translate-y-0.5
-                           flex items-center gap-2'
-                                >
-                                    <UserPlus className='w-4 h-4' />
-                                    Benutzer hinzufügen
-                                </button>
                             </div>
                             <UserManagement />
                         </div>
