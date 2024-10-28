@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Check, ChevronRight, Rocket, Target, TrendingUp } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import LandingNavbar from '../components/LandingNavbar';
 import Footer from '../components/Footer';
 import Arman from '../images/Arman.jpg';
@@ -34,6 +34,18 @@ const Landingpage = () => {
     const [goals, setGoals] = useState([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+    const location = useLocation();
+
+    useEffect(() => {
+        if (location.state?.scrollTo) {
+            const element = document.getElementById(location.state.scrollTo);
+            if (element) {
+                setTimeout(() => {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+            }
+        }
+    }, [location.state]);
 
     useEffect(() => {
         const fetchGoals = async () => {

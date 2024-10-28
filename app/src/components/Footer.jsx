@@ -1,17 +1,24 @@
 import React from 'react';
 import { Instagram, Mail, ExternalLink, ChevronRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useDialog } from '../context/DialogContext';
 import CookieSettingsDialog from './dialogs/CookieSettingsDialog';
 
 const Footer = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const { addDialog } = useDialog();
 
     const navigateToSection = (sectionId) => {
-        document
-            .getElementById(sectionId)
-            ?.scrollIntoView({ behavior: 'smooth' });
+        if (location.pathname === '/') {
+            // If we're on the landing page, just scroll
+            document
+                .getElementById(sectionId)
+                ?.scrollIntoView({ behavior: 'smooth' });
+        } else {
+            // If we're on another page, navigate to landing page with section info
+            navigate('/', { state: { scrollTo: sectionId } });
+        }
     };
 
     const openCookieSettings = () => {
@@ -68,17 +75,22 @@ const Footer = () => {
                             <ul className='space-y-4'>
                                 {[
                                     {
-                                        label: 'Über uns',
-                                        section: 'fourth-section',
+                                        label: 'Vision',
+                                        section: 'second-section',
                                     },
                                     {
                                         label: 'Vorteile',
                                         section: 'third-section',
                                     },
                                     {
-                                        label: 'Vision',
-                                        section: 'second-section',
+                                        label: 'Preise',
+                                        section: 'fourth-section',
                                     },
+                                    {
+                                        label: 'Über uns',
+                                        section: 'fifth-section',
+                                    },
+
                                     { label: 'FAQ', section: 'last-section' },
                                 ].map((link, index) => (
                                     <li key={index}>
