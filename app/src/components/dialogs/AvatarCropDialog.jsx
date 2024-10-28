@@ -3,6 +3,7 @@ import Cropper from 'react-easy-crop';
 import { X, ZoomIn, ZoomOut, RotateCw, Camera } from 'lucide-react';
 import DialogContainer from '../containers/DialogContainer';
 
+// Hilfsfunktionen bleiben unverändert
 const createImage = (url) =>
     new Promise((resolve, reject) => {
         const image = new Image();
@@ -53,7 +54,7 @@ const getRadianAngle = (degreeValue) => {
 const CropperControl = ({ icon: Icon, onClick, label }) => (
     <button
         onClick={onClick}
-        className='p-3 rounded-xl bg-white/70 dark:bg-gray-900/50 backdrop-blur-xl
+        className='p-3 rounded-xl bg-white/50 dark:bg-white/5 backdrop-blur-sm
                 border border-gray-200/50 dark:border-white/10
                 hover:bg-gray-50 dark:hover:bg-white/5
                 transition-all duration-200 hover:-translate-y-0.5
@@ -63,8 +64,8 @@ const CropperControl = ({ icon: Icon, onClick, label }) => (
         <Icon className='w-5 h-5 text-gray-600 dark:text-white/70' />
         <span
             className='absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs
-                       bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded opacity-0 group-hover:opacity-100
-                       transition-opacity duration-200 whitespace-nowrap'
+                     bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded opacity-0 
+                     group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap'
         >
             {label}
         </span>
@@ -97,27 +98,47 @@ const AvatarCropDialog = ({ onClose, onSave, imageFile }) => {
 
     return (
         <DialogContainer onClose={onClose}>
-            <div className='bg-white/70 dark:bg-gray-900/50 backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-white/10 overflow-hidden shadow-xl dark:shadow-2xl shadow-black/5 dark:shadow-black/20'>
-                <div className='p-6 border-b border-gray-200 dark:border-white/10'>
+            <div className='fixed inset-0 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 opacity-90' />
+
+            {/* Decorative Elements */}
+            <div className='absolute -inset-x-20 -inset-y-20 pointer-events-none'>
+                <div className='absolute top-1/4 right-1/4 w-96 h-96 bg-[#4785FF]/10 rounded-full blur-3xl animate-pulse' />
+                <div className='absolute bottom-1/4 left-1/4 w-96 h-96 bg-[#8c52ff]/10 rounded-full blur-3xl animate-pulse delay-1000' />
+            </div>
+
+            <div
+                className='relative bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200/50 
+                          dark:border-white/10 shadow-xl dark:shadow-2xl shadow-black/5 dark:shadow-black/20 
+                          w-full max-w-4xl h-[600px] flex flex-col overflow-hidden'
+            >
+                {/* Header */}
+                <div className='p-6 border-b border-gray-200/50 dark:border-white/10'>
                     <div className='flex justify-between items-center'>
-                        <div className='flex items-center gap-3'>
-                            <div className='w-10 h-10 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center'>
-                                <Camera className='w-5 h-5 text-white' />
+                        <div className='flex items-center gap-4'>
+                            <div className='w-12 h-12 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center'>
+                                <Camera className='w-6 h-6 text-white' />
                             </div>
-                            <h3 className='text-xl font-bold text-gray-900 dark:text-white'>
-                                Profilbild zuschneiden
-                            </h3>
+                            <div>
+                                <h3 className='text-2xl font-bold text-gray-900 dark:text-white'>
+                                    Profilbild zuschneiden
+                                </h3>
+                                <p className='text-sm text-gray-500 dark:text-white/60'>
+                                    Passe Größe und Position deines Bildes an
+                                </p>
+                            </div>
                         </div>
                         <button
                             onClick={onClose}
-                            className='p-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-xl transition-colors duration-200'
+                            className='p-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-xl 
+                                     transition-colors duration-200'
                         >
                             <X className='h-5 w-5 text-gray-400 dark:text-white/40' />
                         </button>
                     </div>
                 </div>
 
-                <div className='relative w-full h-[400px] bg-gray-50 dark:bg-gray-800'>
+                {/* Cropper */}
+                <div className='relative flex-1 bg-gray-50 dark:bg-gray-800/50 backdrop-blur-sm'>
                     <Cropper
                         image={URL.createObjectURL(imageFile)}
                         crop={crop}
@@ -131,59 +152,59 @@ const AvatarCropDialog = ({ onClose, onSave, imageFile }) => {
                         showGrid={false}
                         style={{
                             containerStyle: {
-                                background: 'var(--container-background)',
+                                background: 'transparent',
                             },
                             mediaStyle: {
-                                background: 'var(--media-background)',
+                                background: 'transparent',
                             },
                         }}
                     />
                 </div>
 
-                <div className='p-6 border-t border-gray-200 dark:border-white/10 bg-gray-50/50 dark:bg-gray-900/50'>
-                    <div className='flex flex-col gap-6'>
-                        <div className='flex justify-center gap-3'>
-                            <CropperControl
-                                icon={ZoomOut}
-                                onClick={() => setZoom(Math.max(1, zoom - 0.1))}
-                                label='Verkleinern'
-                            />
-                            <CropperControl
-                                icon={ZoomIn}
-                                onClick={() => setZoom(Math.min(3, zoom + 0.1))}
-                                label='Vergrößern'
-                            />
-                            <CropperControl
-                                icon={RotateCw}
-                                onClick={() =>
-                                    setRotation((rotation + 90) % 360)
-                                }
-                                label='Rotieren'
-                            />
-                        </div>
+                {/* Controls */}
+                <div
+                    className='p-6 space-y-6 border-t border-gray-200/50 dark:border-white/10 
+                              bg-white/50 dark:bg-white/5 backdrop-blur-sm'
+                >
+                    <div className='flex justify-center gap-3'>
+                        <CropperControl
+                            icon={ZoomOut}
+                            onClick={() => setZoom(Math.max(1, zoom - 0.1))}
+                            label='Verkleinern'
+                        />
+                        <CropperControl
+                            icon={ZoomIn}
+                            onClick={() => setZoom(Math.min(3, zoom + 0.1))}
+                            label='Vergrößern'
+                        />
+                        <CropperControl
+                            icon={RotateCw}
+                            onClick={() => setRotation((rotation + 90) % 360)}
+                            label='Rotieren'
+                        />
+                    </div>
 
-                        <div className='flex justify-end gap-3'>
-                            <button
-                                onClick={onClose}
-                                className='px-6 py-2.5 rounded-xl font-medium
-                           text-gray-700 dark:text-white/70 
-                           hover:bg-gray-100 dark:hover:bg-white/5
-                           border border-gray-200 dark:border-white/10
-                           transition-all duration-200'
-                            >
-                                Abbrechen
-                            </button>
-                            <button
-                                onClick={handleSave}
-                                className='px-6 py-2.5 rounded-xl font-medium
-                           bg-gradient-to-r from-[#4785FF] to-[#8c52ff]
-                           text-white shadow-lg 
-                           hover:shadow-xl hover:shadow-blue-500/25 dark:hover:shadow-blue-500/10
-                           transition-all duration-200 hover:-translate-y-0.5'
-                            >
-                                Speichern
-                            </button>
-                        </div>
+                    <div className='flex justify-end gap-3'>
+                        <button
+                            onClick={onClose}
+                            className='px-6 py-3 rounded-xl font-medium
+                                text-gray-700 dark:text-white/70 
+                                bg-gray-100/50 dark:bg-gray-900/50
+                                hover:bg-gray-200/50 dark:hover:bg-white/5
+                                border border-gray-200/50 dark:border-white/10
+                                transition-all duration-200'
+                        >
+                            Abbrechen
+                        </button>
+                        <button
+                            onClick={handleSave}
+                            className='px-6 py-3 bg-gradient-to-r from-[#4785FF] to-[#8c52ff] 
+                                   text-white rounded-xl font-medium shadow-lg 
+                                   hover:shadow-xl hover:shadow-blue-500/25 dark:hover:shadow-blue-500/10
+                                   transition-all duration-200 hover:-translate-y-0.5'
+                        >
+                            Speichern
+                        </button>
                     </div>
                 </div>
             </div>
