@@ -11,7 +11,6 @@ import {
     CheckCheck,
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
-import Waves from '../components/Waves';
 import Loader from '../components/Loader';
 import { useNavigate } from 'react-router-dom';
 
@@ -38,25 +37,31 @@ const NotificationCard = ({ notification, onMarkAsRead }) => {
         <div
             onClick={handleClick}
             className={`
-            bg-white rounded-xl border border-gray-100 hover:shadow-md 
-            transition-all duration-200 overflow-hidden cursor-pointer
-            ${notification.read ? 'bg-gray-50' : ''}
-        `}
+                bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-xl 
+                border border-gray-200/50 dark:border-white/10 
+                hover:shadow-lg transition-all duration-300 hover:-translate-y-1 
+                overflow-hidden cursor-pointer
+                ${notification.read ? 'opacity-75' : ''}
+            `}
         >
             <div className='p-5'>
                 <div className='flex justify-between items-start gap-4 mb-3'>
                     <div className='flex items-center gap-3'>
                         <div
-                            className={`w-10 h-10 rounded-lg flex items-center justify-center relative
+                            className={`
+                            w-12 h-12 rounded-xl flex items-center justify-center relative
                             ${
-                                notification.read ? 'bg-gray-100' : 'bg-blue-50'
-                            }`}
+                                notification.read
+                                    ? 'bg-gray-100/50 dark:bg-white/5'
+                                    : 'bg-gradient-to-br from-[#4785FF] to-[#8c52ff]'
+                            }
+                        `}
                         >
                             <Bell
-                                className={`w-5 h-5 ${
+                                className={`w-6 h-6 ${
                                     notification.read
-                                        ? 'text-gray-400'
-                                        : 'text-blue-500'
+                                        ? 'text-gray-400 dark:text-white/40'
+                                        : 'text-white'
                                 }`}
                             />
                             {!notification.read && (
@@ -65,8 +70,9 @@ const NotificationCard = ({ notification, onMarkAsRead }) => {
                                         e.stopPropagation();
                                         onMarkAsRead(notification._id);
                                     }}
-                                    className='absolute -top-2 -right-2 p-1 rounded-full bg-blue-50 
-                                             text-blue-600 hover:bg-blue-100 transition-colors duration-200'
+                                    className='absolute -top-2 -right-2 p-1.5 rounded-full bg-white 
+                                             text-[#4785FF] hover:bg-gray-50 transition-colors duration-200
+                                             shadow-lg'
                                     aria-label='Als gelesen markieren'
                                 >
                                     <Check className='w-3 h-3' />
@@ -74,10 +80,10 @@ const NotificationCard = ({ notification, onMarkAsRead }) => {
                             )}
                         </div>
                         <div>
-                            <h3 className='font-bold text-gray-900'>
+                            <h3 className='font-bold text-gray-900 dark:text-white'>
                                 {notification.title}
                             </h3>
-                            <span className='text-xs text-gray-400 flex items-center gap-1.5'>
+                            <span className='text-xs text-gray-500 dark:text-white/60 flex items-center gap-1.5'>
                                 <Clock className='w-3.5 h-3.5' />
                                 {formattedDate}
                             </span>
@@ -85,7 +91,10 @@ const NotificationCard = ({ notification, onMarkAsRead }) => {
                     </div>
                 </div>
 
-                <p className='text-gray-600 text-sm bg-gray-50 p-3 rounded-lg'>
+                <p
+                    className='text-gray-600 dark:text-white/70 text-sm bg-gray-50/50 dark:bg-white/5 
+                          p-3 rounded-lg'
+                >
                     {notification.message}
                 </p>
             </div>
@@ -102,8 +111,8 @@ const LoadMoreButton = ({ onClick, loading, disabled }) => (
             transition-all duration-200
             ${
                 disabled || loading
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                    : 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl hover:scale-105'
+                    ? 'bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-white/40 cursor-not-allowed'
+                    : 'bg-gradient-to-br from-[#4785FF] to-[#8c52ff] text-white hover:shadow-lg hover:-translate-y-1'
             }
         `}
     >
@@ -197,26 +206,46 @@ const Notifications = () => {
     };
 
     return (
-        <>
+        <div className='min-h-screen bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800'>
             <Navbar />
-            <div className='min-h-screen bg-gray-50 pt-16'>
-                <Waves />
-                <div className='container mx-auto px-4 py-8 relative z-10'>
-                    <div className='max-w-3xl mx-auto'>
-                        <div className='flex items-center justify-between mb-8'>
-                            <div className='flex items-center gap-3'>
-                                <div className='w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center'>
-                                    <Bell className='w-6 h-6 text-blue-600' />
-                                </div>
-                                <h1 className='text-2xl font-bold text-gray-800'>
-                                    Benachrichtigungen
-                                </h1>
-                            </div>
+
+            {/* Decorative Elements */}
+            <div className='absolute inset-0'>
+                <div className='absolute top-1/4 right-1/4 w-96 h-96 bg-[#4785FF]/10 rounded-full blur-3xl animate-pulse' />
+                <div className='absolute bottom-1/4 left-1/4 w-96 h-96 bg-[#8c52ff]/10 rounded-full blur-3xl animate-pulse delay-1000' />
+            </div>
+
+            <div className='container mx-auto px-4 py-8 relative z-10 pt-24'>
+                {/* Header Section */}
+                <div className='text-center mb-12'>
+                    <div className='flex items-center justify-center gap-4 mb-4'>
+                        <div className='h-16 w-16 rounded-2xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center flex-shrink-0'>
+                            <Bell className='h-8 w-8 text-white' />
+                        </div>
+                        <h1 className='text-4xl font-bold text-gray-900 dark:text-white'>
+                            Benachrichtigungen
+                        </h1>
+                    </div>
+                    <p className='text-lg text-gray-600 dark:text-white/70'>
+                        Bleibe auf dem Laufenden mit deinen Updates
+                    </p>
+                </div>
+
+                <div className='max-w-3xl mx-auto'>
+                    <div
+                        className='bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-2xl 
+                                  border border-gray-200/50 dark:border-white/10 shadow-xl 
+                                  dark:shadow-none overflow-hidden p-6'
+                    >
+                        <div className='flex items-center justify-between mb-6'>
                             {hasUnread && (
                                 <button
                                     onClick={markAllAsRead}
-                                    className='flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 
-                                             rounded-lg hover:bg-blue-100 transition-colors duration-200'
+                                    className='flex items-center gap-2 px-4 py-2 
+                                             bg-gradient-to-br from-[#4785FF]/10 to-[#8c52ff]/10 
+                                             text-[#4785FF] dark:text-white
+                                             rounded-lg hover:from-[#4785FF]/20 hover:to-[#8c52ff]/20 
+                                             transition-all duration-200'
                                 >
                                     <CheckCheck className='w-5 h-5' />
                                     Alle als gelesen markieren
@@ -230,8 +259,8 @@ const Notifications = () => {
                             </div>
                         ) : notifications.length === 0 ? (
                             <div className='text-center py-12'>
-                                <Inbox className='w-12 h-12 text-gray-400 mx-auto mb-3' />
-                                <p className='text-gray-500 text-lg'>
+                                <Inbox className='w-12 h-12 text-gray-400 dark:text-white/40 mx-auto mb-3' />
+                                <p className='text-gray-500 dark:text-white/70 text-lg'>
                                     Keine Benachrichtigungen vorhanden
                                 </p>
                             </div>
@@ -259,7 +288,7 @@ const Notifications = () => {
                     </div>
                 </div>
             </div>
-        </>
+        </div>
     );
 };
 
