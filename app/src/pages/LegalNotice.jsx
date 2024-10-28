@@ -1,17 +1,32 @@
-import React, { useEffect } from 'react';
-import { Mail, Phone, MapPin, Globe, Building2, Scale } from 'lucide-react';
+import React, { useEffect, useContext } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import {
+    Mail,
+    Phone,
+    MapPin,
+    Globe,
+    Building2,
+    Scale,
+    ArrowLeft,
+} from 'lucide-react';
 import LandingNavbar from '../components/LandingNavbar';
+import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { UserContext } from '../context/UserContext';
 
 const LegalNotice = () => {
+    const { user } = useContext(UserContext);
+    const location = useLocation();
+    const navigate = useNavigate();
+    const fromProfile = location.state?.fromProfile;
+
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
 
     return (
         <div className='min-h-screen bg-white dark:bg-gray-900'>
-            <LandingNavbar />
-
+            {user ? <Navbar /> : <LandingNavbar />}
             <div className='relative py-24 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 overflow-hidden'>
                 {/* Background Elements */}
                 <div className='absolute inset-0'>
@@ -22,6 +37,15 @@ const LegalNotice = () => {
                 <div className='container mx-auto px-4 relative z-10'>
                     {/* Header Section */}
                     <div className='text-center mb-16'>
+                        {fromProfile && (
+                            <button
+                                onClick={() => navigate(-1)}
+                                className='absolute left-4 top-0 flex items-center gap-2 text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white transition-colors duration-200'
+                            >
+                                <ArrowLeft className='w-5 h-5' />
+                                <span>Zurück</span>
+                            </button>
+                        )}
                         <h1 className='text-4xl md:text-5xl font-bold mb-6 text-gray-900 dark:text-white'>
                             Impressum &{' '}
                             <span className='text-transparent bg-clip-text bg-gradient-to-r from-[#4785FF] to-[#8c52ff]'>
@@ -154,7 +178,6 @@ const LegalNotice = () => {
                     </div>
                 </div>
             </div>
-
             <Footer />
         </div>
     );

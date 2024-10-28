@@ -5,6 +5,7 @@ import { useToast } from '../context/ToastContext';
 import { useDialog } from '../context/DialogContext';
 import ChangePasswordDialog from '../components/dialogs/ChangePasswordDialog';
 import AvatarCropDialog from '../components/dialogs/AvatarCropDialog';
+import { useNavigate } from 'react-router-dom';
 import {
     Camera,
     Lock,
@@ -20,6 +21,7 @@ import {
     Cookie,
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
+import CookieSettingsDialog from '../components/dialogs/CookieSettingsDialog';
 
 const InputField = React.memo(
     ({ label, id, type = 'text', value, onChange, icon: Icon }) => (
@@ -127,6 +129,7 @@ const Profile = () => {
     const { addDialog } = useDialog();
     const [isModified, setIsModified] = useState(false);
     const [avatarFile, setAvatarFile] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (user) {
@@ -200,6 +203,10 @@ const Profile = () => {
         } catch (error) {
             addToast('Fehler beim Aktualisieren des Profils', 'error');
         }
+    };
+
+    const navigateWithState = (path) => {
+        navigate(path, { state: { fromProfile: true } });
     };
 
     return (
@@ -346,7 +353,7 @@ const Profile = () => {
                                     title='Benachrichtigungen'
                                     description='Verwalte deine Benachrichtigungen'
                                     onClick={() => {
-                                        /* TODO */
+                                        navigate('/notifications');
                                     }}
                                 />
                             </div>
@@ -358,29 +365,25 @@ const Profile = () => {
                                 <LegalLink
                                     icon={ScrollText}
                                     title='Impressum'
-                                    onClick={() => {
-                                        /* TODO */
-                                    }}
+                                    onClick={() => navigateWithState('/impressum')}
                                 />
                                 <LegalLink
                                     icon={Shield}
                                     title='Datenschutz'
-                                    onClick={() => {
-                                        /* TODO */
-                                    }}
+                                    onClick={() => navigateWithState('/datenschutz')}
                                 />
                                 <LegalLink
                                     icon={FileSpreadsheet}
                                     title='AGB'
-                                    onClick={() => {
-                                        /* TODO */
-                                    }}
+                                    onClick={() => navigateWithState('/agb')}
                                 />
                                 <LegalLink
                                     icon={Cookie}
                                     title='Cookie-Einstellungen'
                                     onClick={() => {
-                                        /* TODO */
+                                        addDialog({
+                                            component: CookieSettingsDialog,
+                                        });
                                     }}
                                 />
                             </div>
