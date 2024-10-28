@@ -2,9 +2,81 @@ import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { UserContext } from '../../context/UserContext';
 import { useToast } from '../../context/ToastContext';
-import { X, Lock, KeyRound, KeySquare } from 'lucide-react';
+import { X, Lock, KeyRound, KeySquare, CheckCircle2 } from 'lucide-react';
 import DialogContainer from '../containers/DialogContainer';
 import PasswordInput from '../PasswordInput';
+
+const PasswordStrengthIndicator = ({ password }) => {
+    const getStrength = () => {
+        let strength = 0;
+        if (password.length >= 8) strength++;
+        if (/[A-Z]/.test(password)) strength++;
+        if (/[a-z]/.test(password)) strength++;
+        if (/[0-9]/.test(password)) strength++;
+        if (/[^A-Za-z0-9]/.test(password)) strength++;
+        return strength;
+    };
+
+    const strength = getStrength();
+    const getColor = () => {
+        if (strength <= 2) return 'bg-red-500';
+        if (strength <= 3) return 'bg-yellow-500';
+        if (strength <= 4) return 'bg-green-500';
+        return 'bg-green-600';
+    };
+
+    const requirements = [
+        { text: 'Mindestens 8 Zeichen', met: password.length >= 8 },
+        { text: 'Großbuchstaben (A-Z)', met: /[A-Z]/.test(password) },
+        { text: 'Kleinbuchstaben (a-z)', met: /[a-z]/.test(password) },
+        { text: 'Zahlen (0-9)', met: /[0-9]/.test(password) },
+        {
+            text: 'Sonderzeichen (!@#$%^&*)',
+            met: /[^A-Za-z0-9]/.test(password),
+        },
+    ];
+
+    return (
+        <div className='mt-4 space-y-3'>
+            <div className='space-y-2'>
+                <div className='flex gap-1 h-1.5'>
+                    {[...Array(5)].map((_, i) => (
+                        <div
+                            key={i}
+                            className={`h-full w-full rounded-full ${
+                                i < strength
+                                    ? getColor()
+                                    : 'bg-gray-200 dark:bg-white/10'
+                            }`}
+                        />
+                    ))}
+                </div>
+            </div>
+            <div className='grid grid-cols-2 gap-2'>
+                {requirements.map((req, index) => (
+                    <div key={index} className='flex items-center gap-1.5'>
+                        <CheckCircle2
+                            className={`h-4 w-4 ${
+                                req.met
+                                    ? 'text-green-500'
+                                    : 'text-gray-300 dark:text-white/20'
+                            }`}
+                        />
+                        <span
+                            className={`text-xs ${
+                                req.met
+                                    ? 'text-gray-700 dark:text-white'
+                                    : 'text-gray-500 dark:text-white/40'
+                            }`}
+                        >
+                            {req.text}
+                        </span>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
 
 const ChangePasswordDialog = ({ onClose }) => {
     const [formData, setFormData] = useState({
@@ -14,14 +86,65 @@ const ChangePasswordDialog = ({ onClose }) => {
     });
     const { user } = useContext(UserContext);
     const { addToast } = useToast();
+    const [errors, setErrors] = useState({});
+
+    const validatePassword = (password) => {
+        if (!password) {
+            return 'Bitte geben Sie ein Passwort ein';
+        }
+
+        if (password.length < 8) {
+            return 'Das Passwort muss mindestens 8 Zeichen lang sein';
+        }
+        if (!/[A-Z]/.test(password)) {
+            return 'Das Passwort muss mindestens einen Großbuchstaben enthalten';
+        }
+        if (!/[a-z]/.test(password)) {
+            return 'Das Passwort muss mindestens einen Kleinbuchstaben enthalten';
+        }
+        if (!/[0-9]/.test(password)) {
+            return 'Das Passwort muss mindestens eine Zahl enthalten';
+        }
+        if (!/[^A-Za-z0-9]/.test(password)) {
+            return 'Das Passwort muss mindestens ein Sonderzeichen enthalten';
+        }
+
+        return '';
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
+        
+        // Validate new password when it changes
+        if (name === 'newPassword') {
+            const error = validatePassword(value);
+            setErrors(prev => ({ ...prev, newPassword: error }));
+        }
+        
+        // Check password confirmation when either password changes
+        if (name === 'newPassword' || name === 'confirmPassword') {
+            if (name === 'confirmPassword' && value !== formData.newPassword) {
+                setErrors(prev => ({ ...prev, confirmPassword: 'Die Passwörter stimmen nicht überein' }));
+            } else if (name === 'newPassword' && value !== formData.confirmPassword && formData.confirmPassword) {
+                setErrors(prev => ({ ...prev, confirmPassword: 'Die Passwörter stimmen nicht überein' }));
+            } else {
+                setErrors(prev => ({ ...prev, confirmPassword: '' }));
+            }
+        }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Validate new password
+        const passwordError = validatePassword(formData.newPassword);
+        if (passwordError) {
+            addToast(passwordError, 'error');
+            return;
+        }
+
+        // Check password confirmation
         if (formData.newPassword !== formData.confirmPassword) {
             addToast('Die Passwörter stimmen nicht überein', 'error');
             return;
@@ -88,15 +211,19 @@ const ChangePasswordDialog = ({ onClose }) => {
                         placeholder='••••••••'
                         required
                     />
-                    <PasswordInput
-                        label='Neues Passwort'
-                        name='newPassword'
-                        icon={KeySquare}
-                        value={formData.newPassword}
-                        onChange={handleChange}
-                        placeholder='••••••••'
-                        required
-                    />
+                    <div>
+                        <PasswordInput
+                            label='Neues Passwort'
+                            name='newPassword'
+                            icon={KeySquare}
+                            value={formData.newPassword}
+                            onChange={handleChange}
+                            placeholder='••••••••'
+                            required
+                            error={errors.newPassword}
+                        />
+                        <PasswordStrengthIndicator password={formData.newPassword} />
+                    </div>
                     <PasswordInput
                         label='Neues Passwort bestätigen'
                         name='confirmPassword'
@@ -105,6 +232,7 @@ const ChangePasswordDialog = ({ onClose }) => {
                         onChange={handleChange}
                         placeholder='••••••••'
                         required
+                        error={errors.confirmPassword}
                     />
 
                     {/* Actions */}
