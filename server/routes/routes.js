@@ -66,6 +66,10 @@ const {
     getAdminStats,
     getUserGrowthStats,
 } = require('../controllers/adminGoalController');
+const {
+    getPageViewCount,
+    trackPageView,
+} = require('../middleware/pageViewMiddleware');
 
 /**
  * CORS-Konfiguration
@@ -88,7 +92,7 @@ router.post('/login', loginUser);
 // Abmeldung eines Benutzers
 router.post('/logout', logoutUser);
 // Abrufen des Benutzerprofils
-router.get('/profile', getProfile);
+router.get('/profile', trackPageView, getProfile);
 // Aktualisieren des Benutzerprofils (inkl. Avatar-Upload)
 router.put('/profile', upload.single('avatar'), updateProfile);
 // Ändern des Benutzerpassworts
@@ -181,5 +185,7 @@ router.delete('/admin/goals/:goalId', deleteUserGoal);
 router.get('/admin/stats', getAdminStats);
 
 router.get('/user-growth', getUserGrowthStats);
+
+router.get('/page-views', getPageViewCount);
 
 module.exports = router;

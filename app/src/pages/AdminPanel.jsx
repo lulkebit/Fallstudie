@@ -122,7 +122,7 @@ const AdminPanel = () => {
     useEffect(() => {
         fetchStats();
     }, []);
-    
+
     const fetchStats = async () => {
         try {
             setLoading(true);
@@ -134,7 +134,7 @@ const AdminPanel = () => {
             setLoading(false);
         }
     };
-    
+
     const formatDate = (dateString) => {
         return new Date(dateString).toLocaleDateString('de-DE', {
             day: '2-digit',
@@ -151,7 +151,7 @@ const AdminPanel = () => {
                 </div>
             );
         }
-    
+
         if (error) {
             return (
                 <div className='text-center py-12'>
@@ -165,9 +165,9 @@ const AdminPanel = () => {
                 </div>
             );
         }
-    
+
         if (!stats) return null;
-    
+
         return (
             <div className='space-y-8'>
                 {/* Metrics Grid */}
@@ -199,7 +199,7 @@ const AdminPanel = () => {
                     />
                     <AdminMetric
                         title='Seitenaufrufe'
-                        value={stats.pageViews}
+                        value={stats.pageViewCount}
                         icon={LayoutDashboard}
                         change='8'
                         trendUp={true}

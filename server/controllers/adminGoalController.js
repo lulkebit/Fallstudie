@@ -1,5 +1,6 @@
 const User = require('../models/user');
 const GlobalGoal = require('../models/globalGoal');
+const PageView = require('../models/pageView');
 
 exports.getAllUserGoals = async (req, res) => {
     try {
@@ -77,7 +78,7 @@ exports.deleteUserGoal = async (req, res) => {
 
 exports.getAdminStats = async (req, res) => {
     try {
-        let totalUsers, totalGlobalGoals, users, globalGoals;
+        let totalUsers, totalGlobalGoals, users, globalGoals, pageViewCount;
 
         try {
             totalUsers = await User.countDocuments();
@@ -93,6 +94,12 @@ exports.getAdminStats = async (req, res) => {
 
         try {
             users = await User.find().sort({ createdAt: -1 });
+        } catch (error) {
+            throw error;
+        }
+
+        try {
+            pageViewCount = await PageView.findOne();
         } catch (error) {
             throw error;
         }
@@ -197,6 +204,7 @@ exports.getAdminStats = async (req, res) => {
                 unit: mostPopularGlobalGoal.unit || 'Fortschritt',
             },
             upcomingGoals,
+            pageViewCount: pageViewCount.count,
         };
 
         res.json(stats);

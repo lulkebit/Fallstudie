@@ -4,6 +4,7 @@ const logger = require('../utils/logger');
 const { hashPassword, comparePassword } = require('../helpers/auth');
 const avatars = require('../ressources/avatars');
 const texts = require('../ressources/texts');
+const trackPageView = require('../middleware/pageViewMiddleware');
 
 /**
  * Registriert einen neuen Benutzer im System.
