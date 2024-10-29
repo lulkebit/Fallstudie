@@ -660,8 +660,8 @@ const Landingpage = () => {
                                     ))}
                                 </div>
 
-                                <button className='w-full py-3 px-4 rounded-xl text-gray-700 dark:text-white bg-gray-100 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/20 transition-colors duration-300 font-medium'>
-                                    Jetzt starten
+                                <button className='cursor-not-allowed w-full py-3 px-4 rounded-xl text-gray-700 dark:text-white bg-gray-100 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/20 transition-colors duration-300 font-medium'>
+                                    Aktuell nicht Verfügbar
                                 </button>
                             </div>
                         </div>
@@ -790,7 +790,10 @@ const Landingpage = () => {
                                     ))}
                                 </div>
 
-                                <button className='w-full py-3 px-4 rounded-xl text-gray-700 dark:text-white bg-gray-100 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/20 transition-colors duration-300 font-medium'>
+                                <button
+                                    onClick={() => navigate('/kontakt')}
+                                    className='w-full py-3 px-4 rounded-xl text-gray-700 dark:text-white bg-gray-100 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/20 transition-colors duration-300 font-medium'
+                                >
                                     Kontaktiere uns
                                 </button>
                             </div>
@@ -802,12 +805,6 @@ const Landingpage = () => {
                             Alle Pläne beinhalten eine 14-tägige
                             Geld-zurück-Garantie
                         </p>
-                        <a
-                            href='#faq'
-                            className='text-sm text-gray-400 hover:text-gray-600 dark:text-white/40 dark:hover:text-white/60 transition-colors duration-300 underline'
-                        >
-                            Häufig gestellte Fragen zu unseren Plänen
-                        </a>
                     </div>
                 </div>
             </section>
@@ -979,25 +976,9 @@ const Landingpage = () => {
                             Wir suchen immer nach talentierten Menschen, die
                             unsere Vision teilen.
                         </p>
-                        <a
-                            href='/careers'
-                            className='inline-flex items-center gap-2 text-gray-700 dark:text-white bg-white hover:bg-gray-50 dark:bg-white/5 dark:hover:bg-white/10 px-6 py-3 rounded-xl transition-all duration-300 group border border-gray-200 dark:border-white/10 shadow-lg dark:shadow-none'
-                        >
-                            Offene Positionen ansehen
-                            <svg
-                                className='w-5 h-5 group-hover:translate-x-1 transition-transform duration-300'
-                                fill='none'
-                                stroke='currentColor'
-                                viewBox='0 0 24 24'
-                            >
-                                <path
-                                    strokeLinecap='round'
-                                    strokeLinejoin='round'
-                                    strokeWidth='2'
-                                    d='M9 5l7 7-7 7'
-                                />
-                            </svg>
-                        </a>
+                        <span className='cursor-not-allowed inline-flex items-center gap-2 text-gray-700 dark:text-white bg-white hover:bg-gray-50 dark:bg-white/5 dark:hover:bg-white/10 px-6 py-3 rounded-xl transition-all duration-300 group border border-gray-200 dark:border-white/10 shadow-lg dark:shadow-none'>
+                            Aktuell keine offenen Stellen
+                        </span>
                     </div>
                 </div>
             </section>
