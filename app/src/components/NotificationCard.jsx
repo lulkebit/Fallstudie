@@ -48,7 +48,7 @@ const NotificationItem = ({ notification, onMarkAsRead }) => {
     return (
         <div
             onClick={handleClick}
-            className='group flex items-start gap-4 p-4 hover:bg-gray-100 dark:hover:bg-white/5 
+            className='group flex items-start gap-4 p-4 hover:bg-white dark:hover:bg-white/5 
                      transition-all duration-200 cursor-pointer'
         >
             <div className='flex-shrink-0'>
@@ -166,9 +166,9 @@ const NotificationCard = () => {
 
             {isOpen && (
                 <div
-                    className='absolute right-0 mt-2 w-96 bg-white/70 dark:bg-white/5 backdrop-blur-xl 
+                    className='absolute right-0 mt-2 w-96 bg-gray-50 dark:bg-gray-800
                               border border-gray-200/50 dark:border-white/10 rounded-2xl 
-                              shadow-xl dark:shadow-none'
+                              shadow-xl'
                 >
                     <div
                         className='px-6 py-4 border-b border-gray-200 dark:border-white/10 
@@ -211,10 +211,7 @@ const NotificationCard = () => {
                         )}
                     </div>
 
-                    <div
-                        className='px-4 py-3 border-t border-gray-200 dark:border-white/10 
-                                  bg-gray-50/50 dark:bg-white/5 rounded-b-2xl'
-                    >
+                    <div className='px-4 py-3 border-t border-gray-200 dark:border-white/10'>
                         <button
                             onClick={() => navigate('/notifications')}
                             className='w-full px-4 py-2 flex items-center justify-center gap-2 text-sm 

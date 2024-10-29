@@ -96,7 +96,7 @@ const Navbar = () => {
         <button
             onClick={onClick}
             className={`w-full px-4 py-2.5 flex items-center gap-3 text-sm 
-                     text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 
+                     text-gray-600 dark:text-white/70 hover:bg-white dark:hover:bg-white/5 
                      transition-all duration-200 ${className}`}
         >
             <Icon className='h-4 w-4' />
@@ -195,8 +195,8 @@ const Navbar = () => {
 
                             {showProfileCard && (
                                 <div
-                                    className='absolute right-0 w-64 mt-2 origin-top-right bg-white/70 dark:bg-white/5 
-                                              backdrop-blur-xl rounded-xl shadow-lg py-1 
+                                    className='absolute right-0 w-64 mt-2 origin-top-right bg-gray-50 dark:bg-gray-800 
+                                              rounded-xl shadow-lg
                                               border border-gray-200/50 dark:border-white/10'
                                 >
                                     <div className='p-4 border-b border-gray-200 dark:border-white/10'>
@@ -214,14 +214,6 @@ const Navbar = () => {
                                             onClick={() => navigate('/profile')}
                                         >
                                             Profil anzeigen
-                                        </ProfileDropdownItem>
-                                        <ProfileDropdownItem
-                                            icon={Settings}
-                                            onClick={() =>
-                                                navigate('/settings')
-                                            }
-                                        >
-                                            Einstellungen
                                         </ProfileDropdownItem>
                                         <ProfileDropdownItem
                                             icon={LogOut}
@@ -263,7 +255,7 @@ const Navbar = () => {
                 className={`lg:hidden ${isMobileMenuOpen ? 'block' : 'hidden'}`}
             >
                 <div
-                    className='bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl 
+                    className='bg-gray-50 dark:bg-gray-800
                               border-t border-gray-200 dark:border-white/10'
                 >
                     <div className='px-4 pt-2 pb-6 space-y-4'>
@@ -288,12 +280,6 @@ const Navbar = () => {
                                 onClick={() => navigate('/profile')}
                             >
                                 Profil anzeigen
-                            </ProfileDropdownItem>
-                            <ProfileDropdownItem
-                                icon={Settings}
-                                onClick={() => navigate('/settings')}
-                            >
-                                Einstellungen
                             </ProfileDropdownItem>
                             <ProfileDropdownItem
                                 icon={LogOut}

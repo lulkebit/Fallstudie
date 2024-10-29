@@ -354,11 +354,11 @@ const Profile = () => {
     };
 
     const handleManageSubscription = () => {
-        addToast('Funktion noch nicht verfügbar', 'info');
+        addToast('Funktion noch nicht verfügbar', 'warning');
     };
 
     const handleCancelSubscription = () => {
-        addToast('Funktion noch nicht verfügbar', 'info');
+        addToast('Funktion noch nicht verfügbar', 'warning');
     };
 
     const navigateWithState = (path) => {
