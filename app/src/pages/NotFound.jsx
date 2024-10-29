@@ -1,27 +1,31 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Home, Search, MoveLeft, ExternalLink } from 'lucide-react';
+import { Search, MoveLeft, ExternalLink } from 'lucide-react';
 
+// Hauptkomponente für die 404-Fehlerseite
 const NotFound = () => {
     return (
+        // Container mit Farbverlauf-Hintergrund
         <div className='min-h-screen bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800'>
-            {/* Decorative Elements */}
+            {/* Animierte Hintergrund-Elemente */}
             <div className='absolute inset-0'>
                 <div className='absolute top-1/4 right-1/4 w-96 h-96 bg-[#4785FF]/10 rounded-full blur-3xl animate-pulse' />
                 <div className='absolute bottom-1/4 left-1/4 w-96 h-96 bg-[#8c52ff]/10 rounded-full blur-3xl animate-pulse delay-1000' />
             </div>
 
+            {/* Haupt-Content-Bereich */}
             <div className='relative z-10 min-h-screen flex flex-col items-center justify-center p-4'>
                 <div className='w-full max-w-2xl'>
+                    {/* Glasmorphismus-Karte */}
                     <div className='bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-white/10 p-12 text-center'>
-                        {/* Icon */}
+                        {/* Such-Icon im Farbverlauf */}
                         <div className='mb-8'>
                             <div className='w-24 h-24 rounded-2xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center mx-auto'>
                                 <Search className='w-12 h-12 text-white' />
                             </div>
                         </div>
 
-                        {/* 404 Number */}
+                        {/* Animierte 404-Nummer */}
                         <div className='relative mb-6 group'>
                             <div className='absolute -inset-1'>
                                 <div className='w-full h-full mx-auto rotate-180'>
@@ -35,7 +39,7 @@ const NotFound = () => {
                             </h1>
                         </div>
 
-                        {/* Text Content */}
+                        {/* Fehlermeldung und Beschreibung */}
                         <h2 className='text-2xl font-bold text-gray-900 dark:text-white mb-4'>
                             Seite nicht gefunden
                         </h2>
@@ -44,7 +48,7 @@ const NotFound = () => {
                             oder wurde möglicherweise verschoben.
                         </p>
 
-                        {/* Actions */}
+                        {/* Aktions-Buttons */}
                         <div className='flex flex-col sm:flex-row gap-4 justify-center'>
                             <Link
                                 to='/'
@@ -70,7 +74,7 @@ const NotFound = () => {
                             </a>
                         </div>
 
-                        {/* Animated Dots */}
+                        {/* Animierte Lade-Punkte */}
                         <div className='flex justify-center gap-3 mt-12'>
                             {[...Array(3)].map((_, i) => (
                                 <div
