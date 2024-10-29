@@ -56,11 +56,11 @@ const PageViewsChart = ({ data }) => {
     };
 
     return (
-        <div className='w-full space-y-6'>
-            <div className='flex items-center justify-between'>
+        <div className='w-full p-4 space-y-6'>
+            <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4'>
                 <div>
                     <div className='flex items-start gap-2'>
-                        <div className='h-10 w-10 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center'>
+                        <div className='h-10 w-10 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center shrink-0'>
                             <TrendingUp className='w-5 h-5 text-white' />
                         </div>
                         <div className='flex flex-col'>
@@ -74,7 +74,7 @@ const PageViewsChart = ({ data }) => {
                     </div>
                 </div>
                 <div
-                    className={`flex items-center gap-2 px-3 py-1 rounded-full ${
+                    className={`flex items-center gap-2 px-3 py-1 rounded-full shrink-0 ${
                         trendUp
                             ? 'bg-green-100 dark:bg-green-900/20'
                             : 'bg-red-100 dark:bg-red-900/20'
@@ -95,7 +95,7 @@ const PageViewsChart = ({ data }) => {
                 </div>
             </div>
 
-            <div className='h-[300px] w-full'>
+            <div className='h-[300px] w-full min-w-0'>
                 <ResponsiveContainer width='100%' height='100%'>
                     <AreaChart
                         data={data}
@@ -139,6 +139,7 @@ const PageViewsChart = ({ data }) => {
                             tickLine={false}
                             tick={{ fill: '#6B7280', fontSize: 12 }}
                             className='dark:text-gray-400'
+                            width={40}
                         />
                         <Tooltip content={<CustomTooltip />} />
                         <Area
