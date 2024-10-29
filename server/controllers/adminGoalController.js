@@ -7,7 +7,11 @@ exports.getAllUserGoals = async (req, res) => {
         const allGoals = users.flatMap((user) =>
             user.goals.map((goal) => ({
                 ...goal.toObject(),
-                user: { _id: user._id, username: user.username },
+                user: {
+                    _id: user._id,
+                    username: user.username,
+                    avatar: user.avatar,
+                },
             }))
         );
         res.json(allGoals);
@@ -133,16 +137,18 @@ exports.getAdminStats = async (req, res) => {
             currentValue: 0,
         };
         if (globalGoals.length > 0) {
-            const uncompletedGoals = globalGoals.filter(goal => {
+            const uncompletedGoals = globalGoals.filter((goal) => {
                 const progress = (goal.currentValue / goal.targetValue) * 100;
                 return progress < 100;
             });
-            
+
             if (uncompletedGoals.length > 0) {
-                mostPopularGlobalGoal = uncompletedGoals.reduce((prev, current) =>
-                    (prev.participationCount || 0) > (current.participationCount || 0)
-                        ? prev
-                        : current
+                mostPopularGlobalGoal = uncompletedGoals.reduce(
+                    (prev, current) =>
+                        (prev.participationCount || 0) >
+                        (current.participationCount || 0)
+                            ? prev
+                            : current
                 );
             }
         }
