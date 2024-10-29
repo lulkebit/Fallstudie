@@ -14,6 +14,7 @@ import {
     Flag,
     Users,
     MoveHorizontal,
+    ChevronDown,
 } from 'lucide-react';
 import DialogContainer from '../containers/DialogContainer';
 
@@ -103,6 +104,118 @@ const useForm = (initialState, onChangeCallback) => {
     };
 };
 
+const CustomSelect = ({
+    id,
+    value,
+    onChange,
+    options,
+    placeholder = 'Bitte auswählen',
+    icon: Icon,
+}) => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    const handleSelect = (option) => {
+        const syntheticEvent = {
+            target: {
+                name: id,
+                value: option,
+            },
+        };
+        onChange(syntheticEvent);
+        setIsOpen(false);
+    };
+
+    return (
+        <div className='relative'>
+            <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
+                <Icon className='h-5 w-5 text-gray-400 dark:text-white' />
+            </div>
+            <button
+                type='button'
+                onClick={() => setIsOpen(!isOpen)}
+                className='w-full pl-10 pr-4 py-3 rounded-xl bg-white/50 dark:bg-white/5 border 
+                         border-gray-200/50 dark:border-white/10 
+                         focus:border-[#4785FF] focus:ring-2 focus:ring-[#4785FF]/20
+                         transition-all duration-200 outline-none backdrop-blur-sm
+                         text-left text-gray-900 dark:text-white relative'
+            >
+                {value || placeholder}
+                <ChevronDown className='absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 dark:text-white/70' />
+            </button>
+
+            {isOpen && (
+                <div
+                    className='absolute z-50 w-full mt-2 bg-white dark:bg-gray-800 rounded-xl border border-gray-200/50 
+                              dark:border-white/10 shadow-lg backdrop-blur-sm overflow-hidden'
+                >
+                    <div className='max-h-60 overflow-y-auto'>
+                        {options.map((option) => (
+                            <button
+                                key={option}
+                                onClick={() => handleSelect(option)}
+                                className={`w-full px-4 py-2.5 text-left hover:bg-gray-50 dark:hover:bg-white/5
+                                          transition-colors duration-200
+                                          ${
+                                              value === option
+                                                  ? 'bg-[#4785FF]/10 text-[#4785FF]'
+                                                  : 'text-gray-700 dark:text-white/70'
+                                          }`}
+                            >
+                                {option}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
+// Custom Checkbox Component
+const CustomCheckbox = ({ checked, onChange, id, children }) => {
+    return (
+        <label
+            htmlFor={id}
+            className='relative flex items-center cursor-pointer'
+        >
+            <input
+                type='checkbox'
+                id={id}
+                name={id}
+                checked={checked}
+                onChange={onChange}
+                className='sr-only'
+            />
+            <div
+                className={`w-5 h-5 border-2 rounded-md mr-2 flex items-center justify-center
+                           transition-all duration-200
+                           ${
+                               checked
+                                   ? 'bg-gradient-to-r from-[#4785FF] to-[#8c52ff] border-transparent'
+                                   : 'border-gray-300 dark:border-white/20'
+                           }`}
+            >
+                {checked && (
+                    <svg
+                        className='w-3 h-3 text-white'
+                        fill='none'
+                        viewBox='0 0 24 24'
+                        stroke='currentColor'
+                    >
+                        <path
+                            strokeLinecap='round'
+                            strokeLinejoin='round'
+                            strokeWidth={2}
+                            d='M5 13l4 4L19 7'
+                        />
+                    </svg>
+                )}
+            </div>
+            {children}
+        </label>
+    );
+};
+
 const InputField = React.memo(
     ({
         label,
@@ -113,6 +226,7 @@ const InputField = React.memo(
         options = null,
         onChange,
         error,
+        placeholder,
     }) => (
         <div className='space-y-1.5'>
             <label
@@ -122,54 +236,52 @@ const InputField = React.memo(
                 {label}
             </label>
             <div className='relative'>
-                <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-                    <Icon className='h-5 w-5 text-gray-400 dark:text-white' />
-                </div>
                 {type === 'textarea' ? (
-                    <textarea
-                        id={id}
-                        name={id}
-                        value={value}
-                        onChange={onChange}
-                        className='w-full pl-10 pr-4 py-3 rounded-xl bg-white/50 dark:bg-white/5 border 
-                                border-gray-200/50 dark:border-white/10 
-                                focus:border-[#4785FF] focus:ring-2 focus:ring-[#4785FF]/20 
-                                transition-all duration-200 outline-none backdrop-blur-sm
-                                text-gray-900 dark:text-white'
-                        rows={3}
-                    />
+                    <>
+                        <div className='absolute top-3 left-3 pointer-events-none'>
+                            <Icon className='h-5 w-5 text-gray-400 dark:text-white' />
+                        </div>
+                        <textarea
+                            id={id}
+                            name={id}
+                            value={value}
+                            onChange={onChange}
+                            placeholder={placeholder}
+                            className='w-full pl-10 pr-4 py-3 rounded-xl bg-white/50 dark:bg-white/5 border 
+                                    border-gray-200/50 dark:border-white/10 
+                                    focus:border-[#4785FF] focus:ring-2 focus:ring-[#4785FF]/20 
+                                    transition-all duration-200 outline-none backdrop-blur-sm
+                                    text-gray-900 dark:text-white resize-none'
+                            rows={3}
+                        />
+                    </>
                 ) : type === 'select' ? (
-                    <select
+                    <CustomSelect
                         id={id}
-                        name={id}
                         value={value}
                         onChange={onChange}
-                        className='w-full pl-10 pr-4 py-3 rounded-xl bg-white/50 dark:bg-white/5 border 
-                                border-gray-200/50 dark:border-white/10 
-                                focus:border-[#4785FF] focus:ring-2 focus:ring-[#4785FF]/20
-                                transition-all duration-200 outline-none appearance-none backdrop-blur-sm
-                                text-gray-900 dark:text-white'
-                    >
-                        <option value=''>Bitte auswählen</option>
-                        {options.map((option) => (
-                            <option key={option} value={option}>
-                                {option}
-                            </option>
-                        ))}
-                    </select>
-                ) : (
-                    <input
-                        type={type}
-                        id={id}
-                        name={id}
-                        value={value}
-                        onChange={onChange}
-                        className='w-full pl-10 pr-4 py-3 rounded-xl bg-white/50 dark:bg-white/5 border 
-                                border-gray-200/50 dark:border-white/10 
-                                focus:border-[#4785FF] focus:ring-2 focus:ring-[#4785FF]/20
-                                transition-all duration-200 outline-none backdrop-blur-sm
-                                text-gray-900 dark:text-white'
+                        options={options}
+                        icon={Icon}
                     />
+                ) : (
+                    <>
+                        <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
+                            <Icon className='h-5 w-5 text-gray-400 dark:text-white' />
+                        </div>
+                        <input
+                            type={type}
+                            id={id}
+                            name={id}
+                            value={value}
+                            onChange={onChange}
+                            placeholder={placeholder}
+                            className='w-full pl-10 pr-4 py-3 rounded-xl bg-white/50 dark:bg-white/5 border 
+                                    border-gray-200/50 dark:border-white/10 
+                                    focus:border-[#4785FF] focus:ring-2 focus:ring-[#4785FF]/20
+                                    transition-all duration-200 outline-none backdrop-blur-sm
+                                    text-gray-900 dark:text-white'
+                        />
+                    </>
                 )}
             </div>
             {error && <p className='text-sm text-red-500'>{error}</p>}
@@ -177,25 +289,17 @@ const InputField = React.memo(
     )
 );
 
+// Updated PublicSwitch Component
 const PublicSwitch = ({ checked, onChange }) => (
     <div className='flex items-center gap-3 p-4 bg-white/30 dark:bg-white/5 rounded-xl border border-gray-200/50'>
-        <input
-            type='checkbox'
-            id='public'
-            name='public'
-            checked={checked}
-            onChange={onChange}
-            className='w-4 h-4 text-[#4785FF] border-gray-300 rounded'
-        />
-        <div className='flex items-center gap-2'>
-            <Eye className='h-5 w-5 text-gray-400' />
-            <label
-                htmlFor='public'
-                className='text-sm font-medium text-gray-700'
-            >
-                Öffentlich machen
-            </label>
-        </div>
+        <CustomCheckbox id='public' checked={checked} onChange={onChange}>
+            <div className='flex items-center gap-2'>
+                <Eye className='h-5 w-5 text-gray-400' />
+                <span className='text-sm font-medium text-gray-700 dark:text-white/70'>
+                    Öffentlich machen
+                </span>
+            </div>
+        </CustomCheckbox>
     </div>
 );
 
@@ -221,7 +325,7 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
             fields: ['reminderInterval', 'stepSize'],
         },
         {
-            title: 'Teilnahme',
+            title: 'Sichtbarkeit',
             fields: ['public', 'participationCount'],
         },
     ];
@@ -244,7 +348,7 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
             targetValue: '',
             currentValue: 0,
             unit: '',
-            direction: '',
+            direction: 'Erhöhen',
             reminderInterval: 1,
             stepSize: 1,
             participationCount: 0,
@@ -297,6 +401,7 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                             icon={Type}
                             onChange={handleInputChange}
                             error={errors.title}
+                            placeholder='Gib deinem Ziel einen Namen'
                         />
                         <InputField
                             label='Kategorie'
@@ -316,6 +421,7 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                             icon={Info}
                             onChange={handleInputChange}
                             error={errors.description}
+                            placeholder='Beschreibe dein Ziel'
                         />
                     </div>
                 );
@@ -353,6 +459,7 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                             icon={Target}
                             onChange={handleInputChange}
                             error={errors.targetValue}
+                            placeholder='Gib den Zielwert ein'
                         />
                         <InputField
                             label='Aktueller Wert'
@@ -383,6 +490,15 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                             onChange={handleInputChange}
                             error={errors.direction}
                         />
+                        <InputField
+                            label='Schrittgröße'
+                            id='stepSize'
+                            value={formData.stepSize}
+                            type='number'
+                            icon={MoveHorizontal}
+                            onChange={handleInputChange}
+                            error={errors.stepSize}
+                        />
                     </div>
                 );
             case 3:
@@ -397,15 +513,6 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                             onChange={handleInputChange}
                             error={errors.reminderInterval}
                         />
-                        <InputField
-                            label='Schrittgröße'
-                            id='stepSize'
-                            value={formData.stepSize}
-                            type='number'
-                            icon={MoveHorizontal}
-                            onChange={handleInputChange}
-                            error={errors.stepSize}
-                        />
                     </div>
                 );
             case 4:
@@ -414,15 +521,6 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                         <PublicSwitch
                             checked={formData.public}
                             onChange={handleInputChange}
-                        />
-                        <InputField
-                            label='Maximale Teilnehmerzahl'
-                            id='participationCount'
-                            value={formData.participationCount}
-                            type='number'
-                            icon={Users}
-                            onChange={handleInputChange}
-                            error={errors.participationCount}
                         />
                     </div>
                 );
