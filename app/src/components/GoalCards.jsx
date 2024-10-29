@@ -1,148 +1,231 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     Pin,
     Pencil,
     Trash2,
-    ChevronDown,
-    Check,
     TrendingUp,
+    Check,
+    ChevronDown,
+    Users,
+    Calendar,
+    StepForward,
+    Activity,
+    Eye,
+    Target,
+    MessageSquare,
 } from 'lucide-react';
 
-const GoalCard = ({
-    goal,
-    onEdit,
-    onDelete,
-    onPin,
-    isExpanded,
-    onToggle,
-    showActions = true,
-}) => {
-    const progress = goal.progress || 0;
+const GoalCard = ({ goal, onEdit, onDelete, onPin, onParticipate }) => {
+    const [isExpanded, setIsExpanded] = useState(false);
+    const progress =
+        goal.progress || (goal.currentValue / goal.targetValue) * 100;
+    const formattedProgress = Math.round(Math.min(Math.max(progress, 0), 100));
+
+    const handleParticipate = (e) => {
+        if (isCompleted) return;
+        e.preventDefault();
+        e.stopPropagation();
+        onParticipate(goal.id);
+    };
+
+    const calculateRemainingDays = (endDate) => {
+        const now = new Date();
+        const end = new Date(endDate);
+        const timeDiff = end - now;
+        const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+        return daysDiff;
+    };
+
+    const remainingDays = calculateRemainingDays(goal.endDate);
+    const isCompleted =
+        goal.status === 'abgeschlossen' ||
+        goal.currentValue >= goal.targetValue;
 
     return (
-        <div className='bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-white/10 hover:shadow-lg transition-all duration-300 group'>
-            <div className='p-6'>
-                <div className='flex justify-between items-start mb-4'>
-                    <div>
-                        <div className='flex items-center gap-2 mb-2'>
-                            <span className='text-sm text-gray-500 dark:text-white/60'>
-                                {goal.category}
-                            </span>
-                            {goal.public && (
-                                <span className='px-2 py-0.5 rounded-full text-xs font-medium bg-gradient-to-r from-[#4785FF] to-[#8c52ff] text-white'>
-                                    Öffentlich
-                                </span>
-                            )}
-                        </div>
-                        <h3 className='text-xl font-medium text-gray-900 dark:text-white'>
+        <div
+            className='bg-white/70 dark:bg-white/5 backdrop-blur-sm rounded-xl border border-white/20 
+                     hover:border-white/40 transition-all duration-200 hover:shadow-md group'
+        >
+            <div className='p-4'>
+                {/* Header */}
+                <div className='flex justify-between items-start mb-2'>
+                    <div className='flex items-start gap-2'>
+                        {goal.isPinned && (
+                            <Pin className='h-4 w-4 text-[#4785FF] flex-shrink-0 mt-0.5' />
+                        )}
+                        <h3 className='text-base font-semibold text-gray-900 dark:text-white leading-tight'>
                             {goal.title}
                         </h3>
                     </div>
 
-                    <div className='flex items-center gap-2'>
-                        {progress >= 75 ? (
-                            <div className='h-8 w-8 rounded-full bg-green-500/20 flex items-center justify-center'>
-                                <Check className='h-5 w-5 text-green-500' />
-                            </div>
-                        ) : (
-                            <div className='h-8 w-8 rounded-full bg-gray-100 dark:bg-white/10 flex items-center justify-center'>
-                                <TrendingUp className='h-5 w-5 text-gray-500 dark:text-white/80' />
-                            </div>
-                        )}
-
-                        {showActions && (
-                            <div className='flex items-center gap-1'>
-                                <button
-                                    onClick={() => onPin(goal)}
-                                    className='p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-colors duration-200'
-                                >
-                                    <Pin
-                                        className={`h-4 w-4 ${
-                                            goal.isPinned
-                                                ? 'text-[#4785FF]'
-                                                : 'text-gray-400 dark:text-white/40'
-                                        }`}
-                                    />
-                                </button>
-                                <button
-                                    onClick={() => onEdit(goal)}
-                                    className='p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-colors duration-200'
-                                >
-                                    <Pencil className='h-4 w-4 text-gray-400 dark:text-white/40' />
-                                </button>
-                                <button
-                                    onClick={() => onDelete(goal.id)}
-                                    className='p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-colors duration-200'
-                                >
-                                    <Trash2 className='h-4 w-4 text-gray-400 dark:text-white/40' />
-                                </button>
-                            </div>
-                        )}
+                    <div className='opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex gap-1'>
+                        <button
+                            onClick={() => onPin(goal)}
+                            className='p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10'
+                        >
+                            <Pin className='h-4 w-4 text-gray-400 dark:text-white/40' />
+                        </button>
+                        <button
+                            onClick={() => onEdit(goal)}
+                            className='p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10'
+                        >
+                            <Pencil className='h-4 w-4 text-gray-400 dark:text-white/40' />
+                        </button>
+                        <button
+                            onClick={() => onDelete(goal.id)}
+                            className='p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10'
+                        >
+                            <Trash2 className='h-4 w-4 text-gray-400 dark:text-white/40' />
+                        </button>
                     </div>
                 </div>
 
-                <div className='relative h-2 bg-gray-100 dark:bg-white/10 rounded-full mb-4'>
+                {/* Progress Bar */}
+                <div className='relative h-1.5 bg-gray-100 dark:bg-white/10 rounded-full overflow-hidden'>
                     <div
-                        className='absolute left-0 top-0 h-full rounded-full bg-gradient-to-r from-[#4785FF] to-[#8c52ff] transition-all duration-1000'
-                        style={{ width: `${progress}%` }}
+                        className='absolute left-0 top-0 h-full rounded-full bg-gradient-to-r from-[#4785FF] to-[#8c52ff] 
+                                 transition-all duration-300'
+                        style={{ width: `${formattedProgress}%` }}
                     />
                 </div>
 
-                <div className='flex justify-between text-sm mb-4'>
-                    <span className='text-gray-500 dark:text-white/60'>
-                        Fortschritt
-                    </span>
-                    <span className='text-gray-900 dark:text-white font-medium'>
-                        {progress}%
-                    </span>
-                </div>
-
-                <div className='grid grid-cols-3 gap-2'>
-                    <div className='bg-gray-50 dark:bg-white/5 rounded-lg p-2'>
-                        <div className='text-gray-400 dark:text-white/40 text-xs'>
-                            Aktuell
-                        </div>
-                        <div className='text-gray-900 dark:text-white text-sm font-medium'>
-                            {goal.currentValue} {goal.unit}
-                        </div>
-                    </div>
-                    <div className='bg-gray-50 dark:bg-white/5 rounded-lg p-2'>
-                        <div className='text-gray-400 dark:text-white/40 text-xs'>
-                            Ziel
-                        </div>
-                        <div className='text-gray-900 dark:text-white text-sm font-medium'>
-                            {goal.targetValue} {goal.unit}
-                        </div>
-                    </div>
-                    <div className='bg-gray-50 dark:bg-white/5 rounded-lg p-2'>
-                        <div className='text-gray-400 dark:text-white/40 text-xs'>
-                            Verbleibend
-                        </div>
-                        <div className='text-gray-900 dark:text-white text-sm font-medium'>
-                            {goal.remainingDays || '-'} Tage
-                        </div>
-                    </div>
-                </div>
-
-                {goal.description && (
-                    <button
-                        onClick={onToggle}
-                        className='mt-4 flex items-center gap-2 text-gray-500 dark:text-white/60 text-sm hover:text-gray-700 dark:hover:text-white/80 transition-colors duration-200'
+                {/* Category */}
+                <div className='mt-3 flex justify-start'>
+                    <span
+                        className='px-3 py-1 text-xs font-medium rounded-full 
+                                 bg-gradient-to-r from-[#4785FF] to-[#8c52ff] 
+                                 text-white shadow-sm 
+                                 dark:from-[#4785FF]/80 dark:to-[#8c52ff]/80
+                                 dark:text-white/90 
+                                 transition-all duration-200
+                                 hover:shadow-md hover:scale-105'
                     >
-                        <ChevronDown
-                            className={`w-4 h-4 transition-transform duration-200 ${
-                                isExpanded ? 'rotate-180' : ''
-                            }`}
-                        />
-                        {isExpanded ? 'Weniger anzeigen' : 'Mehr anzeigen'}
-                    </button>
-                )}
+                        {goal.category}
+                    </span>
+                </div>
 
+                {/* Stats */}
+                <div className='mt-3 flex items-center justify-between'>
+                    <div className='flex items-center gap-3'>
+                        <div className='flex items-center gap-1 text-xs text-gray-500 dark:text-white/60'>
+                            {formattedProgress >= 100 ? (
+                                <Check className='h-4 w-4 text-green-500' />
+                            ) : (
+                                <TrendingUp className='h-4 w-4' />
+                            )}
+                            <span>{formattedProgress}%</span>
+                        </div>
+                        <div className='flex items-center gap-1 text-xs text-gray-500 dark:text-white/60'>
+                            <Calendar className='h-4 w-4' />
+                            <span>{remainingDays} Tage übrig</span>
+                        </div>
+                    </div>
+
+                    <div className='flex items-center gap-2'>
+                        {goal.description && (
+                            <button
+                                onClick={() => setIsExpanded(!isExpanded)}
+                                className='p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 text-gray-500 dark:text-white/60'
+                            >
+                                <ChevronDown
+                                    className={`h-4 w-4 transition-transform duration-200 ${
+                                        isExpanded ? 'rotate-180' : ''
+                                    }`}
+                                />
+                            </button>
+                        )}
+                        <button
+                            onClick={handleParticipate}
+                            disabled={isCompleted}
+                            className={`flex items-center gap-1 px-2 py-1 text-xs font-medium text-white 
+                             rounded-lg transition-all duration-200
+                             ${
+                                 isCompleted
+                                     ? 'bg-gray-400 cursor-not-allowed opacity-50'
+                                     : 'bg-gradient-to-r from-[#4785FF] to-[#8c52ff] hover:shadow-md'
+                             }`}
+                        >
+                            <Users className='h-4 w-4' />
+                            <span>Beitragen</span>
+                        </button>
+                    </div>
+                </div>
+
+                {/* Expanded Details */}
                 {isExpanded && (
-                    <div className='mt-4 pt-4 border-t border-gray-200 dark:border-white/10'>
-                        <p className='text-gray-600 dark:text-white/70'>
-                            {goal.description}
+                    <div className='mt-3 pt-3 border-t border-gray-200/50 dark:border-white/10'>
+                        <p className='text-xs text-gray-600 dark:text-white/70 mb-2'>
+                            <p className='flex items-center gap-1 text-xs mb-2'>
+                                <MessageSquare className='h-4 w-4 text-gray-400 dark:text-white/40' />
+                                <span className='text-gray-400 dark:text-white/40'>
+                                    Beschreibung:{' '}
+                                </span>
+                                <span className='text-gray-700 dark:text-white font-medium'>
+                                    {goal.description}
+                                </span>
+                            </p>
                         </p>
+                        <div className='grid grid-cols-2 gap-2 text-xs'>
+                            <div className='flex items-center gap-1'>
+                                <Calendar className='h-4 w-4 text-gray-400 dark:text-white/40' />
+                                <span className='text-gray-400 dark:text-white/40'>
+                                    Start:{' '}
+                                </span>
+                                <span className='text-gray-700 dark:text-white font-medium'>
+                                    {new Date(
+                                        goal.startDate
+                                    ).toLocaleDateString()}
+                                </span>
+                            </div>
+                            <div className='flex items-center gap-1'>
+                                <Calendar className='h-4 w-4 text-gray-400 dark:text-white/40' />
+                                <span className='text-gray-400 dark:text-white/40'>
+                                    Ende:{' '}
+                                </span>
+                                <span className='text-gray-700 dark:text-white font-medium'>
+                                    {new Date(
+                                        goal.endDate
+                                    ).toLocaleDateString()}
+                                </span>
+                            </div>
+                            <div className='flex items-center gap-1'>
+                                <StepForward className='h-4 w-4 text-gray-400 dark:text-white/40' />
+                                <span className='text-gray-400 dark:text-white/40'>
+                                    Schrittgröße:{' '}
+                                </span>
+                                <span className='text-gray-700 dark:text-white font-medium'>
+                                    {goal.stepSize} {goal.unit}
+                                </span>
+                            </div>
+                            <div className='flex items-center gap-1'>
+                                <Activity className='h-4 w-4 text-gray-400 dark:text-white/40' />
+                                <span className='text-gray-400 dark:text-white/40'>
+                                    Beiträge:{' '}
+                                </span>
+                                <span className='text-gray-700 dark:text-white font-medium'>
+                                    {goal.participationCount}x
+                                </span>
+                            </div>
+                            <div className='flex items-center gap-1'>
+                                <Eye className='h-4 w-4 text-gray-400 dark:text-white/40' />
+                                <span className='text-gray-400 dark:text-white/40'>
+                                    Sichtbarkeit:{' '}
+                                </span>
+                                <span className='text-gray-700 dark:text-white font-medium'>
+                                    {goal.public ? 'Öffentlich' : 'Privat'}
+                                </span>
+                            </div>
+                            <div className='flex items-center gap-1'>
+                                <Target className='h-4 w-4 text-gray-400 dark:text-white/40' />
+                                <span className='text-gray-400 dark:text-white/40'>
+                                    Fortschritt:{' '}
+                                </span>
+                                <span className='text-gray-700 dark:text-white font-medium'>
+                                    {goal.currentValue} / {goal.targetValue}{' '}
+                                    {goal.unit}
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 )}
             </div>

@@ -39,12 +39,11 @@ const FriendsMetric = ({ title, value, icon: Icon }) => (
 const Friends = () => {
     const { user } = useContext(UserContext);
     const { addToast } = useToast();
-    const { addDialog } = useDialog();
+    const { addDialog, removeDialog } = useDialog();
     const [friends, setFriends] = useState([]);
     const [friendRequests, setFriendRequests] = useState([]);
     const [newFriendUsername, setNewFriendUsername] = useState('');
     const [loading, setLoading] = useState(true);
-    const [selectedFriendId, setSelectedFriendId] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
@@ -55,68 +54,117 @@ const Friends = () => {
     }, [user]);
 
     const fetchFriends = async () => {
+        if (!user?._id) return;
+
         try {
+            setLoading(true);
             const response = await axios.get(`/friends/${user._id}`);
-            setFriends(response.data);
+            const friendsWithGoalCount = await Promise.all(
+                response.data.map(async (friend) => {
+                    try {
+                        const goalsResponse = await axios.get(
+                            `/goals/friends/${friend.friendId._id}`
+                        );
+                        return {
+                            ...friend,
+                            sharedGoals: goalsResponse.data.length,
+                        };
+                    } catch (error) {
+                        addToast(
+                            'Fehler beim Laden der Ziele für ' +
+                                friend.friendId.username,
+                            'error'
+                        );
+                        return {
+                            ...friend,
+                            sharedGoals: 0,
+                        };
+                    }
+                })
+            );
+            setFriends(friendsWithGoalCount);
         } catch (error) {
-            addToast('Error fetching friends', 'error');
+            addToast(
+                'Fehler beim Laden der Freunde: ' + error.message,
+                'error'
+            );
         } finally {
             setLoading(false);
         }
     };
 
     const fetchFriendRequests = async () => {
+        if (!user?._id) return;
+
         try {
             const response = await axios.get(`/friends/requests/${user._id}`);
             setFriendRequests(response.data);
         } catch (error) {
-            addToast('Error fetching friend requests', 'error');
-        } finally {
-            setLoading(false);
+            addToast(
+                'Fehler beim Laden der Anfragen: ' + error.message,
+                'error'
+            );
         }
     };
 
     const sendFriendRequest = async () => {
+        if (!newFriendUsername.trim()) {
+            addToast('Bitte geben Sie einen Benutzernamen ein', 'error');
+            return;
+        }
+
         try {
             await axios.post('/friends/send', {
                 userId: user._id,
                 friendUsername: newFriendUsername,
             });
+            setNewFriendUsername('');
             fetchFriendRequests();
-            addToast('Freundschaftsanfrage gesendet.', 'success');
+            addToast('Freundschaftsanfrage gesendet', 'success');
         } catch (error) {
-            addToast('Error: ' + error, 'error');
+            addToast(
+                error.response?.data?.message ||
+                    'Fehler beim Senden der Anfrage',
+                'error'
+            );
         }
+    };
+
+    const handleShowGoalsClick = async (friendId, friend) => {
+        addDialog({
+            component: FriendGoalsDialog,
+            props: {
+                friendId: friendId,
+                friend: friend,
+                onClose: removeDialog,
+            },
+        });
     };
 
     const acceptFriendRequest = async (requestId) => {
         try {
             await axios.put(`/friends/accept/${requestId}`);
-            fetchFriends();
-            fetchFriendRequests();
-            addToast('Freundschaftsanfrage akzeptiert.', 'success');
+            await fetchFriends();
+            await fetchFriendRequests();
+            addToast('Freundschaftsanfrage akzeptiert', 'success');
         } catch (error) {
-            addToast('Error accepting friend request', 'error');
+            addToast(
+                'Fehler beim Akzeptieren der Anfrage: ' + error.message,
+                'error'
+            );
         }
     };
 
     const declineFriendRequest = async (requestId) => {
         try {
             await axios.put(`/friends/decline/${requestId}`);
-            fetchFriendRequests();
-            addToast('Freundschaftsanfrage abgelehnt.', 'info');
+            await fetchFriendRequests();
+            addToast('Freundschaftsanfrage abgelehnt', 'info');
         } catch (error) {
-            addToast('Error declining friend request', 'error');
-        }
-    };
-
-    const deleteFriend = async (friendId) => {
-        try {
-            await axios.delete(`/friends/${user._id}/${friendId}`);
-            fetchFriends();
-            addToast('Freund entfernt.', 'info');
-        } catch (error) {
-            addToast('Error deleting friend', 'error');
+            addToast(
+                'Fehler beim Ablehnen der Anfrage: ' + error.message,
+                'error'
+            );
         }
     };
 
@@ -124,14 +172,26 @@ const Friends = () => {
         addDialog({
             component: ConfirmationDialog,
             props: {
-                message: 'Möchten Sie diesen Freund wirklich entfernen?',
-                onConfirm: () => deleteFriend(friendId),
+                title: 'Freund löschen',
+                message: 'Möchtest du diesen Freund wirklich löschen?',
+                variant: 'danger',
+                confirmText: 'Entfernen',
+                onConfirm: async () => {
+                    try {
+                        await axios.delete(`/friends/${user._id}/${friendId}`);
+                        await fetchFriends();
+                        removeDialog();
+                        addToast('Freund erfolgreich gelöscht!', 'success');
+                    } catch (error) {
+                        addToast(
+                            'Fehler beim Löschen: ' + error.message,
+                            'error'
+                        );
+                    }
+                },
+                onClose: removeDialog,
             },
         });
-    };
-
-    const handleShowGoalsClick = (friendId) => {
-        setSelectedFriendId(friendId);
     };
 
     const filteredFriends = friends.filter(
@@ -223,7 +283,7 @@ const Friends = () => {
                               placeholder:text-gray-400 dark:placeholder:text-white/40'
                             />
                             <button
-                                onClick={() => sendFriendRequest()}
+                                onClick={sendFriendRequest}
                                 className='px-6 py-2.5 bg-gradient-to-r from-[#4785FF] to-[#8c52ff] 
                             text-white rounded-xl font-medium shadow-lg 
                             hover:shadow-xl hover:shadow-blue-500/25 dark:hover:shadow-blue-500/10
@@ -310,11 +370,11 @@ const Friends = () => {
                                         setSearchQuery(e.target.value)
                                     }
                                     className='w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-white/5 
-                                border border-gray-200 dark:border-white/10
-                                focus:border-[#4785FF] focus:ring-2 focus:ring-[#4785FF]/20 
-                                transition-all duration-200 outline-none
-                                text-gray-900 dark:text-white
-                                placeholder:text-gray-400 dark:placeholder:text-white/40'
+                                    border border-gray-200 dark:border-white/10
+                                    focus:border-[#4785FF] focus:ring-2 focus:ring-[#4785FF]/20 
+                                    transition-all duration-200 outline-none
+                                    text-gray-900 dark:text-white
+                                    placeholder:text-gray-400 dark:placeholder:text-white/40'
                                 />
                             </div>
                         </div>
@@ -341,7 +401,8 @@ const Friends = () => {
                                             friend={friend}
                                             onShowGoals={() =>
                                                 handleShowGoalsClick(
-                                                    friend.friendId._id
+                                                    friend.friendId._id,
+                                                    friend.friendId
                                                 )
                                             }
                                             onDelete={() =>

@@ -23,7 +23,7 @@ const {
     getPublicGoalsOfFriends,
     getPublicGoalsOfFriend,
     pinGoal,
-    pinFriendGoal,
+    participateInGoal,
 } = require('../controllers/goalController');
 
 const {
@@ -123,8 +123,8 @@ router.put('/goals/:id', updateGoal);
 router.get('/goals/friend/:friendId', getPublicGoalsOfFriend);
 // Anpinnen eines Ziels
 router.post('/goals/pin', pinGoal);
-// Anpinnen eines Freundes-Ziels
-router.post('/goals/pin-friend', pinFriendGoal);
+// Teilnahme an einem Ziel
+router.post('/goals/participate/:goalId', participateInGoal);
 
 /**
  * Globale Ziel-Routen
