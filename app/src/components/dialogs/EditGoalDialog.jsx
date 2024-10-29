@@ -76,16 +76,17 @@ const useForm = (initialState, onChangeCallback) => {
                     newErrors[field] = 'Dieses Feld darf nicht leer sein';
                 }
             });
-    
+
             // Additional validation for date fields
             if (fields.includes('startDate') && fields.includes('endDate')) {
                 const startDate = new Date(formData.startDate);
                 const endDate = new Date(formData.endDate);
                 if (startDate > endDate) {
-                    newErrors.endDate = 'Das Enddatum darf nicht vor dem Startdatum liegen';
+                    newErrors.endDate =
+                        'Das Enddatum darf nicht vor dem Startdatum liegen';
                 }
             }
-    
+
             setErrors(newErrors);
             return Object.keys(newErrors).length === 0;
         },
@@ -348,7 +349,7 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                             label='Zielwert'
                             id='targetValue'
                             value={formData.targetValue}
-                            type='text'
+                            type='number'
                             icon={Target}
                             onChange={handleInputChange}
                             error={errors.targetValue}

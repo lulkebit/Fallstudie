@@ -15,15 +15,11 @@ import {
     Trash2,
     Filter,
     ArrowUpDown,
-    Check,
-    MessageSquare,
-    StepForward,
     Activity,
-    Eye,
 } from 'lucide-react';
 import axios from 'axios';
 import { useDialog } from '../context/DialogContext';
-import { useToast } from '../context/ToastContext'; // Add this line to import useToast
+import { useToast } from '../context/ToastContext';
 import EditGoalDialog from './dialogs/EditGoalDialog';
 import ConfirmationDialog from './dialogs/ConfirmationDialog';
 
@@ -58,9 +54,8 @@ const GoalMetric = ({ title, value, subtitle, icon: Icon, change }) => (
 );
 
 const GoalCard = ({ goal, onEdit, onDelete }) => {
-    const progress =
-        goal.progress || (goal.currentValue / goal.targetValue) * 100;
-    const formattedProgress = Math.round(Math.min(Math.max(progress, 0), 100));
+    const progress = Math.round((goal.currentValue / parseFloat(goal.targetValue)) * 100);
+    const formattedProgress = Math.min(Math.max(progress, 0), 100);
 
     const remainingDays = useMemo(() => {
         const now = new Date();
@@ -291,6 +286,22 @@ const UserGoalsManagement = () => {
         });
     };
 
+    const completedGoals = goals.filter(
+        (goal) => goal.currentValue >= parseFloat(goal.targetValue)
+    );
+
+    const inProgressGoals = goals.filter(
+        (goal) => goal.currentValue > 0 && goal.currentValue < parseFloat(goal.targetValue)
+    );
+
+    const averageProgress = Math.round(
+        goals.reduce(
+            (acc, goal) =>
+                acc + (goal.currentValue / parseFloat(goal.targetValue)) * 100,
+            0
+        ) / (goals.length || 1)
+    );
+
     const filteredAndSortedGoals = goals
         .filter(
             (goal) =>
@@ -335,26 +346,17 @@ const UserGoalsManagement = () => {
                 />
                 <GoalMetric
                     title='Abgeschlossene Ziele'
-                    value={goals.filter((g) => g.status === 'Completed').length}
+                    value={completedGoals.length}
                     icon={CheckCircle2}
                 />
                 <GoalMetric
                     title='In Bearbeitung'
-                    value={
-                        goals.filter((g) => g.status === 'In Progress').length
-                    }
+                    value={inProgressGoals.length}
                     icon={Clock}
                 />
                 <GoalMetric
                     title='Durchschnittlicher Fortschritt'
-                    value={`${Math.round(
-                        goals.reduce(
-                            (acc, goal) =>
-                                acc +
-                                (goal.currentValue / goal.targetValue) * 100,
-                            0
-                        ) / (goals.length || 1)
-                    )}%`}
+                    value={`${averageProgress}%`}
                     icon={TrendingUp}
                 />
             </div>
@@ -385,10 +387,10 @@ const UserGoalsManagement = () => {
                             onClick={() => handleSort('title')}
                         />
                         <FilterButton
-                            active={sortField === 'status'}
+                            active={sortField === 'currentValue'}
                             icon={Filter}
-                            label='Nach Status'
-                            onClick={() => handleSort('status')}
+                            label='Nach Fortschritt'
+                            onClick={() => handleSort('currentValue')}
                         />
                         <FilterButton
                             active={sortField === 'endDate'}
