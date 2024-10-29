@@ -30,7 +30,6 @@ const InputField = ({
     onTogglePassword,
     onBlur,
 }) => {
-    // Nur Password-Felder sollten den Toggle-Button haben
     const isPasswordField = id === 'password';
 
     return (
@@ -95,7 +94,7 @@ const AuthNavbar = () => {
         <LandingNavbar
             hideNavItems={true}
             customActions={
-                <div className='hidden lg:flex items-center gap-4'>
+                <div className='flex items-center gap-4'>
                     <button
                         onClick={toggleTheme}
                         className='text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white transition-colors duration-200 text-sm font-medium'
@@ -107,7 +106,8 @@ const AuthNavbar = () => {
                         className='bg-gradient-to-r from-[#4785FF] to-[#8c52ff] text-white px-4 py-2 rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-blue-500/25 transition-all duration-300 hover:-translate-y-0.5 flex items-center gap-2'
                     >
                         <Rocket className='w-4 h-4' />
-                        Jetzt starten
+                        <span className='hidden sm:inline'>Jetzt starten</span>
+                        <span className='sm:hidden'>Start</span>
                     </button>
                 </div>
             }
@@ -194,7 +194,6 @@ const Login = () => {
     const loginUser = async (event) => {
         event.preventDefault();
 
-        // Set all fields as touched
         setTouched({
             emailOrUsername: true,
             password: true,
@@ -233,18 +232,18 @@ const Login = () => {
 
             {/* Decorative Elements */}
             <div className='absolute inset-0'>
-                <div className='absolute top-1/4 right-1/4 w-96 h-96 bg-[#4785FF]/5 dark:bg-[#4785FF]/10 rounded-full blur-3xl animate-pulse'></div>
-                <div className='absolute bottom-1/4 left-1/4 w-96 h-96 bg-[#8c52ff]/5 dark:bg-[#8c52ff]/10 rounded-full blur-3xl animate-pulse delay-1000'></div>
+                <div className='absolute top-1/4 right-1/4 w-96 h-96 bg-[#4785FF]/5 dark:bg-[#4785FF]/10 rounded-full blur-3xl animate-pulse hidden sm:block'></div>
+                <div className='absolute bottom-1/4 left-1/4 w-96 h-96 bg-[#8c52ff]/5 dark:bg-[#8c52ff]/10 rounded-full blur-3xl animate-pulse delay-1000 hidden sm:block'></div>
             </div>
 
-            <div className='flex min-h-screen items-center justify-center px-4 pt-20 relative z-10'>
+            <div className='flex min-h-screen items-center justify-center p-4 sm:px-6 lg:px-8 pt-20 relative z-10'>
                 <div className='w-full max-w-md'>
                     <div className='bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-white/10 shadow-xl dark:shadow-none'>
-                        <div className='px-8 pt-8 pb-6'>
+                        <div className='px-4 sm:px-8 pt-8 pb-6'>
                             <div className='flex flex-col items-center space-y-2 mb-8'>
-                                <div className='h-16 w-16 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center shadow-lg'>
+                                <div className='h-12 w-12 sm:h-16 sm:w-16 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center shadow-lg'>
                                     <svg
-                                        className='w-8 h-8 text-white'
+                                        className='w-6 h-6 sm:w-8 sm:h-8 text-white'
                                         fill='none'
                                         stroke='currentColor'
                                         viewBox='0 0 24 24'
@@ -257,10 +256,10 @@ const Login = () => {
                                         />
                                     </svg>
                                 </div>
-                                <h2 className='text-2xl font-bold text-gray-900 dark:text-white'>
+                                <h2 className='text-xl sm:text-2xl font-bold text-gray-900 dark:text-white text-center'>
                                     Willkommen zurück
                                 </h2>
-                                <p className='text-gray-600 dark:text-white/60'>
+                                <p className='text-sm sm:text-base text-gray-600 dark:text-white/60 text-center'>
                                     Melde dich an um fortzufahren
                                 </p>
                             </div>
@@ -301,7 +300,7 @@ const Login = () => {
                                     }
                                 />
 
-                                <div className='flex items-center justify-between'>
+                                <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0'>
                                     <label className='flex items-center'>
                                         <input
                                             type='checkbox'
@@ -342,15 +341,15 @@ const Login = () => {
                             </form>
                         </div>
 
-                        <div className='px-8 py-6 bg-gray-50 dark:bg-white/5 rounded-b-2xl border-t border-gray-100 dark:border-white/10'>
-                            <div className='flex items-center justify-between'>
+                        <div className='px-4 sm:px-8 py-6 bg-gray-50 dark:bg-white/5 rounded-b-2xl border-t border-gray-100 dark:border-white/10'>
+                            <div className='flex flex-col sm:flex-row items-center justify-between space-y-3 sm:space-y-0'>
                                 <span className='text-sm text-gray-600 dark:text-white/70'>
                                     Noch kein Konto?
                                 </span>
                                 <Link
                                     to='/register'
                                     className='flex items-center gap-1 text-sm font-medium text-[#4785FF] hover:text-[#6769ff]
-                                             group transition-colors duration-200'
+                                             group transition-group transition-colors duration-200'
                                 >
                                     Jetzt registrieren
                                     <ArrowRight className='h-4 w-4 group-hover:translate-x-1 transition-transform duration-200' />

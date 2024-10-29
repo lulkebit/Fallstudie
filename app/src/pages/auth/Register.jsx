@@ -136,7 +136,7 @@ const PasswordStrengthIndicator = ({ password }) => {
                     ))}
                 </div>
             </div>
-            <div className='grid grid-cols-2 gap-2'>
+            <div className='grid grid-cols-1 sm:grid-cols-2 gap-2'>
                 {requirements.map((req, index) => (
                     <div key={index} className='flex items-center gap-1.5'>
                         <CheckCircle2
@@ -168,7 +168,7 @@ const PricingToggle = ({ selectedPlan, onPlanChange }) => {
             <label className='block text-sm font-medium text-gray-700 dark:text-white/70'>
                 Wähle deinen Plan
             </label>
-            <div className='grid grid-cols-2 gap-4'>
+            <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
                 <div
                     className={`cursor-not-allowed p-4 rounded-xl border transition-all duration-200 ${
                         selectedPlan === 'basic'
@@ -230,7 +230,7 @@ const AuthNavbar = () => {
         <LandingNavbar
             hideNavItems={true}
             customActions={
-                <div className='hidden lg:flex items-center gap-4'>
+                <div className='flex items-center gap-4'>
                     <button
                         onClick={toggleTheme}
                         className='text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white transition-colors duration-200 text-sm font-medium'
@@ -242,7 +242,7 @@ const AuthNavbar = () => {
                         className='bg-gradient-to-r from-[#4785FF] to-[#8c52ff] text-white px-4 py-2 rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-blue-500/25 transition-all duration-300 hover:-translate-y-0.5 flex items-center gap-2'
                     >
                         <LogIn className='w-4 h-4' />
-                        Login
+                        <span className='hidden sm:inline'>Login</span>
                     </button>
                 </div>
             }
@@ -442,10 +442,10 @@ const Register = () => {
                 <div className='absolute bottom-1/4 left-1/4 w-96 h-96 bg-[#8c52ff]/5 dark:bg-[#8c52ff]/10 rounded-full blur-3xl animate-pulse delay-1000'></div>
             </div>
 
-            <div className='flex min-h-screen items-center justify-center px-4 pt-20 relative z-10'>
+            <div className='flex min-h-screen items-center justify-center px-4 sm:px-6 lg:px-8 pt-20 pb-8 relative z-10'>
                 <div className='w-full max-w-md'>
                     <div className='bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-white/10 shadow-xl dark:shadow-none'>
-                        <div className='px-8 pt-8 pb-6'>
+                        <div className='px-4 sm:px-8 pt-8 pb-6'>
                             <div className='flex flex-col items-center space-y-2 mb-8'>
                                 <div className='h-16 w-16 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center shadow-lg'>
                                     <svg
@@ -462,22 +462,21 @@ const Register = () => {
                                         />
                                     </svg>
                                 </div>
-                                <h2 className='text-2xl font-bold text-gray-900 dark:text-white'>
+                                <h2 className='text-2xl font-bold text-gray-900 dark:text-white text-center'>
                                     Konto erstellen
                                 </h2>
-                                <p className='text-gray-600 dark:text-white/60'>
+                                <p className='text-gray-600 dark:text-white/60 text-center'>
                                     Erstelle ein Konto um TrackMyGoal zu nutzen
                                 </p>
                             </div>
 
                             <form onSubmit={registerUser} className='space-y-5'>
-                                {/* Plan Selection */}
                                 <PricingToggle
                                     selectedPlan={selectedPlan}
                                     onPlanChange={setSelectedPlan}
                                 />
 
-                                <div className='grid grid-cols-2 gap-4'>
+                                <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
                                     <InputField
                                         label='Vorname'
                                         id='firstname'
@@ -659,17 +658,24 @@ const Register = () => {
                                     ) : (
                                         <>
                                             <UserPlus className='h-5 w-5' />
-                                            Registrieren{' '}
-                                            {selectedPlan === 'pro' &&
-                                                '& Bezahlen'}
+                                            <span className='hidden sm:inline'>
+                                                Registrieren{' '}
+                                                {selectedPlan === 'pro' &&
+                                                    '& Bezahlen'}
+                                            </span>
+                                            <span className='sm:hidden'>
+                                                {selectedPlan === 'pro'
+                                                    ? 'Registrieren'
+                                                    : "Los geht's"}
+                                            </span>
                                         </>
                                     )}
                                 </button>
                             </form>
                         </div>
 
-                        <div className='px-8 py-6 bg-gray-50 dark:bg-white/5 rounded-b-2xl border-t border-gray-100 dark:border-white/10'>
-                            <div className='flex items-center justify-between'>
+                        <div className='px-4 sm:px-8 py-6 bg-gray-50 dark:bg-white/5 rounded-b-2xl border-t border-gray-100 dark:border-white/10'>
+                            <div className='flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0'>
                                 <Link
                                     to='/login'
                                     className='flex items-center gap-1 text-sm font-medium text-[#4785FF] hover:text-[#6769ff] dark:text-[#4785FF] dark:hover:text-[#6769ff] transition-colors duration-200'
