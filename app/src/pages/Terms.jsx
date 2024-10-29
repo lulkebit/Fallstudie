@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
     Scale,
@@ -9,15 +9,13 @@ import {
     HeartHandshake,
     ShieldCheck,
     HelpCircle,
-    ArrowLeft
+    ArrowLeft,
 } from 'lucide-react';
 import LandingNavbar from '../components/LandingNavbar';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { UserContext } from '../context/UserContext';
 
 const Terms = () => {
-    const { user } = useContext(UserContext);
     const location = useLocation();
     const navigate = useNavigate();
     const fromProfile = location.state?.fromProfile;
@@ -28,7 +26,7 @@ const Terms = () => {
 
     return (
         <div className='min-h-screen bg-white dark:bg-gray-900'>
-            {user ? <Navbar /> : <LandingNavbar />}
+            {fromProfile ? <Navbar /> : <LandingNavbar />}
 
             <div className='relative py-24 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 overflow-hidden'>
                 {/* Background Elements */}
@@ -287,8 +285,7 @@ const Terms = () => {
                     </div>
                 </div>
             </div>
-
-            <Footer />
+            {fromProfile ? null : <Footer />}
         </div>
     );
 };
