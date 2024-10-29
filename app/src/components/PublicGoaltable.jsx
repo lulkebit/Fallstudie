@@ -16,6 +16,7 @@ import {
     Activity,
     Target,
     Clock,
+    ChevronDown,
 } from 'lucide-react';
 
 const EmptyState = () => (
@@ -210,28 +211,31 @@ const PublicGoalTable = ({ onGoalsUpdate }) => {
 
     return (
         <div className='space-y-6'>
-            {/* Filter Section */}
+            {/* Enhanced Filter Section */}
             <div className='flex flex-col sm:flex-row gap-4'>
                 <div className='flex-1 relative'>
-                    <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400' />
+                    <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500' />
                     <input
                         type='text'
                         placeholder='Suche nach Zielen oder Freunden...'
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className='w-full pl-10 pr-4 py-2 bg-white/70 dark:bg-white/5 backdrop-blur-sm 
-                                 rounded-xl border border-white/20 focus:border-[#4785FF] focus:ring-1 
-                                 focus:ring-[#4785FF] transition-all duration-200'
+                        className='w-full pl-10 pr-4 py-2.5 bg-gray-100 dark:bg-gray-800 
+                                 rounded-xl border-none focus:ring-2 focus:ring-[#4785FF] 
+                                 transition-all duration-200 text-gray-900 dark:text-white 
+                                 placeholder-gray-500 dark:placeholder-gray-400'
                     />
                 </div>
-                <div className='relative'>
-                    <Filter className='absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400' />
+                <div className='relative min-w-[180px]'>
+                    <div className='absolute left-3 top-1/2 transform -translate-y-1/2 flex items-center gap-2 pointer-events-none'>
+                        <Filter className='w-4 h-4 text-gray-400 dark:text-gray-500' />
+                    </div>
                     <select
                         value={selectedCategory}
                         onChange={(e) => setSelectedCategory(e.target.value)}
-                        className='pl-10 pr-4 py-2 bg-white/70 dark:bg-white/5 backdrop-blur-sm rounded-xl 
-                                 border border-white/20 focus:border-[#4785FF] focus:ring-1 focus:ring-[#4785FF] 
-                                 transition-all duration-200'
+                        className='w-full appearance-none pl-10 pr-10 py-2.5 bg-gray-100 dark:bg-gray-800 
+                                 rounded-xl border-none focus:ring-2 focus:ring-[#4785FF] cursor-pointer
+                                 transition-all duration-200 text-gray-900 dark:text-white'
                     >
                         <option value=''>Alle Kategorien</option>
                         {categories.map((category) => (
@@ -240,6 +244,10 @@ const PublicGoalTable = ({ onGoalsUpdate }) => {
                             </option>
                         ))}
                     </select>
+                    <ChevronDown
+                        className='absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 
+                                          text-gray-400 dark:text-gray-500 pointer-events-none'
+                    />
                 </div>
             </div>
 
