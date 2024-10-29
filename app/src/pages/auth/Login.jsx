@@ -16,6 +16,8 @@ import {
     Rocket,
 } from 'lucide-react';
 import LandingNavbar from '../../components/LandingNavbar';
+import ForgotPasswordDialog from '../../components/dialogs/ForgotPasswordDialog';
+import { useDialog } from '../../context/DialogContext';
 
 const InputField = ({
     label,
@@ -120,19 +122,14 @@ const Login = () => {
         emailOrUsername: '',
         password: '',
     });
-    const [errors, setErrors] = useState({
-        emailOrUsername: '',
-        password: '',
-    });
-    const [touched, setTouched] = useState({
-        emailOrUsername: false,
-        password: false,
-    });
+    const [errors, setErrors] = useState({}); // Entfernt initiale Fehlerzustände
+    const [touched, setTouched] = useState({}); // Entfernt initiale touch-Zustände
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const { setUser } = useContext(UserContext);
     const navigate = useNavigate();
     const { addToast } = useToast();
+    const { addDialog } = useDialog();
 
     const validateField = (name, value) => {
         let error = '';
@@ -159,22 +156,25 @@ const Login = () => {
         return error;
     };
 
-    const handleBlur = (e) => {
-        const { name } = e.target;
-        setTouched((prev) => ({ ...prev, [name]: true }));
-        setErrors((prev) => ({
-            ...prev,
-            [name]: validateField(name, data[name]),
-        }));
-    };
-
     const handleChange = (e) => {
         const { name, value } = e.target;
         setData((prev) => ({ ...prev, [name]: value }));
+        // Nur validieren wenn das Feld bereits berührt wurde
         if (touched[name]) {
             setErrors((prev) => ({
                 ...prev,
                 [name]: validateField(name, value),
+            }));
+        }
+    };
+
+    const handleBlur = (e) => {
+        const { name } = e.target;
+        // Nur validieren wenn das Feld bereits berührt wurde
+        if (touched[name]) {
+            setErrors((prev) => ({
+                ...prev,
+                [name]: validateField(name, data[name]),
             }));
         }
     };
@@ -194,6 +194,7 @@ const Login = () => {
     const loginUser = async (event) => {
         event.preventDefault();
 
+        // Setze touched-Status für alle Felder beim Submit
         setTouched({
             emailOrUsername: true,
             password: true,
@@ -311,12 +312,17 @@ const Login = () => {
                                             Angemeldet bleiben
                                         </span>
                                     </label>
-                                    <Link
-                                        to='/forgot-password'
+                                    <button
+                                        type='button'
+                                        onClick={() =>
+                                            addDialog({
+                                                component: ForgotPasswordDialog,
+                                            })
+                                        }
                                         className='text-sm text-[#4785FF] hover:text-[#6769ff]'
                                     >
                                         Passwort vergessen?
-                                    </Link>
+                                    </button>
                                 </div>
 
                                 <button
