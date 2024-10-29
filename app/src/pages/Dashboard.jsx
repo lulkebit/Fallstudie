@@ -1,12 +1,20 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
-import { Target, Users } from 'lucide-react';
+import { Target, Users, Loader2 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import PublicGoalTable from '../components/PublicGoaltable';
 import { UserContext } from '../context/UserContext';
+import { useToast } from '../context/ToastContext';
 import axios from 'axios';
 import KanbanBoard from '../components/KanbanBoard';
 
-const DashboardMetric = ({ title, value, change, icon: Icon }) => (
+const LoadingValue = () => (
+    <div className='flex items-center gap-2'>
+        <Loader2 className='w-4 h-4 animate-spin text-gray-400' />
+        <span className='text-gray-400'>Wird geladen...</span>
+    </div>
+);
+
+const DashboardMetric = ({ title, value, change, icon: Icon, isLoading }) => (
     <div className='bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-white/10 p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1'>
         <div className='flex items-center gap-4'>
             <div className='h-12 w-12 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center flex-shrink-0'>
@@ -17,13 +25,19 @@ const DashboardMetric = ({ title, value, change, icon: Icon }) => (
                     {title}
                 </h3>
                 <div className='flex items-baseline gap-2'>
-                    <span className='text-2xl font-bold text-gray-900 dark:text-white'>
-                        {value}
-                    </span>
-                    {change && (
-                        <span className='text-sm font-medium text-green-500'>
-                            +{change}%
-                        </span>
+                    {isLoading ? (
+                        <LoadingValue />
+                    ) : (
+                        <>
+                            <span className='text-2xl font-bold text-gray-900 dark:text-white'>
+                                {value}
+                            </span>
+                            {change && (
+                                <span className='text-sm font-medium text-green-500'>
+                                    +{change}%
+                                </span>
+                            )}
+                        </>
                     )}
                 </div>
             </div>
@@ -34,15 +48,19 @@ const DashboardMetric = ({ title, value, change, icon: Icon }) => (
 const Dashboard = () => {
     const [activeTab, setActiveTab] = useState('private');
     const [metrics, setMetrics] = useState({
-        activeGoals: 'Lädt...',
-        completedGoals: 'Lädt...',
-        communityGoals: 'Lädt...',
-        streak: 'Lädt...',
+        activeGoals: 0,
+        completedGoals: 0,
+        communityGoals: 0,
+        streak: 0,
     });
+    const [isLoading, setIsLoading] = useState(true);
     const { user } = useContext(UserContext);
+    const { addToast } = useToast();
 
     const calculateMetrics = useCallback(async () => {
         if (!user?._id) return;
+
+        setIsLoading(true);
 
         try {
             // Fetch user's goals
@@ -55,24 +73,48 @@ const Dashboard = () => {
                 `/goals/friends/${user._id}`
             );
 
-            // Calculate active and completed goals
-            const completed = goals.filter(
-                (goal) => goal.progress === 100
-            ).length;
-            const active = goals.filter((goal) => goal.progress < 100).length;
+            // Calculate active and completed goals based on progress
+            const completed = goals.filter((goal) => {
+                const progress =
+                    goal.progress ||
+                    (goal.currentValue / goal.targetValue) * 100;
+                return progress === 100;
+            }).length;
+
+            const active = goals.filter((goal) => {
+                const progress =
+                    goal.progress ||
+                    (goal.currentValue / goal.targetValue) * 100;
+                return progress < 100;
+            }).length;
 
             // Calculate streak (days with continuous goal progress)
             let streak = 0;
             const today = new Date();
-            const sortedGoals = goals.sort(
-                (a, b) => new Date(b.endDate) - new Date(a.endDate)
-            );
 
-            for (const goal of sortedGoals) {
-                if (goal.progress > 0 && new Date(goal.endDate) >= today) {
-                    streak++;
-                } else {
-                    break;
+            // Sort goals by lastUpdate date in descending order
+            const sortedGoals = goals
+                .filter((goal) => goal.lastUpdate)
+                .sort(
+                    (a, b) => new Date(b.lastUpdate) - new Date(a.lastUpdate)
+                );
+
+            if (sortedGoals.length > 0) {
+                const twentyFourHours = 24 * 60 * 60 * 1000;
+                let lastDate = today;
+
+                for (const goal of sortedGoals) {
+                    const goalDate = new Date(goal.lastUpdate);
+                    const timeDiff = lastDate - goalDate;
+
+                    if (timeDiff <= twentyFourHours) {
+                        streak++;
+                        lastDate = new Date(
+                            lastDate.getTime() - twentyFourHours
+                        );
+                    } else {
+                        break;
+                    }
                 }
             }
 
@@ -83,9 +125,20 @@ const Dashboard = () => {
                 streak: streak,
             });
         } catch (error) {
-            console.error('Error fetching metrics:', error);
+            addToast(
+                'Fehler beim Laden der Metriken. Bitte versuchen Sie es später erneut.',
+                'error'
+            );
+            setMetrics({
+                activeGoals: 0,
+                completedGoals: 0,
+                communityGoals: 0,
+                streak: 0,
+            });
+        } finally {
+            setIsLoading(false);
         }
-    }, [user?._id]);
+    }, [user?._id, addToast]);
 
     useEffect(() => {
         calculateMetrics();
@@ -118,21 +171,25 @@ const Dashboard = () => {
                         title='Aktive Ziele'
                         value={metrics.activeGoals}
                         icon={Target}
+                        isLoading={isLoading}
                     />
                     <DashboardMetric
                         title='Erreichte Ziele'
                         value={metrics.completedGoals}
                         icon={Target}
+                        isLoading={isLoading}
                     />
                     <DashboardMetric
                         title='Community Ziele'
                         value={metrics.communityGoals}
                         icon={Users}
+                        isLoading={isLoading}
                     />
                     <DashboardMetric
                         title='Streak'
                         value={`${metrics.streak} Tage`}
                         icon={Target}
+                        isLoading={isLoading}
                     />
                 </div>
 
