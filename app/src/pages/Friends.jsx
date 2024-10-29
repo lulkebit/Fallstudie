@@ -241,7 +241,8 @@ const Friends = () => {
                     <FriendsMetric
                         title='Geteilte Ziele'
                         value={friends.reduce(
-                            (acc, friend) => acc + (friend.sharedGoals || 0),
+                            (acc, friend) =>
+                                acc + (friend.sharedGoals.length || 0),
                             0
                         )}
                         icon={Target}
