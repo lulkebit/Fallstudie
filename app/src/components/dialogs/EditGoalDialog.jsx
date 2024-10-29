@@ -12,7 +12,6 @@ import {
     ChevronLeft,
     ChevronRight,
     Flag,
-    Users,
     MoveHorizontal,
     ChevronDown,
 } from 'lucide-react';
@@ -78,7 +77,6 @@ const useForm = (initialState, onChangeCallback) => {
                 }
             });
 
-            // Additional validation for date fields
             if (fields.includes('startDate') && fields.includes('endDate')) {
                 const startDate = new Date(formData.startDate);
                 const endDate = new Date(formData.endDate);
@@ -171,7 +169,6 @@ const CustomSelect = ({
     );
 };
 
-// Custom Checkbox Component
 const CustomCheckbox = ({ checked, onChange, id, children }) => {
     return (
         <label
@@ -263,6 +260,26 @@ const InputField = React.memo(
                         options={options}
                         icon={Icon}
                     />
+                ) : type === 'date' ? (
+                    <>
+                        <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
+                            <Icon className='h-5 w-5 text-gray-400 dark:text-white' />
+                        </div>
+                        <input
+                            type={type}
+                            id={id}
+                            name={id}
+                            value={value}
+                            onChange={onChange}
+                            className='w-full pl-10 pr-4 py-3 rounded-xl bg-white/50 dark:bg-white/5 border 
+                                    border-gray-200/50 dark:border-white/10 
+                                    focus:border-[#4785FF] focus:ring-2 focus:ring-[#4785FF]/20
+                                    transition-all duration-200 outline-none backdrop-blur-sm
+                                    text-gray-900 dark:text-white
+                                    [color-scheme:dark]
+                                    dark:[color-scheme:dark]'
+                        />
+                    </>
                 ) : (
                     <>
                         <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
@@ -289,7 +306,6 @@ const InputField = React.memo(
     )
 );
 
-// Updated PublicSwitch Component
 const PublicSwitch = ({ checked, onChange }) => (
     <div className='flex items-center gap-3 p-4 bg-white/30 dark:bg-white/5 rounded-xl border border-gray-200/50'>
         <CustomCheckbox id='public' checked={checked} onChange={onChange}>
