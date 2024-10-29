@@ -49,13 +49,13 @@ const GoalCard = ({ goal, onEdit, onDelete, onPin, onParticipate }) => {
             <div className='p-4'>
                 {/* Header */}
                 <div className='flex justify-between items-start mb-2'>
-                    <div className='flex-1'>
-                        <h3 className='text-sm font-medium text-gray-900 dark:text-white line-clamp-2'>
+                    <div className='flex items-start gap-2'>
+                        {goal.isPinned && (
+                            <Pin className='h-4 w-4 text-[#4785FF] flex-shrink-0 mt-0.5' />
+                        )}
+                        <h3 className='text-base font-semibold text-gray-900 dark:text-white leading-tight'>
                             {goal.title}
                         </h3>
-                        {goal.isPinned && (
-                            <Pin className='h-4 w-4 text-[#4785FF] mt-1' />
-                        )}
                     </div>
 
                     <div className='opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex gap-1'>
@@ -146,7 +146,7 @@ const GoalCard = ({ goal, onEdit, onDelete, onPin, onParticipate }) => {
                              }`}
                         >
                             <Users className='h-4 w-4' />
-                            <span>Teilnehmen</span>
+                            <span>Beitragen</span>
                         </button>
                     </div>
                 </div>

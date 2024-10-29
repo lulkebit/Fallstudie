@@ -192,6 +192,7 @@ const getPublicGoalsOfFriends = async (req, res) => {
                     ...goal.toObject(),
                     friendName: friend.username,
                     friendId: friend._id,
+                    friendAvatar: friend.avatar,
                     isPinned: pinnedFriendGoals.some(
                         (pinnedGoal) => pinnedGoal.goalId === goal.id
                     ),
@@ -290,42 +291,6 @@ const pinGoal = async (req, res) => {
     }
 };
 
-/**
- * Pinnt ein Ziel eines Freundes für einen Benutzer an.
- *
- * @param {Object} req - Das Express-Request-Objekt.
- * @param {Object} req.body - Der Körper der Anfrage.
- * @param {string} req.body.userId - Die ID des Benutzers.
- * @param {Array} req.body.goals - Die aktualisierten Ziele, einschließlich der angepinnten Freundesziele.
- * @param {Object} res - Das Express-Response-Objekt.
- * @returns {Promise<Array>} Ein Promise, das bei Erfolg ein aktualisiertes Array aller Ziele zurückgibt.
- * @throws {Object} Bei Fehlern während des Pinnens wird ein Fehler-Objekt zurückgegeben.
- */
-const pinFriendGoal = async (req, res) => {
-    const { userId, goals } = req.body;
-    try {
-        const user = await User.findById(userId);
-        if (!user) {
-            logger.warn(texts.WARNINGS.USER_NOT_FOUND);
-            return res.status(404).json({ error: texts.ERRORS.USER_NOT_FOUND });
-        }
-
-        user.pinnedFriendGoals = goals
-            .filter((goal) => goal.isPinned)
-            .map((goal) => ({
-                friendId: goal.friendId,
-                goalId: goal.id,
-            }));
-
-        await user.save();
-        logger.info(texts.SUCCESS.FRIEND_GOAL_PINNED);
-        res.status(200).json(goals);
-    } catch (error) {
-        logger.error(texts.ERRORS.ERROR('pinning friend goal', error));
-        res.status(500).json({ error: texts.ERRORS.PIN_FRIEND_GOAL });
-    }
-};
-
 const participateInGoal = async (req, res) => {
     const { userId, goalId } = req.body;
     try {
@@ -361,6 +326,5 @@ module.exports = {
     getPublicGoalsOfFriends,
     getPublicGoalsOfFriend,
     pinGoal,
-    pinFriendGoal,
     participateInGoal,
 };
