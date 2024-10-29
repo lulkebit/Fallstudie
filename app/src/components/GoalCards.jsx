@@ -24,6 +24,7 @@ const GoalCard = ({
     const formattedProgress = Math.min(Math.max(progress, 0), 100);
 
     const handleParticipate = (e) => {
+        if (isCompleted) return;
         e.preventDefault(); // Prevent drag event
         e.stopPropagation(); // Prevent event bubbling
         onParticipate(goal.id);
@@ -38,6 +39,7 @@ const GoalCard = ({
     };
 
     const remainingDays = calculateRemainingDays(goal.endDate);
+    const isCompleted = goal.currentValue >= goal.targetValue;
 
     return (
         <div
@@ -130,9 +132,12 @@ const GoalCard = ({
                         )}
                         <button
                             onClick={handleParticipate}
-                            className='flex items-center gap-1 px-2 py-1 text-xs font-medium text-white 
-                             bg-gradient-to-r from-[#4785FF] to-[#8c52ff] rounded-lg
-                             hover:shadow-md transition-all duration-200'
+                            disabled={isCompleted}
+                            className={`flex items-center gap-1 px-2 py-1 text-xs font-medium text-white 
+                             rounded-lg transition-all duration-200
+                             ${isCompleted 
+                                ? 'bg-gray-400 cursor-not-allowed opacity-50' 
+                                : 'bg-gradient-to-r from-[#4785FF] to-[#8c52ff] hover:shadow-md'}`}
                         >
                             <Users className='h-3 w-3' />
                             <span>Teilnehmen</span>
