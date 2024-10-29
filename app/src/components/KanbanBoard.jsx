@@ -59,6 +59,12 @@ const KanbanColumn = ({
     columnType,
     headerAction,
 }) => {
+    // Sortiere Ziele so, dass angepinnte Ziele zuerst erscheinen
+    const sortedGoals = [...goals].sort((a, b) => {
+        if (a.isPinned === b.isPinned) return 0;
+        return a.isPinned ? -1 : 1;
+    });
+
     return (
         <div className='flex-1 min-w-[300px] flex flex-col rounded-xl bg-gray-50/50 dark:bg-white/5 backdrop-blur-sm'>
             <div className='p-4 border-b border-white/20'>
@@ -77,8 +83,8 @@ const KanbanColumn = ({
                 </h2>
             </div>
             <div className='p-4 flex-1 space-y-3 overflow-y-auto max-h-[calc(100vh-250px)]'>
-                {goals.length > 0 ? (
-                    goals.map((goal) => children(goal))
+                {sortedGoals.length > 0 ? (
+                    sortedGoals.map((goal) => children(goal))
                 ) : (
                     <EmptyState title={title} columnType={columnType} />
                 )}
