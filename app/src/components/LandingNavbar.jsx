@@ -54,7 +54,7 @@ const LandingNavbar = ({ hideNavItems = false, customActions = null }) => {
                 className='bg-gradient-to-r from-[#4785FF] to-[#8c52ff] text-white px-4 py-2 rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-blue-500/25 transition-all duration-300 hover:-translate-y-0.5 flex items-center gap-2'
             >
                 <Rocket className='w-4 h-4' />
-                Kostenlos starten
+                Jetzt starten
             </button>
         </div>
     );
@@ -178,7 +178,7 @@ const LandingNavbar = ({ hideNavItems = false, customActions = null }) => {
                                     onClick={() => navigate('/register')}
                                     className='w-full bg-gradient-to-r from-[#4785FF] to-[#8c52ff] text-white px-4 py-2 rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-blue-500/25 transition-all duration-300'
                                 >
-                                    Kostenlos starten
+                                    Jetzt starten
                                 </button>
                             </div>
                         </div>

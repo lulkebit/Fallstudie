@@ -14,6 +14,7 @@ import {
     CalendarClock,
     UserCheck,
     AlertTriangle,
+    Settings,
 } from 'lucide-react';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import GlobalGoalTable from '../components/GlobalGoaltable';
@@ -374,7 +375,7 @@ const AdminPanel = () => {
                 <div className='text-center mb-12'>
                     <div className='flex items-center justify-center gap-2 mb-6'>
                         <div className='h-12 w-12 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center'>
-                            <LayoutDashboard className='h-6 w-6 text-white' />
+                            <Settings className='h-6 w-6 text-white' />
                         </div>
                         <h1 className='text-4xl font-bold text-gray-900 dark:text-white'>
                             Admin Panel

@@ -19,6 +19,11 @@ import {
     ScrollText,
     FileSpreadsheet,
     Cookie,
+    CreditCard,
+    Calendar,
+    BadgeCheck,
+    AlertCircle,
+    RefreshCw,
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import CookieSettingsDialog from '../components/dialogs/CookieSettingsDialog';
@@ -40,11 +45,11 @@ const InputField = React.memo(
                     value={value}
                     onChange={onChange}
                     className='w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-white/5 
-                border border-gray-200 dark:border-white/10
-                focus:border-[#4785FF] focus:ring-2 focus:ring-[#4785FF]/20 dark:focus:ring-[#4785FF]/10 
-                transition-all duration-200 outline-none
-                text-gray-900 dark:text-white
-                placeholder:text-gray-400 dark:placeholder:text-white/40'
+                    border border-gray-200 dark:border-white/10
+                    focus:border-[#4785FF] focus:ring-2 focus:ring-[#4785FF]/20 dark:focus:ring-[#4785FF]/10 
+                    transition-all duration-200 outline-none
+                    text-gray-900 dark:text-white
+                    placeholder:text-gray-400 dark:placeholder:text-white/40'
                 />
             </div>
         </div>
@@ -71,7 +76,7 @@ const QuickAction = ({ icon: Icon, title, description, onClick }) => (
     <button
         onClick={onClick}
         className='w-full p-4 bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-xl border border-gray-200/50 dark:border-white/10
-             hover:shadow-lg dark:shadow-none transition-all duration-300 hover:-translate-y-1 group'
+        hover:shadow-lg dark:shadow-none transition-all duration-300 hover:-translate-y-1 group'
     >
         <div className='flex items-center gap-4'>
             <div className='w-10 h-10 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center'>
@@ -94,14 +99,14 @@ const LegalLink = ({ icon: Icon, title, onClick }) => (
     <button
         onClick={onClick}
         className='flex items-center gap-3 p-3 rounded-xl 
-                 bg-white/50 dark:bg-white/5 
-                 border border-gray-200/50 dark:border-white/10 
-                 hover:bg-white dark:hover:bg-white/10
-                 transition-all duration-200 w-full group'
+                bg-white/50 dark:bg-white/5 
+                border border-gray-200/50 dark:border-white/10 
+                hover:bg-white dark:hover:bg-white/10
+                transition-all duration-200 w-full group'
     >
         <div
             className='w-8 h-8 rounded-lg bg-gradient-to-br from-[#4785FF]/10 to-[#8c52ff]/10 
-                      flex items-center justify-center'
+                    flex items-center justify-center'
         >
             <Icon className='w-4 h-4 text-[#4785FF]' />
         </div>
@@ -110,10 +115,145 @@ const LegalLink = ({ icon: Icon, title, onClick }) => (
         </span>
         <ChevronRight
             className='w-4 h-4 text-gray-400 dark:text-white/40 
-                               group-hover:translate-x-1 transition-transform duration-200'
+                            group-hover:translate-x-1 transition-transform duration-200'
         />
     </button>
 );
+
+const SubscriptionDetails = ({ subscription, onManage, onCancel }) => {
+    const getStatusColor = (status) => {
+        switch (status) {
+            case 'active':
+                return 'text-green-500 bg-green-50 dark:bg-green-500/10';
+            case 'cancelled':
+                return 'text-red-500 bg-red-50 dark:bg-red-500/10';
+            case 'pending':
+                return 'text-yellow-500 bg-yellow-50 dark:bg-yellow-500/10';
+            default:
+                return 'text-gray-500 bg-gray-50 dark:bg-gray-500/10';
+        }
+    };
+
+    const formatDate = (date) => {
+        return new Date(date).toLocaleDateString('de-DE', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+        });
+    };
+
+    return (
+        <div className='space-y-6'>
+            {/* Status Badge */}
+            <div className='flex items-center justify-between'>
+                <div className='flex items-center gap-2'>
+                    <span
+                        className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
+                            subscription.status
+                        )}`}
+                    >
+                        {subscription.status === 'active'
+                            ? 'Aktiv'
+                            : subscription.status === 'cancelled'
+                            ? 'Gekündigt'
+                            : 'Ausstehend'}
+                    </span>
+                    {subscription.status === 'active' && (
+                        <BadgeCheck className='w-5 h-5 text-green-500' />
+                    )}
+                </div>
+                <span className='text-sm text-gray-500 dark:text-white/60'>
+                    Plan: {subscription.plan}
+                </span>
+            </div>
+
+            {/* Subscription Details */}
+            <div className='grid grid-cols-2 gap-4'>
+                <div className='bg-white/50 dark:bg-white/5 rounded-xl p-4 border border-gray-200/50 dark:border-white/10'>
+                    <div className='text-sm text-gray-500 dark:text-white/60 mb-1'>
+                        Nächste Zahlung
+                    </div>
+                    <div className='font-medium text-gray-900 dark:text-white flex items-center gap-2'>
+                        <Calendar className='w-4 h-4 text-[#4785FF]' />
+                        {formatDate(subscription.nextBilling)}
+                    </div>
+                </div>
+                <div className='bg-white/50 dark:bg-white/5 rounded-xl p-4 border border-gray-200/50 dark:border-white/10'>
+                    <div className='text-sm text-gray-500 dark:text-white/60 mb-1'>
+                        Monatlicher Betrag
+                    </div>
+                    <div className='font-medium text-gray-900 dark:text-white flex items-center gap-2'>
+                        <CreditCard className='w-4 h-4 text-[#4785FF]' />
+                        {subscription.amount}€
+                    </div>
+                </div>
+            </div>
+
+            {/* Payment Method */}
+            <div className='bg-white/50 dark:bg-white/5 rounded-xl p-4 border border-gray-200/50 dark:border-white/10'>
+                <div className='flex items-center justify-between'>
+                    <div>
+                        <div className='text-sm text-gray-500 dark:text-white/60 mb-1'>
+                            Zahlungsmethode
+                        </div>
+                        <div className='font-medium text-gray-900 dark:text-white flex items-center gap-2'>
+                            <CreditCard className='w-4 h-4 text-[#4785FF]' />
+                            {subscription.paymentMethod}
+                        </div>
+                    </div>
+                    <button
+                        onClick={onManage}
+                        className='text-sm text-[#4785FF] hover:text-[#6769ff] font-medium'
+                    >
+                        Verwalten
+                    </button>
+                </div>
+            </div>
+
+            {/* Actions */}
+            <div className='space-y-3'>
+                {subscription.status === 'active' ? (
+                    <>
+                        <button
+                            onClick={onManage}
+                            className='w-full py-2.5 px-4 rounded-xl font-medium
+                                     bg-gradient-to-r from-[#4785FF] to-[#8c52ff] text-white
+                                     shadow-lg hover:shadow-xl hover:shadow-blue-500/25 dark:hover:shadow-blue-500/10
+                                     hover:-translate-y-0.5 transition-all duration-200
+                                     flex items-center justify-center gap-2'
+                        >
+                            <CreditCard className='w-5 h-5' />
+                            Zahlungsmethode ändern
+                        </button>
+                        <button
+                            onClick={onCancel}
+                            className='w-full py-2.5 px-4 rounded-xl font-medium
+                                     border border-red-500/50 text-red-500
+                                     hover:bg-red-50 dark:hover:bg-red-500/10
+                                     transition-all duration-200
+                                     flex items-center justify-center gap-2'
+                        >
+                            <AlertCircle className='w-5 h-5' />
+                            Abo kündigen
+                        </button>
+                    </>
+                ) : (
+                    <button
+                        onClick={onManage}
+                        className='w-full py-2.5 px-4 rounded-xl font-medium
+                                 bg-gradient-to-r from-[#4785FF] to-[#8c52ff] text-white
+                                 shadow-lg hover:shadow-xl hover:shadow-blue-500/25 dark:hover:shadow-blue-500/10
+                                 hover:-translate-y-0.5 transition-all duration-200
+                                 flex items-center justify-center gap-2'
+                    >
+                        <RefreshCw className='w-5 h-5' />
+                        Abo verlängern
+                    </button>
+                )}
+            </div>
+        </div>
+    );
+};
 
 const Profile = () => {
     const { user, updateUser } = useContext(UserContext);
@@ -130,6 +270,14 @@ const Profile = () => {
     const [isModified, setIsModified] = useState(false);
     const [avatarFile, setAvatarFile] = useState(null);
     const navigate = useNavigate();
+
+    const [subscription, setSubscription] = useState({
+        status: 'active',
+        plan: 'Pro',
+        nextBilling: '2024-11-29',
+        amount: 9.99,
+        paymentMethod: '•••• •••• •••• 4242',
+    });
 
     useEffect(() => {
         if (user) {
@@ -203,6 +351,14 @@ const Profile = () => {
         } catch (error) {
             addToast('Fehler beim Aktualisieren des Profils', 'error');
         }
+    };
+
+    const handleManageSubscription = () => {
+        addToast('Funktion noch nicht verfügbar', 'info');
+    };
+
+    const handleCancelSubscription = () => {
+        addToast('Funktion noch nicht verfügbar', 'info');
     };
 
     const navigateWithState = (path) => {
@@ -331,6 +487,15 @@ const Profile = () => {
                                 </button>
                             </form>
                         </ProfileSection>
+
+                        {/* Subscription Section */}
+                        <ProfileSection title='Abonnement' icon={CreditCard}>
+                            <SubscriptionDetails
+                                subscription={subscription}
+                                onManage={handleManageSubscription}
+                                onCancel={handleCancelSubscription}
+                            />
+                        </ProfileSection>
                     </div>
 
                     {/* Right Sidebar */}
@@ -365,12 +530,16 @@ const Profile = () => {
                                 <LegalLink
                                     icon={ScrollText}
                                     title='Impressum'
-                                    onClick={() => navigateWithState('/impressum')}
+                                    onClick={() =>
+                                        navigateWithState('/impressum')
+                                    }
                                 />
                                 <LegalLink
                                     icon={Shield}
                                     title='Datenschutz'
-                                    onClick={() => navigateWithState('/datenschutz')}
+                                    onClick={() =>
+                                        navigateWithState('/datenschutz')
+                                    }
                                 />
                                 <LegalLink
                                     icon={FileSpreadsheet}

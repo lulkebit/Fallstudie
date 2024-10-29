@@ -15,6 +15,9 @@ import {
     Sun,
     Moon,
     LogIn,
+    Check,
+    Rocket,
+    Zap,
 } from 'lucide-react';
 import LandingNavbar from '../../components/LandingNavbar';
 
@@ -31,7 +34,6 @@ const InputField = ({
     onTogglePassword,
     onBlur,
 }) => {
-    // Nur Password-Felder sollten den Toggle-Button haben
     const isPasswordField = id === 'password';
 
     return (
@@ -160,6 +162,66 @@ const PasswordStrengthIndicator = ({ password }) => {
     );
 };
 
+const PricingToggle = ({ selectedPlan, onPlanChange }) => {
+    return (
+        <div className='space-y-1.5 mb-8'>
+            <label className='block text-sm font-medium text-gray-700 dark:text-white/70'>
+                Wähle deinen Plan
+            </label>
+            <div className='grid grid-cols-2 gap-4'>
+                <div
+                    className={`cursor-not-allowed p-4 rounded-xl border transition-all duration-200 ${
+                        selectedPlan === 'basic'
+                            ? 'border-[#4785FF] dark:border-[#4785FF] bg-[#4785FF]/5 dark:bg-[#4785FF]/10'
+                            : 'border-gray-200 dark:border-white/10 hover:border-[#4785FF]/50 dark:hover:border-[#4785FF]/50'
+                    }`}
+                >
+                    <div className='flex items-center justify-between mb-2'>
+                        <h3 className='font-semibold text-gray-900 dark:text-white'>
+                            Basic
+                        </h3>
+                        {selectedPlan === 'basic' && (
+                            <Check className='w-5 h-5 text-[#4785FF]' />
+                        )}
+                    </div>
+                    <p className='text-2xl font-bold text-gray-900 dark:text-white mb-4'>
+                        Kostenlos
+                    </p>
+                </div>
+
+                <div
+                    onClick={() => onPlanChange('pro')}
+                    className={`cursor-pointer p-4 rounded-xl border relative transition-all duration-200 ${
+                        selectedPlan === 'pro'
+                            ? 'border-[#4785FF] dark:border-[#4785FF] bg-[#4785FF]/5 dark:bg-[#4785FF]/10'
+                            : 'border-gray-200 dark:border-white/10 hover:border-[#4785FF]/50 dark:hover:border-[#4785FF]/50'
+                    }`}
+                >
+                    <div className='absolute -top-2 -right-2'>
+                        <div className='bg-gradient-to-r from-[#4785FF] to-[#8c52ff] text-white text-xs px-2 py-1 rounded-full'>
+                            Empfohlen
+                        </div>
+                    </div>
+                    <div className='flex items-center justify-between mb-2'>
+                        <h3 className='font-semibold text-gray-900 dark:text-white'>
+                            Pro
+                        </h3>
+                        {selectedPlan === 'pro' && (
+                            <Check className='w-5 h-5 text-[#4785FF]' />
+                        )}
+                    </div>
+                    <p className='text-2xl font-bold text-gray-900 dark:text-white mb-4'>
+                        9,99€{' '}
+                        <span className='text-sm font-normal text-gray-500'>
+                            /Monat
+                        </span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const AuthNavbar = () => {
     const navigate = useNavigate();
     const { isDarkMode, toggleTheme } = useTheme();
@@ -196,6 +258,7 @@ const Register = () => {
         username: '',
         password: '',
     });
+    const [selectedPlan, setSelectedPlan] = useState('pro');
     const [privacyConsent, setPrivacyConsent] = useState(false);
     const [errors, setErrors] = useState({});
     const [touched, setTouched] = useState({
@@ -328,7 +391,6 @@ const Register = () => {
     const registerUser = async (event) => {
         event.preventDefault();
 
-        // Alle Felder als berührt markieren
         setTouched({
             firstname: true,
             lastname: true,
@@ -345,7 +407,10 @@ const Register = () => {
 
         setLoading(true);
         try {
-            const { data: responseData } = await axios.post('/register', data);
+            const { data: responseData } = await axios.post('/register', {
+                ...data,
+                plan: selectedPlan,
+            });
 
             if (responseData.error) {
                 addToast(responseData.error, 'error');
@@ -406,6 +471,12 @@ const Register = () => {
                             </div>
 
                             <form onSubmit={registerUser} className='space-y-5'>
+                                {/* Plan Selection */}
+                                <PricingToggle
+                                    selectedPlan={selectedPlan}
+                                    onPlanChange={setSelectedPlan}
+                                />
+
                                 <div className='grid grid-cols-2 gap-4'>
                                     <InputField
                                         label='Vorname'
@@ -494,6 +565,42 @@ const Register = () => {
                                     />
                                 </div>
 
+                                {selectedPlan === 'pro' && (
+                                    <div className='bg-[#4785FF]/5 dark:bg-[#4785FF]/10 border border-[#4785FF]/20 rounded-xl p-4'>
+                                        <h4 className='font-medium text-gray-900 dark:text-white mb-2'>
+                                            Zahlungsübersicht
+                                        </h4>
+                                        <div className='space-y-2'>
+                                            <div className='flex justify-between text-sm'>
+                                                <span className='text-gray-600 dark:text-white/70'>
+                                                    Pro Plan (Monatlich)
+                                                </span>
+                                                <span className='text-gray-900 dark:text-white font-medium'>
+                                                    8,39€
+                                                </span>
+                                            </div>
+                                            <div className='flex justify-between text-sm'>
+                                                <span className='text-gray-600 dark:text-white/70'>
+                                                    MwSt. (19%)
+                                                </span>
+                                                <span className='text-gray-900 dark:text-white font-medium'>
+                                                    1,60€
+                                                </span>
+                                            </div>
+                                            <div className='border-t border-[#4785FF]/20 pt-2 mt-2'>
+                                                <div className='flex justify-between'>
+                                                    <span className='font-medium text-gray-900 dark:text-white'>
+                                                        Gesamt
+                                                    </span>
+                                                    <span className='font-medium text-gray-900 dark:text-white'>
+                                                        9,99€
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
                                 <div className='flex items-start'>
                                     <div className='flex items-center h-5'>
                                         <input
@@ -520,10 +627,7 @@ const Register = () => {
                                         />
                                     </div>
                                     <div className='ml-3 text-sm'>
-                                        <label
-                                            htmlFor='privacyConsent'
-                                            className='font-medium text-gray-700 dark:text-white/70'
-                                        >
+                                        <label className='font-medium text-gray-700 dark:text-white/70'>
                                             Ich stimme den{' '}
                                             <Link
                                                 to='/datenschutz'
@@ -555,7 +659,9 @@ const Register = () => {
                                     ) : (
                                         <>
                                             <UserPlus className='h-5 w-5' />
-                                            Registrieren
+                                            Registrieren{' '}
+                                            {selectedPlan === 'pro' &&
+                                                '& Bezahlen'}
                                         </>
                                     )}
                                 </button>
