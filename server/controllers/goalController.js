@@ -244,7 +244,7 @@ const getPublicGoalsOfFriend = async (req, res) => {
         logger.info(
             texts.INFO.PUBLIC_GOALS_RETRIEVED(publicGoals.length, friendId)
         );
-        res.status(200).json(publicGoals.length);
+        res.status(200).json(publicGoals);
     } catch (error) {
         logger.error(
             texts.ERRORS.ERROR('retrieving public goals of friend', error)
