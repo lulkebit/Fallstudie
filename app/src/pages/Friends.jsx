@@ -16,7 +16,6 @@ import { useDialog } from '../context/DialogContext';
 import ConfirmationDialog from '../components/dialogs/ConfirmationDialog';
 import FriendGoalsDialog from '../components/dialogs/FriendGoalsDialog';
 import Loader from '../components/Loader';
-import Waves from '../components/Waves';
 import { FriendCard, FriendRequestCard } from '../components/FriendRequestCard';
 
 const FriendsMetric = ({ title, value, icon: Icon }) => (

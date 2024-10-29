@@ -15,7 +15,6 @@ import {
 } from 'lucide-react';
 import Loader from '../components/Loader';
 import Navbar from '../components/Navbar';
-import Waves from '../components/Waves';
 
 const GlobalMetric = ({ title, value, icon: Icon, change }) => (
     <div className='bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-white/10 p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1'>
