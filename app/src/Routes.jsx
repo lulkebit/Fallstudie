@@ -41,6 +41,7 @@ function MyRoutes() {
                 <Route path='/datenschutz' element={<Privacy />} />
                 <Route path='/agb' element={<Terms />} />
                 <Route path='/kontakt' element={<Kontakt />} />
+                <Route path='/loading' element={<LoadingPage />} /> {/* Dient zur Präsentation */}
                 <Route
                     path='/login'
                     element={
