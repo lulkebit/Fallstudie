@@ -313,7 +313,7 @@ const PublicSwitch = ({ checked, onChange }) => (
             <div className='flex items-center gap-2'>
                 <Eye className='h-5 w-5 text-gray-400' />
                 <span className='text-sm font-medium text-gray-700 dark:text-white/70'>
-                    Öffentlich machen
+                    Öffentlich
                 </span>
             </div>
         </CustomCheckbox>
