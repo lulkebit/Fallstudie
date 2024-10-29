@@ -1,6 +1,6 @@
 const User = require('../models/user');
 const GlobalGoal = require('../models/globalGoal');
-const PageView = require('../models/pageView');
+const { getPageViewStats } = require('../middleware/pageViewMiddleware');
 
 exports.getAllUserGoals = async (req, res) => {
     try {
@@ -78,137 +78,145 @@ exports.deleteUserGoal = async (req, res) => {
 
 exports.getAdminStats = async (req, res) => {
     try {
-        let totalUsers, totalGlobalGoals, users, globalGoals, pageViewCount;
+        // Einzelne Try-Catch-Blöcke für besseres Error Handling
+        let stats = {};
 
+        // 1. Basis Nutzer Statistiken
         try {
-            totalUsers = await User.countDocuments();
+            const users = await User.find();
+            stats.totalUsers = users.length;
+
+            const activeUsers = users.filter(
+                (user) => user.goals && user.goals.length > 0
+            );
+            stats.activeUsers = activeUsers.length;
+
+            const totalUserGoals = users.reduce(
+                (sum, user) => sum + (user.goals ? user.goals.length : 0),
+                0
+            );
+            stats.totalUserGoals = totalUserGoals;
+
+            stats.averageGoalsPerUser =
+                totalUserGoals > 0
+                    ? (totalUserGoals / users.length).toFixed(2)
+                    : 0;
+
+            const completedUserGoals = users.reduce(
+                (sum, user) =>
+                    sum +
+                    (user.goals
+                        ? user.goals.filter(
+                              (goal) => goal.status === 'completed'
+                          ).length
+                        : 0),
+                0
+            );
+            stats.completedUserGoals = completedUserGoals;
+
+            stats.completionRate =
+                totalUserGoals > 0
+                    ? ((completedUserGoals / totalUserGoals) * 100).toFixed(2)
+                    : 0;
         } catch (error) {
-            throw error;
+            console.error('Error fetching user statistics:', error);
+            stats.userError = 'Error fetching user statistics';
         }
 
+        // 2. Globale Ziele Statistiken
         try {
-            totalGlobalGoals = await GlobalGoal.countDocuments();
-        } catch (error) {
-            throw error;
-        }
+            const globalGoals = await GlobalGoal.find();
+            stats.totalGlobalGoals = globalGoals.length;
 
-        try {
-            users = await User.find().sort({ createdAt: -1 });
-        } catch (error) {
-            throw error;
-        }
+            // Most popular global goal
+            let mostPopularGlobalGoal = {
+                title: 'N/A',
+                participationCount: 0,
+                targetValue: 0,
+                currentValue: 0,
+                unit: 'Fortschritt',
+            };
 
-        try {
-            pageViewCount = await PageView.findOne();
-        } catch (error) {
-            throw error;
-        }
+            if (globalGoals.length > 0) {
+                const uncompletedGoals = globalGoals.filter((goal) => {
+                    const progress =
+                        (goal.currentValue / goal.targetValue) * 100;
+                    return progress < 100;
+                });
 
-        const totalUserGoals = users.reduce(
-            (sum, user) => sum + (user.goals ? user.goals.length : 0),
-            0
-        );
-
-        const activeUsers = users.filter(
-            (user) => user.goals && user.goals.length > 0
-        ).length;
-
-        const averageGoalsPerUser =
-            totalUsers > 0 ? totalUserGoals / totalUsers : 0;
-
-        const completedUserGoals = users.reduce(
-            (sum, user) =>
-                sum +
-                (user.goals
-                    ? user.goals.filter((goal) => goal.status === 'completed')
-                          .length
-                    : 0),
-            0
-        );
-
-        const completionRate =
-            totalUserGoals > 0
-                ? (completedUserGoals / totalUserGoals) * 100
-                : 0;
-
-        try {
-            globalGoals = await GlobalGoal.find();
-        } catch (error) {
-            throw error;
-        }
-
-        let mostPopularGlobalGoal = {
-            title: 'N/A',
-            participationCount: 0,
-            targetValue: 0,
-            currentValue: 0,
-        };
-        if (globalGoals.length > 0) {
-            const uncompletedGoals = globalGoals.filter((goal) => {
-                const progress = (goal.currentValue / goal.targetValue) * 100;
-                return progress < 100;
-            });
-
-            if (uncompletedGoals.length > 0) {
-                mostPopularGlobalGoal = uncompletedGoals.reduce(
-                    (prev, current) =>
-                        (prev.participationCount || 0) >
-                        (current.participationCount || 0)
-                            ? prev
-                            : current
-                );
+                if (uncompletedGoals.length > 0) {
+                    mostPopularGlobalGoal = uncompletedGoals.reduce(
+                        (prev, current) =>
+                            (prev.participationCount || 0) >
+                            (current.participationCount || 0)
+                                ? prev
+                                : current
+                    );
+                }
             }
-        }
 
-        const now = new Date();
-        const oneWeekFromNow = new Date(
-            now.getTime() + 7 * 24 * 60 * 60 * 1000
-        );
-
-        const upcomingGoals = users.reduce((goals, user) => {
-            if (user.goals) {
-                const userUpcomingGoals = user.goals
-                    .filter(
-                        (goal) =>
-                            goal.endDate &&
-                            goal.endDate > now &&
-                            goal.endDate <= oneWeekFromNow
-                    )
-                    .map((goal) => ({
-                        avatar: user.avatar,
-                        username: user.username,
-                        title: goal.title,
-                        endDate: goal.endDate,
-                    }));
-                return [...goals, ...userUpcomingGoals];
-            }
-            return goals;
-        }, []);
-
-        upcomingGoals.sort((a, b) => a.endDate - b.endDate);
-
-        const stats = {
-            totalUsers,
-            totalGlobalGoals,
-            totalUserGoals,
-            activeUsers,
-            averageGoalsPerUser: averageGoalsPerUser.toFixed(2),
-            completedUserGoals,
-            completionRate: completionRate.toFixed(2),
-            mostPopularGlobalGoal: {
+            stats.mostPopularGlobalGoal = {
                 title: mostPopularGlobalGoal.title,
                 participationCount:
                     mostPopularGlobalGoal.participationCount || 0,
                 targetValue: mostPopularGlobalGoal.targetValue || 0,
                 currentValue: mostPopularGlobalGoal.currentValue || 0,
                 unit: mostPopularGlobalGoal.unit || 'Fortschritt',
-            },
-            upcomingGoals,
-            pageViewCount: pageViewCount.count,
-        };
+            };
+        } catch (error) {
+            console.error('Error fetching global goals statistics:', error);
+            stats.globalGoalsError = 'Error fetching global goals statistics';
+        }
+
+        // 3. Upcoming Goals
+        try {
+            const now = new Date();
+            const oneWeekFromNow = new Date(
+                now.getTime() + 7 * 24 * 60 * 60 * 1000
+            );
+
+            const users = await User.find();
+            const upcomingGoals = users.reduce((goals, user) => {
+                if (user.goals) {
+                    const userUpcomingGoals = user.goals
+                        .filter(
+                            (goal) =>
+                                goal.endDate &&
+                                goal.endDate > now &&
+                                goal.endDate <= oneWeekFromNow
+                        )
+                        .map((goal) => ({
+                            avatar: user.avatar,
+                            username: user.username,
+                            title: goal.title,
+                            endDate: goal.endDate,
+                        }));
+                    return [...goals, ...userUpcomingGoals];
+                }
+                return goals;
+            }, []);
+
+            upcomingGoals.sort((a, b) => a.endDate - b.endDate);
+            stats.upcomingGoals = upcomingGoals;
+        } catch (error) {
+            console.error('Error fetching upcoming goals:', error);
+            stats.upcomingGoalsError = 'Error fetching upcoming goals';
+        }
+
+        // 4. Page View Statistics
+        try {
+            const pageViewStats = await getPageViewStats();
+            stats.pageViewCount = pageViewStats.pageViewCount;
+            stats.pageViewsData = pageViewStats.pageViewsData;
+        } catch (error) {
+            console.error('Error fetching page view statistics:', error);
+            stats.pageViewsData = [];
+            stats.pageViewCount = 0;
+        }
 
         res.json(stats);
     } catch (error) {
+        console.error('Error in getAdminStats:', error);
         res.status(500).json({
             message: 'Error fetching admin statistics',
             error: error.message,

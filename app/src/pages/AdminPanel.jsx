@@ -23,6 +23,7 @@ import UserGrowthTimeline from '../components/UserGrowthTimeline';
 import Navbar from '../components/Navbar';
 import { Pie } from 'recharts';
 import StatCard from '../components/StatCard';
+import PageViewsChart from '../components/PageViewChart';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -170,8 +171,15 @@ const AdminPanel = () => {
 
         return (
             <div className='space-y-8'>
-                {/* Metrics Grid */}
-                <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6'>
+                {/* Page Views Section - Now Larger and First */}
+                <div className='bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-white/10 p-6'>
+                    <div className='h-[400px]'>
+                        <PageViewsChart data={stats?.pageViewsData} />
+                    </div>
+                </div>
+
+                {/* Key Metrics Grid - Now 2x2 */}
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                     <AdminMetric
                         title='Gesamtnutzer'
                         value={stats.totalUsers}
@@ -196,13 +204,6 @@ const AdminPanel = () => {
                         title='Ø Ziele pro Nutzer'
                         value={stats.averageGoalsPerUser}
                         icon={Target}
-                    />
-                    <AdminMetric
-                        title='Seitenaufrufe'
-                        value={stats.pageViewCount}
-                        icon={LayoutDashboard}
-                        change='8'
-                        trendUp={true}
                     />
                 </div>
 

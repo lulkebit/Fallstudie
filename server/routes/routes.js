@@ -66,10 +66,7 @@ const {
     getAdminStats,
     getUserGrowthStats,
 } = require('../controllers/adminGoalController');
-const {
-    getPageViewCount,
-    trackPageView,
-} = require('../middleware/pageViewMiddleware');
+const { trackPageView } = require('../middleware/pageViewMiddleware');
 
 /**
  * CORS-Konfiguration
@@ -185,7 +182,5 @@ router.delete('/admin/goals/:goalId', deleteUserGoal);
 router.get('/admin/stats', getAdminStats);
 
 router.get('/user-growth', getUserGrowthStats);
-
-router.get('/page-views', getPageViewCount);
 
 module.exports = router;
