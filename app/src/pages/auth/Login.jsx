@@ -29,56 +29,63 @@ const InputField = ({
     showPassword,
     onTogglePassword,
     onBlur,
-}) => (
-    <div className='space-y-1.5'>
-        <label
-            htmlFor={id}
-            className='block text-sm font-medium text-gray-700 dark:text-white/70'
-        >
-            {label}
-        </label>
-        <div className='relative'>
-            <div className='absolute inset-y-0 left-0 flex items-center pl-3'>
-                <Icon className='h-5 w-5 text-gray-400' />
+}) => {
+    // Nur Password-Felder sollten den Toggle-Button haben
+    const isPasswordField = id === 'password';
+
+    return (
+        <div className='space-y-1.5'>
+            <label
+                htmlFor={id}
+                className='block text-sm font-medium text-gray-700 dark:text-white/70'
+            >
+                {label}
+            </label>
+            <div className='relative'>
+                <div className='absolute inset-y-0 left-0 flex items-center pl-3'>
+                    <Icon className='h-5 w-5 text-gray-400' />
+                </div>
+                <input
+                    id={id}
+                    name={id}
+                    type={type}
+                    value={value}
+                    onChange={onChange}
+                    onBlur={onBlur}
+                    placeholder={placeholder}
+                    className={`w-full pl-10 ${
+                        isPasswordField ? 'pr-12' : 'pr-4'
+                    } py-2.5 bg-white dark:bg-white/5 border rounded-xl
+                             text-gray-900 dark:text-white text-sm placeholder:text-gray-400 dark:placeholder:text-white/40
+                             focus:ring-2 focus:ring-[#4785FF] focus:border-transparent dark:focus:ring-[#4785FF]/50
+                             transition-all duration-200 ${
+                                 error
+                                     ? 'border-red-500 dark:border-red-500/50'
+                                     : 'border-gray-200 dark:border-white/10'
+                             }`}
+                />
+                {isPasswordField && (
+                    <button
+                        type='button'
+                        onClick={onTogglePassword}
+                        className='absolute inset-y-0 right-0 flex items-center pr-3'
+                    >
+                        {showPassword ? (
+                            <EyeOff className='h-5 w-5 text-gray-400 hover:text-gray-600 dark:text-white/40 dark:hover:text-white/60' />
+                        ) : (
+                            <Eye className='h-5 w-5 text-gray-400 hover:text-gray-600 dark:text-white/40 dark:hover:text-white/60' />
+                        )}
+                    </button>
+                )}
             </div>
-            <input
-                id={id}
-                name={id}
-                type={type}
-                value={value}
-                onChange={onChange}
-                onBlur={onBlur}
-                placeholder={placeholder}
-                className={`w-full pl-10 pr-12 py-2.5 bg-white dark:bg-white/5 border rounded-xl
-                         text-gray-900 dark:text-white text-sm placeholder:text-gray-400 dark:placeholder:text-white/40
-                         focus:ring-2 focus:ring-[#4785FF] focus:border-transparent dark:focus:ring-[#4785FF]/50
-                         transition-all duration-200 ${
-                             error
-                                 ? 'border-red-500 dark:border-red-500/50'
-                                 : 'border-gray-200 dark:border-white/10'
-                         }`}
-            />
-            {type === 'password' && (
-                <button
-                    type='button'
-                    onClick={onTogglePassword}
-                    className='absolute inset-y-0 right-0 flex items-center pr-3'
-                >
-                    {showPassword ? (
-                        <EyeOff className='h-5 w-5 text-gray-400 hover:text-gray-600 dark:text-white/40 dark:hover:text-white/60' />
-                    ) : (
-                        <Eye className='h-5 w-5 text-gray-400 hover:text-gray-600 dark:text-white/40 dark:hover:text-white/60' />
-                    )}
-                </button>
+            {error && (
+                <p className='text-sm text-red-500 dark:text-red-400 mt-1'>
+                    {error}
+                </p>
             )}
         </div>
-        {error && (
-            <p className='text-sm text-red-500 dark:text-red-400 mt-1'>
-                {error}
-            </p>
-        )}
-    </div>
-);
+    );
+};
 
 const AuthNavbar = () => {
     const navigate = useNavigate();
