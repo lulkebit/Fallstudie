@@ -14,6 +14,7 @@ import {
     Flag,
     MoveHorizontal,
     ChevronDown,
+    Save,
 } from 'lucide-react';
 import DialogContainer from '../containers/DialogContainer';
 
@@ -556,9 +557,10 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
 
             <div
                 className='relative bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200/50 
-                          dark:border-white/10 shadow-xl w-full max-w-3xl mx-auto'
+                          dark:border-white/10 shadow-xl w-full max-w-5xl mx-auto h-[800px] flex flex-col'
             >
-                <div className='p-6 border-b border-gray-200/50'>
+                {/* Header - Static */}
+                <div className='flex-none p-6 border-b border-gray-200/50'>
                     <div className='flex justify-between items-center mb-6'>
                         <div className='flex items-center gap-4'>
                             <div className='w-12 h-12 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center'>
@@ -578,8 +580,7 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                         </div>
                         <button
                             onClick={onClose}
-                            className='p-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-xl 
-                                     transition-colors duration-200'
+                            className='p-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-xl transition-colors duration-200'
                         >
                             <X className='h-5 w-5 text-gray-400 dark:text-white/40' />
                         </button>
@@ -589,8 +590,7 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                         {steps.map((step, index) => (
                             <React.Fragment key={step.title}>
                                 <div
-                                    className={`flex items-center gap-2 
-                                    ${
+                                    className={`flex items-center gap-2 ${
                                         index <= currentStep
                                             ? 'text-[#4785FF]'
                                             : 'text-gray-400 dark:text-white/40'
@@ -612,8 +612,7 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                                 </div>
                                 {index < steps.length - 1 && (
                                     <div
-                                        className={`flex-grow h-0.5 
-                                        ${
+                                        className={`flex-grow h-0.5 ${
                                             index < currentStep
                                                 ? 'bg-gradient-to-r from-[#4785FF] to-[#8c52ff]'
                                                 : 'bg-gray-200 dark:bg-white/10'
@@ -625,15 +624,17 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                     </div>
                 </div>
 
-                <div className='p-6'>{renderStepContent(currentStep)}</div>
+                <div className='flex-1 p-6'>
+                    {renderStepContent(currentStep)}
+                </div>
 
-                <div className='p-6 border-t border-gray-200/50 dark:border-white/10'>
+                {/* Footer - Static */}
+                <div className='flex-none p-6 border-t border-gray-200/50 dark:border-white/10 bg-white/70 dark:bg-white/5 backdrop-blur-sm'>
                     <div className='flex justify-between items-center'>
                         <button
                             onClick={handlePrevious}
                             disabled={currentStep === 0}
-                            className={`px-6 py-3 rounded-xl font-medium transition-all duration-200 
-                                      flex items-center gap-2
+                            className={`px-6 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-2
                                 ${
                                     currentStep === 0
                                         ? 'opacity-50 cursor-not-allowed text-gray-400 dark:text-white/40'
@@ -647,21 +648,19 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                         {currentStep === steps.length - 1 ? (
                             <button
                                 onClick={handleSave}
-                                className='px-6 py-3 bg-gradient-to-r from-[#4785FF] to-[#8c52ff] 
-                                         text-white rounded-xl font-medium shadow-lg 
-                                         hover:shadow-xl hover:shadow-blue-500/25 dark:hover:shadow-blue-500/10
-                                         transition-all duration-200 hover:-translate-y-0.5'
+                                className='px-6 py-3 bg-gradient-to-r from-[#4785FF] to-[#8c52ff] text-white rounded-xl font-medium shadow-lg 
+                                hover:shadow-xl hover:shadow-blue-500/25 dark:hover:shadow-blue-500/10
+                                transition-all duration-200 hover:-translate-y-0.5 flex items-center gap-2'
                             >
+                                <Save className='h-5 w-5' />
                                 Speichern
                             </button>
                         ) : (
                             <button
                                 onClick={handleNext}
-                                className='px-6 py-3 bg-gradient-to-r from-[#4785FF] to-[#8c52ff] 
-                                         text-white rounded-xl font-medium shadow-lg 
+                                className='px-6 py-3 bg-gradient-to-r from-[#4785FF] to-[#8c52ff] text-white rounded-xl font-medium shadow-lg 
                                          hover:shadow-xl hover:shadow-blue-500/25 dark:hover:shadow-blue-500/10
-                                         transition-all duration-200 hover:-translate-y-0.5
-                                         flex items-center gap-2'
+                                         transition-all duration-200 hover:-translate-y-0.5 flex items-center gap-2'
                             >
                                 Weiter
                                 <ChevronRight className='h-5 w-5' />
