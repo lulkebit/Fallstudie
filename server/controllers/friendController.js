@@ -40,20 +40,46 @@ const sendFriendRequest = async (req, res) => {
             return res.status(404).json({ error: texts.ERRORS.USER_NOT_FOUND });
         }
 
-        const existingRequest = await Friend.findOne({
-            userId,
-            friendId: friend._id,
-            status: { $in: ['pending', 'accepted'] },
+        // Suche nach ALLEN existierenden Freundschaftsanfragen zwischen den Benutzern
+        const allRequests = await Friend.find({
+            $or: [
+                { userId: userId, friendId: friend._id },
+                { userId: friend._id, friendId: userId },
+            ],
         });
-        if (existingRequest) {
-            logger.warn(
-                texts.WARNINGS.FRIEND_REQUEST_ALREADY_EXISTS(userId, friend._id)
-            );
-            return res
-                .status(400)
-                .json({ error: texts.ERRORS.FRIEND_REQUEST_ALREADY_SENT });
+
+        logger.info(
+            `Gefundene Anfragen zwischen ${userId} und ${
+                friend._id
+            }: ${JSON.stringify(allRequests)}`
+        );
+
+        // Wenn Anfragen existieren, prüfe deren Status
+        if (allRequests.length > 0) {
+            const latestRequest = allRequests[allRequests.length - 1];
+            logger.info(`Letzte Anfrage Status: ${latestRequest.status}`);
+
+            // Wenn die letzte Anfrage abgelehnt wurde, lösche alle alten Anfragen
+            if (latestRequest.status === 'declined') {
+                logger.info('Lösche alte abgelehnte Anfragen...');
+                await Friend.deleteMany({
+                    $or: [
+                        { userId: userId, friendId: friend._id },
+                        { userId: friend._id, friendId: userId },
+                    ],
+                });
+            } else if (['pending', 'accepted'].includes(latestRequest.status)) {
+                logger.warn(
+                    `Aktive Anfrage gefunden mit Status: ${latestRequest.status}`
+                );
+                return res
+                    .status(400)
+                    .json({ error: texts.ERRORS.FRIEND_REQUEST_ALREADY_SENT });
+            }
         }
 
+        // Erstelle neue Freundschaftsanfrage
+        logger.info('Erstelle neue Freundschaftsanfrage...');
         const friendRequest = new Friend({ userId, friendId: friend._id });
         await friendRequest.save();
         logger.info(texts.INFO.FRIEND_REQUEST_SAVED(userId, friend._id));
@@ -168,8 +194,8 @@ const declineFriendRequest = async (req, res) => {
                 .json({ error: texts.ERRORS.FRIEND_REQUEST_NOT_FOUND });
         }
 
-        friendRequest.status = 'declined';
-        await friendRequest.save();
+        // Lösche die Freundschaftsanfrage anstatt sie auf 'declined' zu setzen
+        await Friend.deleteOne({ _id: requestId });
 
         const user = await User.findById(friendRequest.userId);
         const friend = await User.findById(friendRequest.friendId);
@@ -183,7 +209,9 @@ const declineFriendRequest = async (req, res) => {
         });
 
         logger.info(texts.SUCCESS.FRIEND_REQUEST_DECLINED);
-        res.status(200).json(friendRequest);
+        res.status(200).json({
+            message: 'Freundschaftsanfrage erfolgreich abgelehnt',
+        });
     } catch (error) {
         logger.error(texts.ERRORS.ERROR('declining friend request', error));
         res.status(500).json({ error: texts.ERRORS.DECLINE_FRIEND_REQUEST });
