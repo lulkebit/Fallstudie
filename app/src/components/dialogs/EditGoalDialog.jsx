@@ -12,10 +12,11 @@ import {
     ChevronLeft,
     ChevronRight,
     Flag,
+    Users,
+    MoveHorizontal,
 } from 'lucide-react';
 import DialogContainer from '../containers/DialogContainer';
 
-// Constants bleiben gleich
 const CATEGORIES = [
     'Gesundheit',
     'Fitness',
@@ -29,7 +30,6 @@ const CATEGORIES = [
     'Sonstiges',
 ];
 
-const REMINDER_TYPES = ['Täglich', 'Wöchentlich', 'Monatlich'];
 const DIRECTIONS = [
     'Erhöhen',
     'Reduzieren',
@@ -37,6 +37,7 @@ const DIRECTIONS = [
     'Erreichen',
     'Sonstiges',
 ];
+
 const UNITS = [
     'Kilogramm',
     'Stunden',
@@ -46,7 +47,6 @@ const UNITS = [
     'Sonstiges',
 ];
 
-// useForm Hook bleibt gleich
 const useForm = (initialState, onChangeCallback) => {
     const [formData, setFormData] = useState(initialState);
     const [errors, setErrors] = useState({});
@@ -92,7 +92,6 @@ const useForm = (initialState, onChangeCallback) => {
     };
 };
 
-// InputField Component
 const InputField = React.memo(
     ({
         label,
@@ -121,16 +120,11 @@ const InputField = React.memo(
                         name={id}
                         value={value}
                         onChange={onChange}
-                        className={`w-full pl-10 pr-4 py-3 rounded-xl bg-white/50 dark:bg-white/5 border 
-                              ${
-                                  error
-                                      ? 'border-red-500 dark:border-red-500/50'
-                                      : 'border-gray-200/50 dark:border-white/10'
-                              } 
-                              focus:border-[#4785FF] focus:ring-2 focus:ring-[#4785FF]/20 dark:focus:ring-[#4785FF]/10 
-                              transition-all duration-200 outline-none backdrop-blur-sm
-                              text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40`}
-                        placeholder={`${label} eingeben`}
+                        className='w-full pl-10 pr-4 py-3 rounded-xl bg-white/50 dark:bg-white/5 border 
+                                border-gray-200/50 dark:border-white/10 
+                                focus:border-[#4785FF] focus:ring-2 focus:ring-[#4785FF]/20 
+                                transition-all duration-200 outline-none backdrop-blur-sm
+                                text-gray-900 dark:text-white'
                         rows={3}
                     />
                 ) : type === 'select' ? (
@@ -139,25 +133,15 @@ const InputField = React.memo(
                         name={id}
                         value={value}
                         onChange={onChange}
-                        className={`w-full pl-10 pr-4 py-3 rounded-xl bg-white/50 dark:bg-white/5 border 
-                              ${
-                                  error
-                                      ? 'border-red-500 dark:border-red-500/50'
-                                      : 'border-gray-200/50 dark:border-white/10'
-                              } 
-                              focus:border-[#4785FF] focus:ring-2 focus:ring-[#4785FF]/20 dark:focus:ring-[#4785FF]/10 
-                              transition-all duration-200 outline-none appearance-none backdrop-blur-sm
-                              text-gray-900 dark:text-white`}
+                        className='w-full pl-10 pr-4 py-3 rounded-xl bg-white/50 dark:bg-white/5 border 
+                                border-gray-200/50 dark:border-white/10 
+                                focus:border-[#4785FF] focus:ring-2 focus:ring-[#4785FF]/20
+                                transition-all duration-200 outline-none appearance-none backdrop-blur-sm
+                                text-gray-900 dark:text-white'
                     >
-                        <option value='' className='dark:bg-gray-800'>
-                            Bitte auswählen
-                        </option>
+                        <option value=''>Bitte auswählen</option>
                         {options.map((option) => (
-                            <option
-                                key={option}
-                                value={option}
-                                className='dark:bg-gray-800'
-                            >
+                            <option key={option} value={option}>
                                 {option}
                             </option>
                         ))}
@@ -169,77 +153,34 @@ const InputField = React.memo(
                         name={id}
                         value={value}
                         onChange={onChange}
-                        className={`w-full pl-10 pr-4 py-3 rounded-xl bg-white/50 dark:bg-white/5 border 
-                              ${
-                                  error
-                                      ? 'border-red-500 dark:border-red-500/50'
-                                      : 'border-gray-200/50 dark:border-white/10'
-                              } 
-                              focus:border-[#4785FF] focus:ring-2 focus:ring-[#4785FF]/20 dark:focus:ring-[#4785FF]/10 
-                              transition-all duration-200 outline-none backdrop-blur-sm
-                              text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40`}
-                        placeholder={`${label} eingeben`}
+                        className='w-full pl-10 pr-4 py-3 rounded-xl bg-white/50 dark:bg-white/5 border 
+                                border-gray-200/50 dark:border-white/10 
+                                focus:border-[#4785FF] focus:ring-2 focus:ring-[#4785FF]/20
+                                transition-all duration-200 outline-none backdrop-blur-sm
+                                text-gray-900 dark:text-white'
                     />
                 )}
             </div>
-            {error && (
-                <p className='text-sm text-red-500 dark:text-red-400'>
-                    {error}
-                </p>
-            )}
+            {error && <p className='text-sm text-red-500'>{error}</p>}
         </div>
     )
 );
 
-// ProgressInput Component
-const ProgressInput = ({ value, onChange }) => (
-    <div className='space-y-4'>
-        <div className='flex justify-between items-center'>
-            <label className='block text-sm font-medium text-gray-700 dark:text-white/70'>
-                Fortschritt
-            </label>
-            <span className='text-transparent bg-clip-text bg-gradient-to-r from-[#4785FF] to-[#8c52ff] font-medium'>
-                {value}%
-            </span>
-        </div>
-        <input
-            type='range'
-            id='progress'
-            name='progress'
-            value={value}
-            onChange={onChange}
-            className='w-full h-2 bg-gray-200 dark:bg-white/10 rounded-full appearance-none cursor-pointer
-                    [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 
-                    [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-gradient-to-r 
-                    [&::-webkit-slider-thumb]:from-[#4785FF] [&::-webkit-slider-thumb]:to-[#8c52ff]
-                    [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:cursor-pointer
-                    [&::-webkit-slider-thumb]:shadow-lg'
-            min='0'
-            max='100'
-        />
-    </div>
-);
-
-// PublicSwitch Component
 const PublicSwitch = ({ checked, onChange }) => (
-    <div
-        className='flex items-center gap-3 p-4 bg-white/30 dark:bg-white/5 rounded-xl
-                    border border-gray-200/50 dark:border-white/10 backdrop-blur-sm'
-    >
+    <div className='flex items-center gap-3 p-4 bg-white/30 dark:bg-white/5 rounded-xl border border-gray-200/50'>
         <input
             type='checkbox'
             id='public'
             name='public'
             checked={checked}
             onChange={onChange}
-            className='w-4 h-4 text-[#4785FF] border-gray-300 dark:border-white/10 rounded 
-                     focus:ring-[#4785FF] dark:bg-white/5'
+            className='w-4 h-4 text-[#4785FF] border-gray-300 rounded'
         />
         <div className='flex items-center gap-2'>
-            <Eye className='h-5 w-5 text-gray-400 dark:text-white/40' />
+            <Eye className='h-5 w-5 text-gray-400' />
             <label
                 htmlFor='public'
-                className='text-sm font-medium text-gray-700 dark:text-white/70'
+                className='text-sm font-medium text-gray-700'
             >
                 Öffentlich machen
             </label>
@@ -256,10 +197,22 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
             title: 'Grundinformationen',
             fields: ['title', 'category', 'description'],
         },
-        { title: 'Zeitrahmen', fields: ['startDate', 'endDate'] },
-        { title: 'Zieldetails', fields: ['targetValue', 'unit', 'direction'] },
-        { title: 'Erinnerungen', fields: ['reminderType'] },
-        { title: 'Fortschritt und Sichtbarkeit', fields: [] },
+        {
+            title: 'Zeitrahmen',
+            fields: ['startDate', 'endDate'],
+        },
+        {
+            title: 'Zieldetails',
+            fields: ['targetValue', 'currentValue', 'unit', 'direction'],
+        },
+        {
+            title: 'Tracking',
+            fields: ['reminderInterval', 'stepSize'],
+        },
+        {
+            title: 'Teilnahme',
+            fields: ['public', 'participationCount'],
+        },
     ];
 
     const {
@@ -271,18 +224,19 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
         validateFields,
     } = useForm(
         {
-            id: null,
             title: '',
-            startDate: '',
-            endDate: '',
-            targetValue: '',
-            unit: '',
-            direction: '',
-            reminderType: '',
             description: '',
             category: '',
-            progress: 0,
+            startDate: '',
+            endDate: '',
             public: false,
+            targetValue: '',
+            currentValue: 0,
+            unit: '',
+            direction: '',
+            reminderInterval: 1,
+            stepSize: 1,
+            participationCount: 0,
         },
         setEditedGoal
     );
@@ -358,7 +312,7 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                 return (
                     <div className='space-y-6'>
                         <InputField
-                            label='Start'
+                            label='Startdatum'
                             id='startDate'
                             value={formData.startDate}
                             type='date'
@@ -367,7 +321,7 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                             error={errors.startDate}
                         />
                         <InputField
-                            label='Ende'
+                            label='Enddatum'
                             id='endDate'
                             value={formData.endDate}
                             type='date'
@@ -388,6 +342,15 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                             icon={Target}
                             onChange={handleInputChange}
                             error={errors.targetValue}
+                        />
+                        <InputField
+                            label='Aktueller Wert'
+                            id='currentValue'
+                            value={formData.currentValue}
+                            type='number'
+                            icon={Target}
+                            onChange={handleInputChange}
+                            error={errors.currentValue}
                         />
                         <InputField
                             label='Einheit'
@@ -415,27 +378,40 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                 return (
                     <div className='space-y-6'>
                         <InputField
-                            label='Erinnerungsintervall'
-                            id='reminderType'
-                            value={formData.reminderType}
-                            type='select'
+                            label='Erinnerungsintervall (in Tagen)'
+                            id='reminderInterval'
+                            value={formData.reminderInterval}
+                            type='number'
                             icon={Bell}
-                            options={REMINDER_TYPES}
                             onChange={handleInputChange}
-                            error={errors.reminderType}
+                            error={errors.reminderInterval}
+                        />
+                        <InputField
+                            label='Schrittgröße'
+                            id='stepSize'
+                            value={formData.stepSize}
+                            type='number'
+                            icon={MoveHorizontal}
+                            onChange={handleInputChange}
+                            error={errors.stepSize}
                         />
                     </div>
                 );
             case 4:
                 return (
                     <div className='space-y-6'>
-                        <ProgressInput
-                            value={formData.progress}
-                            onChange={handleInputChange}
-                        />
                         <PublicSwitch
                             checked={formData.public}
                             onChange={handleInputChange}
+                        />
+                        <InputField
+                            label='Maximale Teilnehmerzahl'
+                            id='participationCount'
+                            value={formData.participationCount}
+                            type='number'
+                            icon={Users}
+                            onChange={handleInputChange}
+                            error={errors.participationCount}
                         />
                     </div>
                 );
@@ -448,7 +424,6 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
         <DialogContainer onClose={onClose}>
             <div className='fixed inset-0 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 opacity-90' />
 
-            {/* Decorative Elements */}
             <div className='absolute -inset-x-20 -inset-y-20 pointer-events-none'>
                 <div className='absolute top-1/4 right-1/4 w-96 h-96 bg-[#4785FF]/10 rounded-full blur-3xl animate-pulse' />
                 <div className='absolute bottom-1/4 left-1/4 w-96 h-96 bg-[#8c52ff]/10 rounded-full blur-3xl animate-pulse delay-1000' />
@@ -456,11 +431,9 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
 
             <div
                 className='relative bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200/50 
-                dark:border-white/10 shadow-xl dark:shadow-2xl shadow-black/5 dark:shadow-black/20 
-                w-[780px] h-[700px] flex flex-col overflow-hidden'
+                          dark:border-white/10 shadow-xl w-full max-w-3xl mx-auto'
             >
-                {/* Header */}
-                <div className='p-6 border-b border-gray-200/50 dark:border-white/10'>
+                <div className='p-6 border-b border-gray-200/50'>
                     <div className='flex justify-between items-center mb-6'>
                         <div className='flex items-center gap-4'>
                             <div className='w-12 h-12 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center'>
@@ -487,7 +460,6 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                         </button>
                     </div>
 
-                    {/* Progress Steps */}
                     <div className='flex items-center gap-2'>
                         {steps.map((step, index) => (
                             <React.Fragment key={step.title}>
@@ -528,14 +500,8 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                     </div>
                 </div>
 
-                {/* Content */}
-                <div className='flex-1 min-h-0'>
-                    <div className='h-full p-6 overflow-y-auto'>
-                        {renderStepContent(currentStep)}
-                    </div>
-                </div>
+                <div className='p-6'>{renderStepContent(currentStep)}</div>
 
-                {/* Footer */}
                 <div className='p-6 border-t border-gray-200/50 dark:border-white/10'>
                     <div className='flex justify-between items-center'>
                         <button

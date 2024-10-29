@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { Target, Users } from 'lucide-react';
 import Navbar from '../components/Navbar';
-import Table from '../components/PrivateGoaltable';
 import PublicGoalTable from '../components/PublicGoaltable';
 import { UserContext } from '../context/UserContext';
 import axios from 'axios';
+import KanbanBoard from '../components/KanbanBoard';
 
 const DashboardMetric = ({ title, value, change, icon: Icon }) => (
     <div className='bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-white/10 p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1'>
@@ -165,7 +165,7 @@ const Dashboard = () => {
                     {/* Content */}
                     <div className='p-6 pt-0'>
                         {activeTab === 'private' ? (
-                            <Table onGoalsUpdate={calculateMetrics} />
+                            <KanbanBoard onGoalsUpdate={calculateMetrics} />
                         ) : (
                             <PublicGoalTable onGoalsUpdate={calculateMetrics} />
                         )}

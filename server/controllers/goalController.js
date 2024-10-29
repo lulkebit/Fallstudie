@@ -326,6 +326,33 @@ const pinFriendGoal = async (req, res) => {
     }
 };
 
+const participateInGoal = async (req, res) => {
+    const { userId, goalId } = req.body;
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ error: 'Benutzer nicht gefunden' });
+        }
+
+        const goal = user.goals.find((goal) => goal.id === goalId);
+        if (!goal) {
+            return res.status(404).json({ error: 'Ziel nicht gefunden' });
+        }
+
+        goal.participationCount += 1;
+        goal.currentValue += goal.stepSize;
+
+        if (goal.currentValue > goal.targetValue) {
+            goal.currentValue = goal.targetValue;
+        }
+
+        await user.save();
+        res.status(200).json(user.goals);
+    } catch (error) {
+        res.status(500).json({ error: 'Fehler beim Teilnehmen am Ziel' });
+    }
+};
+
 module.exports = {
     addGoal,
     getGoals,
@@ -335,4 +362,5 @@ module.exports = {
     getPublicGoalsOfFriend,
     pinGoal,
     pinFriendGoal,
+    participateInGoal,
 };

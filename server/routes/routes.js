@@ -24,6 +24,7 @@ const {
     getPublicGoalsOfFriend,
     pinGoal,
     pinFriendGoal,
+    participateInGoal,
 } = require('../controllers/goalController');
 
 const {
@@ -125,6 +126,8 @@ router.get('/goals/friend/:friendId', getPublicGoalsOfFriend);
 router.post('/goals/pin', pinGoal);
 // Anpinnen eines Freundes-Ziels
 router.post('/goals/pin-friend', pinFriendGoal);
+// Teilnahme an einem Ziel
+router.post('/goals/participate/:goalId', participateInGoal);
 
 /**
  * Globale Ziel-Routen
