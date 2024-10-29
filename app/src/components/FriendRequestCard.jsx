@@ -108,7 +108,8 @@ const FriendCard = ({ friend, onShowGoals, onDelete }) => (
                         <div className='flex items-center gap-1 text-sm text-gray-500 dark:text-white/60'>
                             <Star className='w-3 h-3' />
                             <span className='whitespace-nowrap'>
-                                {friend.sharedGoals || 0} Ziele
+                                {console.log(friend)}
+                                {friend.sharedGoals || 0} öffentliche Ziele
                             </span>
                         </div>
                         <div className='flex items-center gap-1 text-sm text-gray-500 dark:text-white/60'>

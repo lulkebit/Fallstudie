@@ -1,21 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import {
-    UserPlus,
-    UserCheck,
-    UserX,
-    Users,
-    Globe,
-    Search,
-    Target,
-} from 'lucide-react';
+import { UserPlus, Users, Search, Target } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import { UserContext } from '../context/UserContext';
 import { useToast } from '../context/ToastContext';
 import { useDialog } from '../context/DialogContext';
 import ConfirmationDialog from '../components/dialogs/ConfirmationDialog';
 import FriendGoalsDialog from '../components/dialogs/FriendGoalsDialog';
-import Loader from '../components/Loader';
 import { FriendCard, FriendRequestCard } from '../components/FriendRequestCard';
 
 const FriendsMetric = ({ title, value, icon: Icon }) => (
@@ -63,11 +54,12 @@ const Friends = () => {
                 response.data.map(async (friend) => {
                     try {
                         const goalsResponse = await axios.get(
-                            `/goals/friends/${friend.friendId._id}`
+                            `/goals/friend/${friend.friendId._id}`
                         );
+
                         return {
                             ...friend,
-                            sharedGoals: goalsResponse.data.length,
+                            sharedGoals: goalsResponse.data,
                         };
                     } catch (error) {
                         addToast(

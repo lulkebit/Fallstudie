@@ -20,11 +20,12 @@ const FriendGoalsDialog = ({ friendId, friend, onClose }) => {
             try {
                 setIsLoading(true);
                 setError(null);
-                
+
                 // Fetch goals
-                const goalsResponse = await axios.get(`/goals/friends/${friendId}`);
+                const goalsResponse = await axios.get(
+                    `/goals/friend/${friendId}`
+                );
                 setGoals(goalsResponse.data);
-                
             } catch (err) {
                 setError('Fehler beim Laden der Ziele');
                 console.error('Error fetching goals:', err);
