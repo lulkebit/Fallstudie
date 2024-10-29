@@ -118,8 +118,6 @@ exports.getAdminStats = async (req, res) => {
                 );
             }, 0);
 
-            console.log('completedUserGoals:', completedUserGoals);
-
             stats.completionRate =
                 totalUserGoals > 0
                     ? ((completedUserGoals / totalUserGoals) * 100).toFixed(2)
