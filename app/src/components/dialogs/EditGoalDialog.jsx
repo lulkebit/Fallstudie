@@ -204,7 +204,7 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
 
     const steps = [
         {
-            title: 'Grundinformationen',
+            title: 'Basics',
             fields: ['title', 'category', 'description'],
         },
         {
