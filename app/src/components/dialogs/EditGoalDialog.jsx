@@ -76,6 +76,16 @@ const useForm = (initialState, onChangeCallback) => {
                     newErrors[field] = 'Dieses Feld darf nicht leer sein';
                 }
             });
+    
+            // Additional validation for date fields
+            if (fields.includes('startDate') && fields.includes('endDate')) {
+                const startDate = new Date(formData.startDate);
+                const endDate = new Date(formData.endDate);
+                if (startDate > endDate) {
+                    newErrors.endDate = 'Das Enddatum darf nicht vor dem Startdatum liegen';
+                }
+            }
+    
             setErrors(newErrors);
             return Object.keys(newErrors).length === 0;
         },
@@ -112,7 +122,7 @@ const InputField = React.memo(
             </label>
             <div className='relative'>
                 <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-                    <Icon className='h-5 w-5 text-gray-400 dark:text-white/40' />
+                    <Icon className='h-5 w-5 text-gray-400 dark:text-white' />
                 </div>
                 {type === 'textarea' ? (
                     <textarea
@@ -194,7 +204,7 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
 
     const steps = [
         {
-            title: 'Grundinformationen',
+            title: 'Basics',
             fields: ['title', 'category', 'description'],
         },
         {

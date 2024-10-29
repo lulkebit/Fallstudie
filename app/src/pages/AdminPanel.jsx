@@ -122,7 +122,7 @@ const AdminPanel = () => {
     useEffect(() => {
         fetchStats();
     }, []);
-
+    
     const fetchStats = async () => {
         try {
             setLoading(true);
@@ -134,7 +134,7 @@ const AdminPanel = () => {
             setLoading(false);
         }
     };
-
+    
     const formatDate = (dateString) => {
         return new Date(dateString).toLocaleDateString('de-DE', {
             day: '2-digit',
@@ -151,7 +151,7 @@ const AdminPanel = () => {
                 </div>
             );
         }
-
+    
         if (error) {
             return (
                 <div className='text-center py-12'>
@@ -165,13 +165,13 @@ const AdminPanel = () => {
                 </div>
             );
         }
-
+    
         if (!stats) return null;
-
+    
         return (
             <div className='space-y-8'>
                 {/* Metrics Grid */}
-                <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
+                <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6'>
                     <AdminMetric
                         title='Gesamtnutzer'
                         value={stats.totalUsers}
@@ -196,6 +196,13 @@ const AdminPanel = () => {
                         title='Ø Ziele pro Nutzer'
                         value={stats.averageGoalsPerUser}
                         icon={Target}
+                    />
+                    <AdminMetric
+                        title='Seitenaufrufe'
+                        value={stats.pageViews}
+                        icon={LayoutDashboard}
+                        change='8'
+                        trendUp={true}
                     />
                 </div>
 
