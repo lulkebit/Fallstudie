@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, useCallback } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, ClipboardList, Timer, CheckCircle2 } from 'lucide-react';
 import { UserContext } from '../context/UserContext';
 import { useDialog } from '../context/DialogContext';
 import { useToast } from '../context/ToastContext';
@@ -8,43 +8,80 @@ import EditGoalDialog from './dialogs/EditGoalDialog';
 import ConfirmationDialog from './dialogs/ConfirmationDialog';
 import GoalCard from './GoalCards';
 
-const KanbanColumn = ({ title, goals = [], onDrop, children }) => {
-    const [isOver, setIsOver] = useState(false);
-
-    const handleDragOver = (e) => {
-        e.preventDefault();
-        setIsOver(true);
+const EmptyState = ({ title, columnType }) => {
+    const getEmptyStateIcon = () => {
+        switch (columnType) {
+            case 'new':
+                return (
+                    <ClipboardList className='w-8 h-8 text-gray-300 dark:text-gray-600 mb-2' />
+                );
+            case 'in-progress':
+                return (
+                    <Timer className='w-8 h-8 text-gray-300 dark:text-gray-600 mb-2' />
+                );
+            case 'completed':
+                return (
+                    <CheckCircle2 className='w-8 h-8 text-gray-300 dark:text-gray-600 mb-2' />
+                );
+            default:
+                return null;
+        }
     };
 
-    const handleDragLeave = () => {
-        setIsOver(false);
-    };
-
-    const handleDrop = (e) => {
-        e.preventDefault();
-        setIsOver(false);
-        onDrop(e);
+    const getEmptyStateMessage = () => {
+        switch (columnType) {
+            case 'new':
+                return 'Keine neuen Ziele vorhanden';
+            case 'in-progress':
+                return 'Keine Ziele in Bearbeitung';
+            case 'completed':
+                return 'Noch keine Ziele abgeschlossen';
+            default:
+                return `Keine Ziele in "${title}"`;
+        }
     };
 
     return (
-        <div
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-            className={`flex-1 min-w-[300px] flex flex-col rounded-xl ${
-                isOver ? 'bg-[#4785FF]/5' : 'bg-gray-50/50 dark:bg-white/5'
-            } backdrop-blur-sm transition-colors duration-200`}
-        >
+        <div className='flex flex-col items-center justify-center h-40 p-4 rounded-lg border-2 border-dashed border-gray-200 dark:border-gray-700'>
+            {getEmptyStateIcon()}
+            <p className='text-sm text-gray-500 dark:text-gray-400 text-center'>
+                {getEmptyStateMessage()}
+            </p>
+        </div>
+    );
+};
+
+const KanbanColumn = ({
+    title,
+    icon: Icon,
+    goals = [],
+    children,
+    columnType,
+    headerAction,
+}) => {
+    return (
+        <div className='flex-1 min-w-[300px] flex flex-col rounded-xl bg-gray-50/50 dark:bg-white/5 backdrop-blur-sm'>
             <div className='p-4 border-b border-white/20'>
                 <h2 className='text-sm font-medium text-gray-900 dark:text-white flex items-center justify-between'>
-                    {title}
-                    <span className='text-xs text-gray-500 dark:text-white/60'>
-                        {goals.length} Ziele
-                    </span>
+                    <div className='flex items-center gap-2'>
+                        <Icon className='w-4 h-4' />
+                        {title}
+                    </div>
+                    {headerAction ? (
+                        headerAction
+                    ) : (
+                        <span className='text-xs text-gray-500 dark:text-white/60'>
+                            {goals.length} Ziele
+                        </span>
+                    )}
                 </h2>
             </div>
             <div className='p-4 flex-1 space-y-3 overflow-y-auto max-h-[calc(100vh-250px)]'>
-                {goals.map((goal) => children(goal))}
+                {goals.length > 0 ? (
+                    goals.map((goal) => children(goal))
+                ) : (
+                    <EmptyState title={title} columnType={columnType} />
+                )}
             </div>
         </div>
     );
@@ -56,7 +93,6 @@ const KanbanBoard = ({ onGoalsUpdate }) => {
     const { addToast } = useToast();
     const [goals, setGoals] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [draggedGoal, setDraggedGoal] = useState(null);
 
     // Fetch goals
     const fetchGoals = useCallback(async () => {
@@ -191,42 +227,6 @@ const KanbanBoard = ({ onGoalsUpdate }) => {
         [goals]
     );
 
-    // Handle status changes via drag and drop
-    const handleStatusChange = useCallback(
-        async (goalId, newStatus) => {
-            const goal = goals.find((g) => g.id === goalId);
-            if (!goal) return;
-
-            let newProgress;
-            switch (newStatus) {
-                case 'new':
-                    newProgress = 0;
-                    break;
-                case 'in-progress':
-                    newProgress = 50;
-                    break;
-                case 'completed':
-                    newProgress = 100;
-                    break;
-                default:
-                    return;
-            }
-
-            try {
-                const { data } = await axios.put(`/goals/${goalId}`, {
-                    userId: user._id,
-                    goal: { ...goal, progress: newProgress },
-                });
-                setGoals(data);
-                if (onGoalsUpdate) onGoalsUpdate();
-                addToast('Status aktualisiert!', 'success');
-            } catch (error) {
-                addToast('Fehler beim Aktualisieren des Status', 'error');
-            }
-        },
-        [goals, user._id, addToast, onGoalsUpdate]
-    );
-
     // Handle opening the edit dialog
     const handleAddGoal = useCallback(() => {
         addDialog({
@@ -280,85 +280,74 @@ const KanbanBoard = ({ onGoalsUpdate }) => {
         );
     }
 
+    const newGoalButton = (
+        <button
+            onClick={handleAddGoal}
+            className='px-3 py-1 bg-gradient-to-r from-[#4785FF] to-[#8c52ff] text-white rounded-lg 
+                     text-xs font-medium shadow-md hover:shadow-lg transition-all duration-200 
+                     hover:-translate-y-0.5 flex items-center gap-1'
+        >
+            <Plus className='h-3 w-3' />
+            Neues Ziel
+        </button>
+    );
+
     return (
-        <div className='flex flex-col h-full'>
-            <div className='flex justify-between items-center mb-6'>
-                <h1 className='text-xl font-bold text-gray-900 dark:text-white'>
-                    Ziele
-                </h1>
-                <button
-                    onClick={handleAddGoal}
-                    className='px-4 py-2 bg-gradient-to-r from-[#4785FF] to-[#8c52ff] text-white rounded-xl 
-                             text-sm font-medium shadow-md hover:shadow-lg transition-all duration-200 
-                             hover:-translate-y-0.5 flex items-center gap-2'
-                >
-                    <Plus className='h-4 w-4' />
-                    Neues Ziel
-                </button>
-            </div>
+        <div className='flex gap-6 h-full'>
+            <KanbanColumn
+                title='Neu'
+                icon={ClipboardList}
+                goals={getColumnGoals('new')}
+                columnType='new'
+                headerAction={newGoalButton}
+            >
+                {(goal) => (
+                    <GoalCard
+                        key={goal.id}
+                        goal={goal}
+                        onEdit={() => handleEditGoal(goal)}
+                        onDelete={handleDeleteGoal}
+                        onPin={handlePinGoal}
+                        onParticipate={handleParticipate}
+                    />
+                )}
+            </KanbanColumn>
 
-            <div className='flex gap-6 h-full'>
-                <KanbanColumn
-                    title='Neu'
-                    goals={getColumnGoals('new')}
-                    onDrop={() => handleStatusChange(draggedGoal?.id, 'new')}
-                >
-                    {(goal) => (
-                        <GoalCard
-                            key={goal.id}
-                            goal={goal}
-                            onEdit={() => handleEditGoal(goal)}
-                            onDelete={handleDeleteGoal}
-                            onPin={handlePinGoal}
-                            onParticipate={handleParticipate}
-                            onDragStart={() => setDraggedGoal(goal)}
-                            onDragEnd={() => setDraggedGoal(null)}
-                        />
-                    )}
-                </KanbanColumn>
+            <KanbanColumn
+                title='In Bearbeitung'
+                icon={Timer}
+                goals={getColumnGoals('in-progress')}
+                columnType='in-progress'
+            >
+                {(goal) => (
+                    <GoalCard
+                        key={goal.id}
+                        goal={goal}
+                        onEdit={() => handleEditGoal(goal)}
+                        onDelete={handleDeleteGoal}
+                        onPin={handlePinGoal}
+                        onParticipate={handleParticipate}
+                    />
+                )}
+            </KanbanColumn>
 
-                <KanbanColumn
-                    title='In Bearbeitung'
-                    goals={getColumnGoals('in-progress')}
-                    onDrop={() =>
-                        handleStatusChange(draggedGoal?.id, 'in-progress')
-                    }
-                >
-                    {(goal) => (
-                        <GoalCard
-                            key={goal.id}
-                            goal={goal}
-                            onEdit={() => handleEditGoal(goal)}
-                            onDelete={handleDeleteGoal}
-                            onPin={handlePinGoal}
-                            onParticipate={handleParticipate}
-                            onDragStart={() => setDraggedGoal(goal)}
-                            onDragEnd={() => setDraggedGoal(null)}
-                        />
-                    )}
-                </KanbanColumn>
-
-                <KanbanColumn
-                    title='Abgeschlossen'
-                    goals={getColumnGoals('completed')}
-                    onDrop={() =>
-                        handleStatusChange(draggedGoal?.id, 'completed')
-                    }
-                >
-                    {(goal) => (
-                        <GoalCard
-                            key={goal.id}
-                            goal={goal}
-                            onEdit={() => handleEditGoal(goal)}
-                            onDelete={handleDeleteGoal}
-                            onPin={handlePinGoal}
-                            onParticipate={handleParticipate}
-                            onDragStart={() => setDraggedGoal(goal)}
-                            onDragEnd={() => setDraggedGoal(null)}
-                        />
-                    )}
-                </KanbanColumn>
-            </div>
+            <KanbanColumn
+                title='Abgeschlossen'
+                icon={CheckCircle2}
+                goals={getColumnGoals('completed')}
+                columnType='completed'
+            >
+                {(goal) => (
+                    <GoalCard
+                        key={goal.id}
+                        goal={goal}
+                        onEdit={() => handleEditGoal(goal)}
+                        onDelete={handleDeleteGoal}
+                        onPin={handlePinGoal}
+                        onParticipate={handleParticipate}
+                    />
+                )}
+            </KanbanColumn>
         </div>
     );
 };
