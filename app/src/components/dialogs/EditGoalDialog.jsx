@@ -76,6 +76,16 @@ const useForm = (initialState, onChangeCallback) => {
                     newErrors[field] = 'Dieses Feld darf nicht leer sein';
                 }
             });
+    
+            // Additional validation for date fields
+            if (fields.includes('startDate') && fields.includes('endDate')) {
+                const startDate = new Date(formData.startDate);
+                const endDate = new Date(formData.endDate);
+                if (startDate > endDate) {
+                    newErrors.endDate = 'Das Enddatum darf nicht vor dem Startdatum liegen';
+                }
+            }
+    
             setErrors(newErrors);
             return Object.keys(newErrors).length === 0;
         },
