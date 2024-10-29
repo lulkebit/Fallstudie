@@ -133,12 +133,18 @@ exports.getAdminStats = async (req, res) => {
             currentValue: 0,
         };
         if (globalGoals.length > 0) {
-            mostPopularGlobalGoal = globalGoals.reduce((prev, current) =>
-                (prev.participationCount || 0) >
-                (current.participationCount || 0)
-                    ? prev
-                    : current
-            );
+            const uncompletedGoals = globalGoals.filter(goal => {
+                const progress = (goal.currentValue / goal.targetValue) * 100;
+                return progress < 100;
+            });
+            
+            if (uncompletedGoals.length > 0) {
+                mostPopularGlobalGoal = uncompletedGoals.reduce((prev, current) =>
+                    (prev.participationCount || 0) > (current.participationCount || 0)
+                        ? prev
+                        : current
+                );
+            }
         }
 
         const now = new Date();

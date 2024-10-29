@@ -22,6 +22,7 @@ import UserGoalsManagement from '../components/UserGoalsManagement';
 import UserGrowthTimeline from '../components/UserGrowthTimeline';
 import Navbar from '../components/Navbar';
 import { Pie } from 'recharts';
+import StatCard from '../components/StatCard';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -272,7 +273,49 @@ const AdminPanel = () => {
                         </div>
                         <div className='relative h-40'>
                             <div className='absolute inset-0'>
-                                {/* Replace with chart component */}
+                                <StatCard
+                                    title='Zielfortschritt'
+                                    value={`${Math.round(
+                                        (stats.mostPopularGlobalGoal
+                                            .currentValue /
+                                            stats.mostPopularGlobalGoal
+                                                .targetValue) *
+                                            100
+                                    )}%`}
+                                    chartData={{
+                                        labels: ['Erreicht', 'Verbleibend'],
+                                        datasets: [
+                                            {
+                                                data: [
+                                                    stats.mostPopularGlobalGoal
+                                                        .currentValue,
+                                                    stats.mostPopularGlobalGoal
+                                                        .targetValue -
+                                                        stats
+                                                            .mostPopularGlobalGoal
+                                                            .currentValue,
+                                                ],
+                                                backgroundColor: [
+                                                    'rgba(71, 133, 255, 1)',
+                                                    'rgba(140, 82, 255, 0.2)',
+                                                ],
+                                                borderWidth: 0,
+                                            },
+                                        ],
+                                    }}
+                                    chartOptions={{
+                                        plugins: {
+                                            legend: {
+                                                display: true,
+                                                position: 'bottom',
+                                            },
+                                            tooltip: {
+                                                enabled: true,
+                                            },
+                                        },
+                                        cutout: '70%',
+                                    }}
+                                />
                             </div>
                         </div>
                     </div>
@@ -378,18 +421,6 @@ const AdminPanel = () => {
                                         Ziele für alle Nutzer
                                     </p>
                                 </div>
-                                <button
-                                    onClick={() => {
-                                        /* TODO: Add new global goal */
-                                    }}
-                                    className='px-4 py-2 rounded-xl font-medium bg-gradient-to-r from-[#4785FF] to-[#8c52ff]
-                           text-white shadow-lg hover:shadow-xl hover:shadow-blue-500/25 dark:hover:shadow-blue-500/10
-                           transition-all duration-200 hover:-translate-y-0.5
-                           flex items-center gap-2'
-                                >
-                                    <Target className='w-4 h-4' />
-                                    Neues Ziel erstellen
-                                </button>
                             </div>
                             <GlobalGoalTable />
                         </div>
@@ -421,32 +452,6 @@ const AdminPanel = () => {
                                         Überwache und verwalte individuelle
                                         Benutzerziele
                                     </p>
-                                </div>
-                                <div className='flex gap-2'>
-                                    <button
-                                        onClick={() => {
-                                            /* TODO: Export goals */
-                                        }}
-                                        className='px-4 py-2 rounded-xl font-medium text-gray-700 dark:text-white/70 
-                             hover:bg-gray-100 dark:hover:bg-white/5
-                             border border-gray-200 dark:border-white/10
-                             transition-all duration-200
-                             flex items-center gap-2'
-                                    >
-                                        Export
-                                    </button>
-                                    <button
-                                        onClick={() => {
-                                            /* TODO: Filter goals */
-                                        }}
-                                        className='px-4 py-2 rounded-xl font-medium text-gray-700 dark:text-white/70 
-                             hover:bg-gray-100 dark:hover:bg-white/5
-                             border border-gray-200 dark:border-white/10
-                             transition-all duration-200
-                             flex items-center gap-2'
-                                    >
-                                        Filter
-                                    </button>
                                 </div>
                             </div>
                             <UserGoalsManagement />
