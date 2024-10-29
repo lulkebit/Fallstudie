@@ -29,6 +29,16 @@ const GoalCard = ({
         onParticipate(goal.id);
     };
 
+    const calculateRemainingDays = (endDate) => {
+        const now = new Date();
+        const end = new Date(endDate);
+        const timeDiff = end - now;
+        const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+        return daysDiff;
+    };
+
+    const remainingDays = calculateRemainingDays(goal.endDate);
+
     return (
         <div
             draggable
@@ -101,7 +111,7 @@ const GoalCard = ({
                             <span>{formattedProgress}%</span>
                         </div>
                         <div className='text-xs text-gray-500 dark:text-white/60'>
-                            {goal.remainingDays} Tage übrig
+                            {remainingDays} Tage übrig
                         </div>
                     </div>
 
