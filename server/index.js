@@ -21,16 +21,16 @@ mongoose
     });
 
 // Middleware-Konfiguration
-app.use(express.json()); // Parsen von JSON-Anfragen
+app.use(express.json({ limit: '50mb' })); // Erhöhtes Limit für JSON-Anfragen
 app.use(cookieParser()); // Parsen von Cookies
-app.use(express.urlencoded({ extended: false })); // Parsen von URL-encodierten Daten
+app.use(express.urlencoded({ extended: false, limit: '50mb' })); // Parsen von URL-encodierten Daten mit erhöhtem Limit
 
 // Routen-Konfiguration
 app.use('/', require('./routes/routes'));
 
-// Fehlerbehandlungs-Middleware (empfohlen)
+// Fehlerbehandlungs-Middleware
 app.use((err, req, res, next) => {
-    logger.error('Unbehandelter Fehler:', err);
+    logger.error('Unbehandelter Fehler: ' + err);
     res.status(500).json({ error: 'Interner Serverfehler' });
 });
 

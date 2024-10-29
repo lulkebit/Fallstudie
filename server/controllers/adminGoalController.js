@@ -1,6 +1,8 @@
 const User = require('../models/user');
 const GlobalGoal = require('../models/globalGoal');
 const { getPageViewStats } = require('../middleware/pageViewMiddleware');
+const logger = require('../utils/logger');
+const texts = require('../ressources/texts');
 
 exports.getAllUserGoals = async (req, res) => {
     try {
@@ -25,31 +27,26 @@ exports.getAllUserGoals = async (req, res) => {
 };
 
 exports.updateUserGoal = async (req, res) => {
+    const { userId, goal, id } = req.body;
     try {
-        const { goalId } = req.params;
-        const { title, description, status } = req.body;
-
-        const user = await User.findOne({ 'goals._id': goalId });
+        logger.info(texts.INFO.UPDATING_GOAL(id, userId));
+        const user = await User.findById(userId);
         if (!user) {
-            return res.status(404).json({ message: 'Goal not found' });
+            logger.warn(texts.WARNINGS.USER_NOT_FOUND);
+            return res.status(404).json({ error: texts.ERRORS.USER_NOT_FOUND });
         }
-
-        const goal = user.goals.id(goalId);
-        if (!goal) {
-            return res.status(404).json({ message: 'Goal not found' });
+        const goalIndex = user.goals.findIndex((g) => g.id === parseInt(id));
+        if (goalIndex === -1) {
+            logger.warn(texts.ERRORS.GOAL_NOT_FOUND);
+            return res.status(404).json({ error: texts.ERRORS.GOAL_NOT_FOUND });
         }
-
-        goal.title = title;
-        goal.description = description;
-        goal.status = status;
-
+        user.goals[goalIndex] = goal;
         await user.save();
-        res.json(goal);
+        logger.info(texts.SUCCESS.GOAL_UPDATED);
+        res.status(200).json(user.goals);
     } catch (error) {
-        res.status(500).json({
-            message: 'Error updating user goal',
-            error: error.message,
-        });
+        logger.error(texts.ERRORS.ERROR('updating goal ' + error, error));
+        res.status(500).json({ error: texts.ERRORS.UPDATE_GOAL });
     }
 };
 

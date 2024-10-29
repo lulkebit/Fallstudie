@@ -54,7 +54,9 @@ const GoalMetric = ({ title, value, subtitle, icon: Icon, change }) => (
 );
 
 const GoalCard = ({ goal, onEdit, onDelete }) => {
-    const progress = Math.round((goal.currentValue / parseFloat(goal.targetValue)) * 100);
+    const progress = Math.round(
+        (goal.currentValue / parseFloat(goal.targetValue)) * 100
+    );
     const formattedProgress = Math.min(Math.max(progress, 0), 100);
 
     const remainingDays = useMemo(() => {
@@ -222,8 +224,13 @@ const UserGoalsManagement = () => {
 
     const handleSaveGoal = useCallback(async (goalData) => {
         try {
-            await axios.put(`/admin/goals//${goalData.id}`, {
+            console.log('Goal Data:', goalData);
+            console.log('User ID:', goalData.user._id);
+            console.log('Goal ID:', goalData.id);
+            await axios.put(`/admin/goals/${goalData.id}`, {
                 goal: goalData,
+                userId: goalData.user._id,
+                id: goalData.id,
             });
 
             fetchGoals();
@@ -291,7 +298,9 @@ const UserGoalsManagement = () => {
     );
 
     const inProgressGoals = goals.filter(
-        (goal) => goal.currentValue > 0 && goal.currentValue < parseFloat(goal.targetValue)
+        (goal) =>
+            goal.currentValue > 0 &&
+            goal.currentValue < parseFloat(goal.targetValue)
     );
 
     const averageProgress = Math.round(
