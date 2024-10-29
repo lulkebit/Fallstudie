@@ -102,17 +102,23 @@ exports.getAdminStats = async (req, res) => {
                     ? (totalUserGoals / users.length).toFixed(2)
                     : 0;
 
-            const completedUserGoals = users.reduce(
-                (sum, user) =>
+            const completedUserGoals = users.reduce((sum, user) => {
+                if (!user.goals) return sum;
+                return (
                     sum +
-                    (user.goals
-                        ? user.goals.filter(
-                              (goal) => goal.status === 'completed'
-                          ).length
-                        : 0),
-                0
-            );
-            stats.completedUserGoals = completedUserGoals;
+                    user.goals.filter((goal) => {
+                        // Überprüfe, ob targetValue eine gültige Zahl ist
+                        const target = parseFloat(goal.targetValue);
+                        if (isNaN(target) || target === 0) return false;
+
+                        // Berechne den Fortschritt als Prozentsatz
+                        const progress = (goal.currentValue / target) * 100;
+                        return progress >= 100;
+                    }).length
+                );
+            }, 0);
+
+            console.log('completedUserGoals:', completedUserGoals);
 
             stats.completionRate =
                 totalUserGoals > 0
