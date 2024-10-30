@@ -1,19 +1,23 @@
+//Import der Bibliotheken
 import React from 'react';
 import { Loader2 } from 'lucide-react';
 
+//Festlegen von "LoadingPage" als wiederverwendbare React-Komponente
 const LoadingPage = () => {
     return (
+        // Hintergrund mit Farbverlauf (links oben --> rechts unten)
         <div className='min-h-screen bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800'>
-            {/* Decorative Elements */}
             <div className='absolute inset-0'>
+                {/* Kreise im Hintergrund (verschwommen, pulsierend) */}
                 <div className='absolute top-1/4 right-1/4 w-96 h-96 bg-[#4785FF]/10 rounded-full blur-3xl animate-pulse' />
                 <div className='absolute bottom-1/4 left-1/4 w-96 h-96 bg-[#8c52ff]/10 rounded-full blur-3xl animate-pulse delay-1000' />
             </div>
 
             <div className='relative z-10 min-h-screen flex flex-col items-center justify-center p-4'>
                 <div className='w-full max-w-2xl'>
+                    {/* Box für Inhalte */}
                     <div className='bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-white/10 p-12 text-center'>
-                        {/* Icon */}
+                        {/* Logo-Icon */}
                         <div className='mb-8'>
                             <div className='w-24 h-24 rounded-2xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center mx-auto'>
                                 <img
@@ -24,16 +28,17 @@ const LoadingPage = () => {
                             </div>
                         </div>
 
-                        {/* Loading Text */}
+                        {/* Hintergrundstreifen */}
                         <div className='relative mb-6 group'>
                             <div className='absolute -inset-1'>
                                 <div className='w-full h-full mx-auto rotate-180'>
-                                    <div className='absolute inset-0 -z-10 group-hover:animate-[pulse_2s_infinite]'>
+                                    <div className='absolute inset-0 -z-10'>
                                         <div className='absolute inset-0 translate-x-0 blur-2xl bg-gradient-to-r from-[#4785FF]/30 to-[#8c52ff]/30' />
                                     </div>
                                 </div>
                             </div>
                             <div className='flex items-center justify-center gap-2'>
+                                {/* Ladesymbol */}
                                 <Loader2 className='w-8 h-8 text-[#4785FF] animate-spin' />
                             </div>
                         </div>
@@ -46,7 +51,7 @@ const LoadingPage = () => {
                             Wir laden Ihre Daten...
                         </p>
 
-                        {/* Animated Dots */}
+                        {/* Animierte Punkte */}
                         <div className='flex justify-center gap-3 mt-8'>
                             {[...Array(3)].map((_, i) => (
                                 <div
@@ -66,4 +71,5 @@ const LoadingPage = () => {
     );
 };
 
+//Export der Loadingpage zur Wiederverwendung
 export default LoadingPage;
