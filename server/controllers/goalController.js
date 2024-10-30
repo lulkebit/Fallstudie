@@ -31,7 +31,7 @@ const addGoal = async (req, res) => {
         const newGoal = {
             ...goal,
             id: highestId + 1,
-            public: goal.public === 'on',
+            public: Boolean(goal.public), // Convert to boolean explicitly
         };
 
         user.goals.push(newGoal);
@@ -131,7 +131,10 @@ const updateGoal = async (req, res) => {
             logger.warn(texts.ERRORS.GOAL_NOT_FOUND);
             return res.status(404).json({ error: texts.ERRORS.GOAL_NOT_FOUND });
         }
-        user.goals[goalIndex] = goal;
+        user.goals[goalIndex] = {
+            ...goal,
+            public: Boolean(goal.public), // Convert to boolean explicitly
+        };
         await user.save();
         logger.info(texts.SUCCESS.GOAL_UPDATED);
         res.status(200).json(user.goals);
