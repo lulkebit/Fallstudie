@@ -1,15 +1,13 @@
 import { TrendingUp } from 'lucide-react';
 import React from 'react';
 import {
-    LineChart,
-    Line,
+    AreaChart,
+    Area,
     XAxis,
     YAxis,
     CartesianGrid,
     Tooltip,
     ResponsiveContainer,
-    Area,
-    AreaChart,
 } from 'recharts';
 
 const PageViewsChart = ({ data }) => {
@@ -26,16 +24,26 @@ const PageViewsChart = ({ data }) => {
         ];
     }
 
-    // Berechne die prozentuale Veränderung
-    const calculateChange = () => {
+    // Berechne die tägliche prozentuale Veränderung (heute vs. gestern)
+    const calculateDailyChange = () => {
         if (data.length < 2) return 0;
-        const oldValue = data[0].views;
-        const newValue = data[data.length - 1].views;
-        if (oldValue === 0) return 100;
-        return (((newValue - oldValue) / oldValue) * 100).toFixed(1);
+
+        // Hole die Werte von heute und gestern (die letzten beiden Tage)
+        const yesterdayViews = data[data.length - 2].views;
+        const todayViews = data[data.length - 1].views;
+
+        // Wenn gestern keine Aufrufe waren
+        if (yesterdayViews === 0) {
+            return todayViews > 0 ? 100 : 0;
+        }
+
+        // Berechne die prozentuale Veränderung
+        return ((todayViews - yesterdayViews) / yesterdayViews) * 100;
     };
 
-    const change = calculateChange();
+    // Berechne die Änderung
+    const change = calculateDailyChange();
+    const formattedChange = change.toFixed(1);
     const trendUp = change >= 0;
 
     // Custom Tooltip
@@ -87,7 +95,7 @@ const PageViewsChart = ({ data }) => {
                                 : 'text-red-600 dark:text-red-400'
                         }`}
                     >
-                        {change}%
+                        {formattedChange}%
                     </span>
                     <p className='text-sm font-medium text-gray-600 dark:text-gray-400'>
                         {trendUp ? 'Zuwachs' : 'Rückgang'}

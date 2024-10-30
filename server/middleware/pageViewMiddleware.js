@@ -1,9 +1,18 @@
 const PageView = require('../models/pageView');
 
+const getGermanDate = () => {
+    // Erstelle ein Datum in der deutschen Zeitzone
+    const date = new Date().toLocaleString('en-US', {
+        timeZone: 'Europe/Berlin',
+    });
+    const germanDate = new Date(date);
+    germanDate.setHours(0, 0, 0, 0);
+    return germanDate;
+};
+
 const getPageViewStats = async () => {
     try {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        const today = getGermanDate();
 
         const sevenDaysAgo = new Date(today);
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
@@ -26,11 +35,15 @@ const getPageViewStats = async () => {
                 (v) => v.date.toDateString() === currentDate.toDateString()
             );
 
+            // Formatiere das Datum im deutschen Format
+            const formattedDate = currentDate.toLocaleString('de-DE', {
+                day: '2-digit',
+                month: '2-digit',
+                timeZone: 'Europe/Berlin',
+            });
+
             viewData.push({
-                date: currentDate.toLocaleDateString('de-DE', {
-                    day: '2-digit',
-                    month: '2-digit',
-                }),
+                date: formattedDate,
                 views: existingView ? existingView.views : 0,
             });
         }
@@ -53,16 +66,26 @@ const getPageViewStats = async () => {
 
 const trackPageView = async (req, res, next) => {
     try {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        const today = getGermanDate();
 
-        let pageView = await PageView.findOne({ date: today });
+        let pageView = await PageView.findOne({
+            date: {
+                $gte: new Date(today.getTime()),
+                $lt: new Date(today.getTime() + 24 * 60 * 60 * 1000),
+            },
+        });
+
         if (!pageView) {
-            pageView = new PageView({ date: today });
+            pageView = new PageView({
+                date: today,
+                views: 0,
+            });
         }
 
         pageView.views += 1;
-        pageView.lastUpdated = new Date();
+        pageView.lastUpdated = new Date().toLocaleString('en-US', {
+            timeZone: 'Europe/Berlin',
+        });
         await pageView.save();
 
         next();

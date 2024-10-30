@@ -29,7 +29,7 @@ pageViewSchema.statics.getLast7Days = async function () {
             $gte: sevenDaysAgo,
             $lte: today,
         },
-    }).sort({ date: 1 });
+    }).sort({ date: 1 }); // Aufsteigend sortiert nach Datum
 
     const result = [];
     for (let i = 0; i < 7; i++) {
@@ -49,10 +49,29 @@ pageViewSchema.statics.getLast7Days = async function () {
         });
     }
 
+    // Berechne die prozentuale Veränderung
+    if (result.length >= 2) {
+        const firstDayViews = result[0].views;
+        const lastDayViews = result[result.length - 1].views;
+        const percentageChange =
+            firstDayViews === 0
+                ? lastDayViews === 0
+                    ? 0
+                    : 100
+                : (
+                      ((lastDayViews - firstDayViews) / firstDayViews) *
+                      100
+                  ).toFixed(1);
+
+        // Füge die prozentuale Veränderung zu den Metadaten hinzu
+        result.percentageChange = percentageChange;
+    } else {
+        result.percentageChange = 0;
+    }
+
     return result;
 };
 
-// Methode zum Abrufen der Gesamtanzahl der Aufrufe der letzten 7 Tage
 pageViewSchema.statics.getTotalViewsCount = async function () {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
