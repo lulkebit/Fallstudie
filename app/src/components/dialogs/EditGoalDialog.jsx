@@ -127,7 +127,7 @@ const CustomSelect = ({
     return (
         <div className='relative'>
             <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-                <Icon className='h-5 w-5 text-gray-400 dark:text-white' />
+                <Icon className='h-5 w-5 text-gray-900 dark:text-white' />
             </div>
             <button
                 type='button'
@@ -139,7 +139,7 @@ const CustomSelect = ({
                          text-left text-gray-900 dark:text-white relative'
             >
                 {value || placeholder}
-                <ChevronDown className='absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 dark:text-white/70' />
+                <ChevronDown className='absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-900 dark:text-white/70' />
             </button>
 
             {isOpen && (
@@ -237,7 +237,7 @@ const InputField = React.memo(
                 {type === 'textarea' ? (
                     <>
                         <div className='absolute top-3 left-3 pointer-events-none'>
-                            <Icon className='h-5 w-5 text-gray-400 dark:text-white' />
+                            <Icon className='h-5 w-5 text-gray-900 dark:text-white' />
                         </div>
                         <textarea
                             id={id}
@@ -264,7 +264,7 @@ const InputField = React.memo(
                 ) : type === 'date' ? (
                     <>
                         <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-                            <Icon className='h-5 w-5 text-gray-400 dark:text-white' />
+                            <Icon className='h-5 w-5 text-gray-900 dark:text-white' />
                         </div>
                         <input
                             type={type}
@@ -284,7 +284,7 @@ const InputField = React.memo(
                 ) : (
                     <>
                         <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-                            <Icon className='h-5 w-5 text-gray-400 dark:text-white' />
+                            <Icon className='h-5 w-5 text-gray-900 dark:text-white' />
                         </div>
                         <input
                             type={type}
@@ -311,7 +311,7 @@ const PublicSwitch = ({ checked, onChange }) => (
     <div className='flex items-center gap-3 p-4 bg-white/30 dark:bg-white/5 rounded-xl border border-gray-200/50'>
         <CustomCheckbox id='public' checked={checked} onChange={onChange}>
             <div className='flex items-center gap-2'>
-                <Eye className='h-5 w-5 text-gray-400' />
+                <Eye className='h-5 w-5 text-gray-800 dark:text-white/70' />
                 <span className='text-sm font-medium text-gray-700 dark:text-white/70'>
                     Öffentlich
                 </span>
@@ -559,7 +559,6 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                 className='relative bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200/50 
                           dark:border-white/10 shadow-xl w-full max-w-5xl mx-auto h-[800px] flex flex-col'
             >
-                {/* Header - Static */}
                 <div className='flex-none p-6 border-b border-gray-200/50'>
                     <div className='flex justify-between items-center mb-6'>
                         <div className='flex items-center gap-4'>
@@ -582,7 +581,7 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                             onClick={onClose}
                             className='p-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-xl transition-colors duration-200'
                         >
-                            <X className='h-5 w-5 text-gray-400 dark:text-white/40' />
+                            <X className='h-5 w-5 text-gray-600 dark:text-white/40' />
                         </button>
                     </div>
 
@@ -593,7 +592,7 @@ const EditGoalDialog = ({ goal, onSave, onClose }) => {
                                     className={`flex items-center gap-2 ${
                                         index <= currentStep
                                             ? 'text-[#4785FF]'
-                                            : 'text-gray-400 dark:text-white/40'
+                                            : 'text-gray-600 dark:text-white/40'
                                     }`}
                                 >
                                     <div
