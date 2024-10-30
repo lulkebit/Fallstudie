@@ -293,23 +293,47 @@ const UserGoalsManagement = () => {
         });
     };
 
-    const completedGoals = goals.filter(
-        (goal) => goal.currentValue >= parseFloat(goal.targetValue)
-    );
+    // Calculate metrics with proper error handling
+    const metrics = useMemo(() => {
+        const completedGoals = goals.filter((goal) => {
+            const targetValue = parseFloat(goal.targetValue);
+            return !isNaN(targetValue) && goal.currentValue >= targetValue;
+        });
 
-    const inProgressGoals = goals.filter(
-        (goal) =>
-            goal.currentValue > 0 &&
-            goal.currentValue < parseFloat(goal.targetValue)
-    );
+        const inProgressGoals = goals.filter((goal) => {
+            const targetValue = parseFloat(goal.targetValue);
+            return (
+                !isNaN(targetValue) &&
+                goal.currentValue > 0 &&
+                goal.currentValue < targetValue
+            );
+        });
 
-    const averageProgress = Math.round(
-        goals.reduce(
-            (acc, goal) =>
-                acc + (goal.currentValue / parseFloat(goal.targetValue)) * 100,
-            0
-        ) / (goals.length || 1)
-    );
+        const validGoals = goals.filter((goal) => {
+            const targetValue = parseFloat(goal.targetValue);
+            return !isNaN(targetValue) && targetValue > 0;
+        });
+
+        const averageProgress =
+            validGoals.length > 0
+                ? Math.round(
+                      validGoals.reduce((acc, goal) => {
+                          const progress =
+                              (goal.currentValue /
+                                  parseFloat(goal.targetValue)) *
+                              100;
+                          return acc + progress;
+                      }, 0) / validGoals.length
+                  )
+                : 0;
+
+        return {
+            totalGoals: goals.length,
+            completedGoals: completedGoals.length,
+            inProgressGoals: inProgressGoals.length,
+            averageProgress,
+        };
+    }, [goals]);
 
     const filteredAndSortedGoals = goals
         .filter(
@@ -349,23 +373,23 @@ const UserGoalsManagement = () => {
             <div className='grid grid-cols-1 md:grid-cols-4 gap-6'>
                 <GoalMetric
                     title='Gesamt Ziele'
-                    value={goals.length}
+                    value={metrics.totalGoals}
                     icon={Goal}
                     change={8}
                 />
                 <GoalMetric
                     title='Abgeschlossene Ziele'
-                    value={completedGoals.length}
+                    value={metrics.completedGoals}
                     icon={CheckCircle2}
                 />
                 <GoalMetric
                     title='In Bearbeitung'
-                    value={inProgressGoals.length}
+                    value={metrics.inProgressGoals}
                     icon={Clock}
                 />
                 <GoalMetric
                     title='Durchschnittlicher Fortschritt'
-                    value={`${averageProgress}%`}
+                    value={`${metrics.averageProgress}%`}
                     icon={TrendingUp}
                 />
             </div>
