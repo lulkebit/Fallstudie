@@ -139,7 +139,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => (
     </div>
 );
 
-const UserManagement = () => {
+const UserManagement = ({ activeUsers }) => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
@@ -273,7 +273,7 @@ const UserManagement = () => {
                 />
                 <UserMetric
                     title='Aktive Nutzer'
-                    value={users.filter((u) => u.isActive).length}
+                    value={activeUsers}
                     icon={UserCheck}
                 />
                 <UserMetric

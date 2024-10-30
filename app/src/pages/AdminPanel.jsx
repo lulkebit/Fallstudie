@@ -5,7 +5,6 @@ import {
     Users,
     Target,
     Flag,
-    ChevronRight,
     TrendingUp,
     UserPlus,
     CheckCircle,
@@ -470,7 +469,7 @@ const AdminPanel = () => {
                                     </p>
                                 </div>
                             </div>
-                            <UserManagement />
+                            <UserManagement activeUsers={stats?.activeUsers} />
                         </div>
                     )}
                     {activeTab === 'benutzerZiele' && (
