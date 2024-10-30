@@ -60,8 +60,8 @@ const NotFound = () => {
                                 <MoveLeft className='w-5 h-5' />
                                 Zurück zur Startseite
                             </Link>
-                            <a
-                                href='/kontakt'
+                            <Link
+                                to='/kontakt'
                                 className='inline-flex items-center justify-center gap-2 px-6 py-3
                          text-gray-700 dark:text-white/70 
                          hover:bg-gray-100 dark:hover:bg-white/5
@@ -71,7 +71,7 @@ const NotFound = () => {
                             >
                                 <ExternalLink className='w-5 h-5' />
                                 Support kontaktieren
-                            </a>
+                            </Link>
                         </div>
 
                         {/* Animierte Lade-Punkte */}
