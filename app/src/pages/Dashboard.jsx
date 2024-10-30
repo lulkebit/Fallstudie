@@ -126,7 +126,7 @@ const Dashboard = () => {
             });
         } catch (error) {
             addToast(
-                'Fehler beim Laden der Metriken. Bitte versuchen Sie es später erneut.',
+                'Fehler beim Laden der Metriken. Bitte versuche es später erneut.',
                 'error'
             );
             setMetrics({

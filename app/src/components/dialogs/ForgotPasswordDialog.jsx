@@ -11,16 +11,15 @@ const ForgotPasswordDialog = ({ onClose }) => {
 
     const validateEmail = (email) => {
         if (!email.trim()) {
-            return 'Bitte geben Sie Ihre E-Mail-Adresse ein';
+            return 'Bitte gib deine E-Mail-Adresse ein';
         } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            return 'Bitte geben Sie eine gültige E-Mail-Adresse ein';
+            return 'Bitte gib eine gültige E-Mail-Adresse ein';
         }
         return '';
     };
 
     const handleBlur = () => {
         setTouched(true);
-        // Nur validieren wenn das Feld bereits berührt wurde
         if (touched) {
             setError(validateEmail(email));
         }
@@ -28,7 +27,6 @@ const ForgotPasswordDialog = ({ onClose }) => {
 
     const handleChange = (e) => {
         setEmail(e.target.value);
-        // Nur validieren wenn das Feld bereits berührt wurde
         if (touched) {
             setError(validateEmail(e.target.value));
         }
@@ -51,7 +49,7 @@ const ForgotPasswordDialog = ({ onClose }) => {
             setSubmitted(true);
         } catch (error) {
             setError(
-                'Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.'
+                'Ein Fehler ist aufgetreten. Bitte versuche es später erneut.'
             );
         } finally {
             setLoading(false);
@@ -95,8 +93,8 @@ const ForgotPasswordDialog = ({ onClose }) => {
                 <div className='p-6'>
                     <p className='text-gray-600 dark:text-white/70 text-base mb-6'>
                         {submitted
-                            ? 'Überprüfen Sie Ihre E-Mails für weitere Anweisungen'
-                            : 'Geben Sie Ihre E-Mail-Adresse ein, um Ihr Passwort zurückzusetzen'}
+                            ? 'Überprüfe deine E-Mails für weitere Anweisungen'
+                            : 'Gib deine E-Mail-Adresse ein, um dein Passwort zurückzusetzen'}
                     </p>
 
                     {!submitted ? (
@@ -140,13 +138,13 @@ const ForgotPasswordDialog = ({ onClose }) => {
                     ) : (
                         <div className='space-y-4'>
                             <p className='text-gray-600 dark:text-white/70'>
-                                Wir haben Ihnen einen Link zum Zurücksetzen
-                                Ihres Passworts an <strong>{email}</strong>{' '}
+                                Wir haben dir einen Link zum Zurücksetzen
+                                deines Passworts an <strong>{email}</strong>{' '}
                                 gesendet.
                             </p>
                             <p className='text-sm text-gray-500 dark:text-white/50'>
-                                Überprüfen Sie auch Ihren Spam-Ordner, falls Sie
-                                die E-Mail nicht finden können.
+                                Überprüfe auch deinen Spam-Ordner, falls du
+                                die E-Mail nicht finden kannst.
                             </p>
                         </div>
                     )}

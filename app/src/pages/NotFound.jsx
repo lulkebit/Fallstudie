@@ -44,7 +44,7 @@ const NotFound = () => {
                             Seite nicht gefunden
                         </h2>
                         <p className='text-gray-600 dark:text-white/70 mb-8 max-w-md mx-auto'>
-                            Die von Ihnen gesuchte Seite existiert leider nicht
+                            Die von dir gesuchte Seite existiert leider nicht
                             oder wurde möglicherweise verschoben.
                         </p>
 

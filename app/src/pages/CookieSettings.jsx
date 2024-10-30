@@ -30,7 +30,7 @@ const CookieSettings = () => {
                             Cookie-Einstellungen
                         </h1>
                         <p className='mt-2 text-gray-600 dark:text-gray-300'>
-                            Hier können Sie Ihre Cookie-Präferenzen verwalten.
+                            Hier kannst du deine Cookie-Präferenzen verwalten.
                             Notwendige Cookies sind für die Grundfunktionen der
                             Website erforderlich.
                         </p>
@@ -90,7 +90,7 @@ const CookieSettings = () => {
                                 </h3>
                                 <p className='text-sm text-gray-600 dark:text-gray-300'>
                                     Diese Cookies werden verwendet, um Werbung
-                                    relevanter für Sie zu machen.
+                                    relevanter für dich zu machen.
                                 </p>
                             </div>
                             <div className='relative'>
@@ -112,7 +112,7 @@ const CookieSettings = () => {
                                 </h3>
                                 <p className='text-sm text-gray-600 dark:text-gray-300'>
                                     Diese Cookies ermöglichen der Website, sich
-                                    an Ihre Einstellungen zu erinnern.
+                                    an deine Einstellungen zu erinnern.
                                 </p>
                             </div>
                             <div className='relative'>

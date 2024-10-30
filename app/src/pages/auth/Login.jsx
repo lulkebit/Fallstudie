@@ -122,8 +122,8 @@ const Login = () => {
         emailOrUsername: '',
         password: '',
     });
-    const [errors, setErrors] = useState({}); // Entfernt initiale Fehlerzustände
-    const [touched, setTouched] = useState({}); // Entfernt initiale touch-Zustände
+    const [errors, setErrors] = useState({});
+    const [touched, setTouched] = useState({});
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const { setUser } = useContext(UserContext);
@@ -136,18 +136,17 @@ const Login = () => {
         switch (name) {
             case 'emailOrUsername':
                 if (!value.trim()) {
-                    error =
-                        'Bitte geben Sie Ihre E-Mail oder Ihren Benutzernamen ein';
+                    error = 'Bitte gib deine E-Mail oder deinen Benutzernamen ein';
                 } else if (
                     value.includes('@') &&
                     !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
                 ) {
-                    error = 'Bitte geben Sie eine gültige E-Mail-Adresse ein';
+                    error = 'Bitte gib eine gültige E-Mail-Adresse ein';
                 }
                 break;
             case 'password':
                 if (!value) {
-                    error = 'Bitte geben Sie Ihr Passwort ein';
+                    error = 'Bitte gib dein Passwort ein';
                 }
                 break;
             default:
@@ -159,7 +158,6 @@ const Login = () => {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setData((prev) => ({ ...prev, [name]: value }));
-        // Nur validieren wenn das Feld bereits berührt wurde
         if (touched[name]) {
             setErrors((prev) => ({
                 ...prev,
@@ -170,7 +168,6 @@ const Login = () => {
 
     const handleBlur = (e) => {
         const { name } = e.target;
-        // Nur validieren wenn das Feld bereits berührt wurde
         if (touched[name]) {
             setErrors((prev) => ({
                 ...prev,
@@ -194,14 +191,13 @@ const Login = () => {
     const loginUser = async (event) => {
         event.preventDefault();
 
-        // Setze touched-Status für alle Felder beim Submit
         setTouched({
             emailOrUsername: true,
             password: true,
         });
 
         if (!validateForm()) {
-            addToast('Bitte füllen Sie alle Felder korrekt aus', 'error');
+            addToast('Bitte fülle alle Felder korrekt aus', 'error');
             return;
         }
 
@@ -219,7 +215,7 @@ const Login = () => {
             }
         } catch (error) {
             addToast(
-                'Login fehlgeschlagen. Bitte versuchen Sie es erneut.',
+                'Login fehlgeschlagen. Bitte versuche es erneut.',
                 'error'
             );
         } finally {

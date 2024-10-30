@@ -134,7 +134,7 @@ module.exports = {
         USERNAME_ALREADY_EXISTS_CLIENT: 'Benutzername wird bereits verwendet',
         PASSWORD_TOO_SHORT: 'Passwort muss mindestens 6 Zeichen lang sein',
         NAME_MISSING_SERVER: 'Vor- oder Nachname fehlt',
-        NAME_MISSING_CLIENT: 'Bitte geben Sie Ihren Vor- und Nachnamen ein',
+        NAME_MISSING_CLIENT: 'Bitte gib deinen Vor- und Nachnamen ein',
         WRONG_EMAIL_SERVER: (email) =>
             `Anmeldung fehlgeschlagen: Kein Benutzer mit E-Mail ${email} gefunden`,
         WRONG_PASSWORD_SERVER: (benutzername) =>

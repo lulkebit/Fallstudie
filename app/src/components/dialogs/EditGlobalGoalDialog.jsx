@@ -189,7 +189,7 @@ const EditGlobalGoalDialog = ({ goal, onSave, onClose }) => {
                                 value={formData.title}
                                 onChange={handleChange}
                                 icon={Flag}
-                                placeholder='Geben Sie einen Titel ein...'
+                                placeholder='Gib einen Titel ein...'
                                 required
                             />
 
@@ -200,7 +200,7 @@ const EditGlobalGoalDialog = ({ goal, onSave, onClose }) => {
                                 onChange={handleChange}
                                 type='textarea'
                                 icon={Hash}
-                                placeholder='Beschreiben Sie das Ziel...'
+                                placeholder='Beschreibe das Ziel...'
                             />
                         </div>
 

@@ -90,7 +90,7 @@ const ChangePasswordDialog = ({ onClose }) => {
 
     const validatePassword = (password) => {
         if (!password) {
-            return 'Bitte geben Sie ein Passwort ein';
+            return 'Bitte gib ein Passwort ein';
         }
 
         if (password.length < 8) {
@@ -115,21 +115,31 @@ const ChangePasswordDialog = ({ onClose }) => {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
-        
+
         // Validate new password when it changes
         if (name === 'newPassword') {
             const error = validatePassword(value);
-            setErrors(prev => ({ ...prev, newPassword: error }));
+            setErrors((prev) => ({ ...prev, newPassword: error }));
         }
-        
+
         // Check password confirmation when either password changes
         if (name === 'newPassword' || name === 'confirmPassword') {
             if (name === 'confirmPassword' && value !== formData.newPassword) {
-                setErrors(prev => ({ ...prev, confirmPassword: 'Die Passwörter stimmen nicht überein' }));
-            } else if (name === 'newPassword' && value !== formData.confirmPassword && formData.confirmPassword) {
-                setErrors(prev => ({ ...prev, confirmPassword: 'Die Passwörter stimmen nicht überein' }));
+                setErrors((prev) => ({
+                    ...prev,
+                    confirmPassword: 'Die Passwörter stimmen nicht überein',
+                }));
+            } else if (
+                name === 'newPassword' &&
+                value !== formData.confirmPassword &&
+                formData.confirmPassword
+            ) {
+                setErrors((prev) => ({
+                    ...prev,
+                    confirmPassword: 'Die Passwörter stimmen nicht überein',
+                }));
             } else {
-                setErrors(prev => ({ ...prev, confirmPassword: '' }));
+                setErrors((prev) => ({ ...prev, confirmPassword: '' }));
             }
         }
     };
@@ -222,7 +232,9 @@ const ChangePasswordDialog = ({ onClose }) => {
                             required
                             error={errors.newPassword}
                         />
-                        <PasswordStrengthIndicator password={formData.newPassword} />
+                        <PasswordStrengthIndicator
+                            password={formData.newPassword}
+                        />
                     </div>
                     <PasswordInput
                         label='Neues Passwort bestätigen'

@@ -118,7 +118,7 @@ const CookieSettingsDialog = ({ onClose }) => {
                                     Cookie-Einstellungen
                                 </h3>
                                 <p className='text-sm text-gray-500 dark:text-white/60'>
-                                    Verwalten Sie Ihre Cookie-Präferenzen
+                                    Verwalte deine Cookie-Präferenzen
                                 </p>
                             </div>
                         </div>
@@ -154,7 +154,7 @@ const CookieSettingsDialog = ({ onClose }) => {
 
                     <ToggleSwitch
                         label='Marketing Cookies'
-                        description='Diese Cookies werden verwendet, um Werbung relevanter für Sie zu machen.'
+                        description='Diese Cookies werden verwendet, um Werbung relevanter für dich zu machen.'
                         isChecked={preferences.marketing}
                         onChange={() => handleToggle('marketing')}
                         disabled={false}
@@ -163,7 +163,7 @@ const CookieSettingsDialog = ({ onClose }) => {
 
                     <ToggleSwitch
                         label='Präferenz Cookies'
-                        description='Diese Cookies ermöglichen der Website, sich an Ihre Einstellungen zu erinnern.'
+                        description='Diese Cookies ermöglichen der Website, sich an deine Einstellungen zu erinnern.'
                         isChecked={preferences.preferences}
                         onChange={() => handleToggle('preferences')}
                         disabled={false}

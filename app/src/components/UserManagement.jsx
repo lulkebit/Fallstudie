@@ -176,7 +176,7 @@ const UserManagement = ({ activeUsers }) => {
             component: ConfirmationDialog,
             props: {
                 title: 'Löschen bestätigen',
-                message: `Sind Sie sicher, dass Sie den Benutzer "${username}" löschen möchten?`,
+                message: `Bist du sicher, dass du den Benutzer "${username}" löschen möchten?`,
                 variant: 'danger',
                 confirmText: 'Löschen',
                 onConfirm: async () => {

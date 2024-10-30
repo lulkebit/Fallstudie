@@ -273,7 +273,7 @@ const GlobalGoalTable = () => {
                 addToast(
                     `Fehler beim ${
                         formData.id ? 'Aktualisieren' : 'Erstellen'
-                    } des globalen Ziels. Bitte versuchen Sie es erneut.`,
+                    } des globalen Ziels. Bitte versuche es erneut.`,
                     'error'
                 );
             }
@@ -288,7 +288,7 @@ const GlobalGoalTable = () => {
                 props: {
                     title: 'Ziel löschen',
                     message:
-                        'Möchten Sie dieses globale Ziel wirklich löschen?',
+                        'Möchtest du dieses globale Ziel wirklich löschen?',
                     variant: 'danger',
                     confirmText: 'Löschen',
                     onConfirm: async () => {
@@ -301,7 +301,7 @@ const GlobalGoalTable = () => {
                             addToast('Globales Ziel gelöscht!', 'success');
                         } catch (error) {
                             addToast(
-                                'Fehler beim Löschen des globalen Ziels. Bitte versuchen Sie es erneut. ' +
+                                'Fehler beim Löschen des globalen Ziels. Bitte versuche es erneut. ' +
                                     error,
                                 'error'
                             );

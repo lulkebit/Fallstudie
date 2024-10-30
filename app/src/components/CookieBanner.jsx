@@ -26,10 +26,10 @@ const CookieBanner = () => {
                                 Wir verwenden Cookies
                             </h3>
                             <p className='text-gray-600 dark:text-gray-300 text-sm'>
-                                Wir nutzen Cookies, um Ihre Erfahrung auf
+                                Wir nutzen Cookies, um deine Erfahrung auf
                                 unserer Website zu verbessern. Einige davon sind
                                 notwendig für den Betrieb der Seite, während
-                                andere uns helfen, die Website und Ihre
+                                andere uns helfen, die Website und deine
                                 Interaktion mit ihr zu verstehen.
                             </p>
                         </div>

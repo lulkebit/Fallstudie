@@ -25,7 +25,7 @@ const Kontakt = () => {
         if (!formData.email.trim()) {
             newErrors.email = 'E-Mail ist erforderlich';
         } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-            newErrors.email = 'Bitte geben Sie eine gültige E-Mail-Adresse ein';
+            newErrors.email = 'Bitte gib eine gültige E-Mail-Adresse ein';
         }
         if (!formData.message.trim()) {
             newErrors.message = 'Nachricht ist erforderlich';
@@ -88,11 +88,11 @@ const Kontakt = () => {
                         </div>
                     </div>
                     <h1 className='text-4xl font-bold text-gray-900 dark:text-white mb-4'>
-                        Kontaktieren Sie uns
+                        Kontaktiere uns
                     </h1>
                     <p className='text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto'>
-                        Haben Sie Fragen oder Anregungen? Wir freuen uns über
-                        Ihre Nachricht und werden uns zeitnah bei Ihnen melden.
+                        Hast du Fragen oder Anregungen? Wir freuen uns über
+                        deine Nachricht und werden uns zeitnah bei dir melden.
                     </p>
                 </div>
 
@@ -186,7 +186,7 @@ const Kontakt = () => {
                                      ? 'border-red-500'
                                      : 'border-gray-200 dark:border-white/10'
                              }`}
-                                        placeholder='Ihr Name'
+                                        placeholder='Dein Name'
                                     />
                                     {errors.name && (
                                         <p className='mt-1 text-sm text-red-500'>
@@ -216,7 +216,7 @@ const Kontakt = () => {
                                      ? 'border-red-500'
                                      : 'border-gray-200 dark:border-white/10'
                              }`}
-                                        placeholder='Ihre E-Mail-Adresse'
+                                        placeholder='Deine E-Mail-Adresse'
                                     />
                                     {errors.email && (
                                         <p className='mt-1 text-sm text-red-500'>
@@ -246,7 +246,7 @@ const Kontakt = () => {
                                      ? 'border-red-500'
                                      : 'border-gray-200 dark:border-white/10'
                              }`}
-                                        placeholder='Ihre Nachricht'
+                                        placeholder='Deine Nachricht'
                                     />
                                     {errors.message && (
                                         <p className='mt-1 text-sm text-red-500'>
@@ -277,14 +277,14 @@ const Kontakt = () => {
 
                                 {submitStatus === 'success' && (
                                     <p className='text-green-500 text-center mt-4'>
-                                        Ihre Nachricht wurde erfolgreich
+                                        Deine Nachricht wurde erfolgreich
                                         gesendet!
                                     </p>
                                 )}
                                 {submitStatus === 'error' && (
                                     <p className='text-red-500 text-center mt-4'>
                                         Ein Fehler ist aufgetreten. Bitte
-                                        versuchen Sie es später erneut.
+                                        versuche es später erneut.
                                     </p>
                                 )}
                             </form>

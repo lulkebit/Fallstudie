@@ -48,7 +48,7 @@ const LoadingPage = () => {
                             Einen Moment bitte
                         </h2>
                         <p className='text-gray-600 dark:text-white/70 mb-8 max-w-md mx-auto'>
-                            Wir laden Ihre Daten...
+                            Wir laden deine Daten...
                         </p>
 
                         {/* Animierte Punkte */}

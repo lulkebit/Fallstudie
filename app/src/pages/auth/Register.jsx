@@ -279,7 +279,7 @@ const Register = () => {
         switch (name) {
             case 'firstname':
                 if (!value.trim()) {
-                    error = 'Bitte geben Sie Ihren Vornamen ein';
+                    error = 'Bitte gib deinen Vornamen ein';
                 } else if (value.trim().length < 2) {
                     error = 'Der Vorname muss mindestens 2 Zeichen lang sein';
                 } else if (!/^[a-zA-ZäöüßÄÖÜ\s-]+$/.test(value)) {
@@ -289,7 +289,7 @@ const Register = () => {
                 break;
             case 'lastname':
                 if (!value.trim()) {
-                    error = 'Bitte geben Sie Ihren Nachnamen ein';
+                    error = 'Bitte gib deinen Nachnamen ein';
                 } else if (value.trim().length < 2) {
                     error = 'Der Nachname muss mindestens 2 Zeichen lang sein';
                 } else if (!/^[a-zA-ZäöüßÄÖÜ\s-]+$/.test(value)) {
@@ -299,14 +299,14 @@ const Register = () => {
                 break;
             case 'email':
                 if (!value) {
-                    error = 'Bitte geben Sie Ihre E-Mail-Adresse ein';
+                    error = 'Bitte gib deine E-Mail-Adresse ein';
                 } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-                    error = 'Bitte geben Sie eine gültige E-Mail-Adresse ein';
+                    error = 'Bitte gib eine gültige E-Mail-Adresse ein';
                 }
                 break;
             case 'username':
                 if (!value) {
-                    error = 'Bitte geben Sie einen Benutzernamen ein';
+                    error = 'Bitte gib einen Benutzernamen ein';
                 } else if (value.length < 3) {
                     error =
                         'Der Benutzername muss mindestens 3 Zeichen lang sein';
@@ -317,7 +317,7 @@ const Register = () => {
                 break;
             case 'password':
                 if (!value) {
-                    error = 'Bitte geben Sie ein Passwort ein';
+                    error = 'Bitte gib ein Passwort ein';
                 } else {
                     const requirements = [
                         value.length >= 8,
@@ -347,7 +347,7 @@ const Register = () => {
                 break;
             case 'privacyConsent':
                 if (!value) {
-                    error = 'Bitte stimmen Sie den Datenschutzrichtlinien zu';
+                    error = 'Bitte stimme den Datenschutzrichtlinien zu';
                 }
                 break;
             default:
@@ -401,7 +401,7 @@ const Register = () => {
         });
 
         if (!validateForm()) {
-            addToast('Bitte füllen Sie alle Felder korrekt aus', 'error');
+            addToast('Bitte fülle alle Felder korrekt aus', 'error');
             return;
         }
 
@@ -418,14 +418,14 @@ const Register = () => {
                 setData({});
                 navigate('/login');
                 addToast(
-                    'Registrierung erfolgreich! Sie können sich jetzt einloggen.',
+                    'Registrierung erfolgreich! Du kannst dich jetzt einloggen.',
                     'success'
                 );
             }
         } catch (error) {
             const errorMessage =
                 error.response?.data?.error ||
-                'Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut.';
+                'Registrierung fehlgeschlagen. Bitte versuche es erneut.';
             addToast(errorMessage, 'error');
         } finally {
             setLoading(false);

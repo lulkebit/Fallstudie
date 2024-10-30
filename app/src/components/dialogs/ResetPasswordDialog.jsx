@@ -9,7 +9,7 @@ const ResetPasswordDialog = ({ onClose, onResetPassword, userId }) => {
 
     const validatePassword = (password) => {
         if (!password) {
-            return 'Bitte geben Sie ein Passwort ein';
+            return 'Bitte gib ein Passwort ein';
         }
 
         if (password.length < 8) {
@@ -74,8 +74,7 @@ const ResetPasswordDialog = ({ onClose, onResetPassword, userId }) => {
                                     Passwort zurücksetzen
                                 </h3>
                                 <p className='text-sm text-gray-500 dark:text-white/60'>
-                                    Setzen Sie ein neues Passwort für den
-                                    Benutzer
+                                    Setze ein neues Passwort für den Benutzer
                                 </p>
                             </div>
                         </div>

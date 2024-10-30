@@ -101,7 +101,7 @@ const Friends = () => {
 
     const sendFriendRequest = async () => {
         if (!newFriendUsername.trim()) {
-            addToast('Bitte geben Sie einen Benutzernamen ein', 'error');
+            addToast('Bitte gib einen Benutzernamen ein', 'error');
             return;
         }
 
