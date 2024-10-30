@@ -158,7 +158,7 @@ const GoalCard = ({ goal, onEdit, onDelete }) => {
                     <div className='flex items-center gap-2'>
                         <Activity className='w-4 h-4 text-gray-400 dark:text-white/40' />
                         <span className='text-xs text-gray-600 dark:text-white/80'>
-                            {goal.participationCount || 0} Teilnehmer
+                            {goal.participationCount || 0} Beiträge
                         </span>
                     </div>
                     <div className='flex items-center gap-2'>
