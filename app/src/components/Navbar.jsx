@@ -122,19 +122,11 @@ const Navbar = () => {
                                       flex items-center justify-center cursor-pointer'
                             onClick={() => navigate('/dashboard')}
                         >
-                            <svg
-                                className='w-6 h-6 text-white'
-                                fill='none'
-                                stroke='currentColor'
-                                viewBox='0 0 24 24'
-                            >
-                                <path
-                                    strokeLinecap='round'
-                                    strokeLinejoin='round'
-                                    strokeWidth='2'
-                                    d='M13 10V3L4 14h7v7l9-11h-7z'
-                                />
-                            </svg>
+                            <img
+                                src='/Logo.png'
+                                alt='TrackMyGoal Logo'
+                                className='h-8 w-8 object-contain'
+                            />
                         </div>
                         <span
                             className='text-xl font-bold text-transparent bg-clip-text 

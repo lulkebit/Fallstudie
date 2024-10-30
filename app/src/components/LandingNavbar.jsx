@@ -81,19 +81,11 @@ const LandingNavbar = ({ hideNavItems = false, customActions = null }) => {
                             onClick={() => navigate('/')}
                             className='h-8 w-8 sm:h-10 sm:w-10 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center mr-2 sm:mr-3 cursor-pointer'
                         >
-                            <svg
-                                className='w-4 h-4 sm:w-6 sm:h-6 text-white'
-                                fill='none'
-                                stroke='currentColor'
-                                viewBox='0 0 24 24'
-                            >
-                                <path
-                                    strokeLinecap='round'
-                                    strokeLinejoin='round'
-                                    strokeWidth='2'
-                                    d='M13 10V3L4 14h7v7l9-11h-7z'
-                                />
-                            </svg>
+                            <img
+                                src='/Logo.png'
+                                alt='TrackMyGoal Logo'
+                                className='h-8 w-8 object-contain'
+                            />
                         </div>
                         <button
                             onClick={() => navigate('/')}

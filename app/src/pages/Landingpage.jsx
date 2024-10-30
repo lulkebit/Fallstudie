@@ -112,7 +112,11 @@ const Landingpage = () => {
                 <div className='w-full lg:w-1/2 flex flex-col justify-center px-6 lg:px-16 py-20 relative z-10'>
                     <div className='flex items-center gap-2 mb-8'>
                         <div className='h-10 w-10 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center'>
-                            <Target className='h-6 w-6 text-white' />
+                            <img
+                                src='/Logo.png'
+                                alt='TrackMyGoal Logo'
+                                className='h-8 w-8 object-contain'
+                            />
                         </div>
                         <span className='text-gray-600 dark:text-white/80 font-medium'>
                             TrackMyGoal

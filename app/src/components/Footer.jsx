@@ -42,20 +42,12 @@ const Footer = () => {
                         {/* Brand Column */}
                         <div className='space-y-6'>
                             <div className='flex items-center gap-3'>
-                                <div className='h-10 w-10 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center'>
-                                    <svg
-                                        className='w-6 h-6 text-white'
-                                        fill='none'
-                                        stroke='currentColor'
-                                        viewBox='0 0 24 24'
-                                    >
-                                        <path
-                                            strokeLinecap='round'
-                                            strokeLinejoin='round'
-                                            strokeWidth='2'
-                                            d='M13 10V3L4 14h7v7l9-11h-7z'
-                                        />
-                                    </svg>
+                                <div className='h-12 w-12 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center'>
+                                    <img
+                                        src='/Logo.png'
+                                        alt='TrackMyGoal Logo'
+                                        className='h-10 w-10 object-contain'
+                                    />
                                 </div>
                                 <span className='text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#4785FF] to-[#8c52ff]'>
                                     TrackMyGoal
