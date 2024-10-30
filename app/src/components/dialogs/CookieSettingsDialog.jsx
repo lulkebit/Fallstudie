@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useCookies } from '../../context/CookieContext';
 import { X, Cookie, Shield, BarChart2, Target, Settings } from 'lucide-react';
-import DialogContainer from '../containers/DialogContainer';
 
 const ToggleSwitch = ({
     label,
@@ -16,10 +15,10 @@ const ToggleSwitch = ({
             <div
                 className={`w-10 h-10 rounded-xl ${
                     isChecked
-                        ? 'bg-gradient-to-br from-[#4785FF] to-[#8c52ff]'
+                        ? 'bg-gradient-to-br from-blue-500 to-purple-500'
                         : 'bg-gray-100 dark:bg-white/5'
                 } 
-                            flex items-center justify-center transition-colors duration-200`}
+                flex items-center justify-center transition-colors duration-200`}
             >
                 <Icon
                     className={`w-5 h-5 ${
@@ -38,35 +37,54 @@ const ToggleSwitch = ({
                 </p>
             </div>
         </div>
-        <label
+        <div
             className={`relative inline-flex items-center ${
-                disabled ? 'cursor-not-allowed' : 'cursor-pointer'
+                disabled ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'
             }`}
         >
             <input
                 type='checkbox'
-                className='sr-only peer'
                 checked={isChecked}
-                onChange={onChange}
+                onChange={() => !disabled && onChange()}
                 disabled={disabled}
+                className='sr-only'
             />
             <div
-                className={`w-11 h-6 rounded-full peer backdrop-blur-sm
+                role='switch'
+                aria-checked={isChecked}
+                onClick={() => !disabled && onChange()}
+                className={`
+                    w-11 h-6 rounded-full 
+                    transition-colors duration-200
                     ${
                         isChecked
-                            ? 'bg-gradient-to-r from-[#4785FF] to-[#8c52ff]'
-                            : 'bg-gray-200/50 dark:bg-white/5'
+                            ? 'bg-gradient-to-r from-blue-500 to-purple-500'
+                            : 'bg-gray-200 dark:bg-white/5'
                     }
-                    peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300/50 dark:peer-focus:ring-blue-800/50 
-                    after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
-                    after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 
-                    after:transition-all ${
-                        isChecked ? 'after:translate-x-full' : ''
-                    }
-                    transition-colors duration-200`}
-                onClick={() => !disabled && onChange()}
-            ></div>
-        </label>
+                    relative
+                `}
+            >
+                <div
+                    className={`
+                        absolute top-0.5 left-0.5
+                        w-5 h-5 rounded-full 
+                        bg-white
+                        shadow-sm
+                        transform transition-transform duration-200
+                        ${isChecked ? 'translate-x-5' : 'translate-x-0'}
+                    `}
+                />
+            </div>
+        </div>
+    </div>
+);
+
+const DialogBackdrop = ({ children, onClose }) => (
+    <div
+        className='fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm'
+        onClick={onClose}
+    >
+        <div onClick={(e) => e.stopPropagation()}>{children}</div>
     </div>
 );
 
@@ -92,13 +110,13 @@ const CookieSettingsDialog = ({ onClose }) => {
     };
 
     return (
-        <DialogContainer onClose={onClose}>
+        <DialogBackdrop onClose={onClose}>
             <div className='fixed inset-0 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 opacity-90' />
 
             {/* Decorative Elements */}
             <div className='absolute -inset-x-20 -inset-y-20 pointer-events-none'>
-                <div className='absolute top-1/4 right-1/4 w-96 h-96 bg-[#4785FF]/10 rounded-full blur-3xl animate-pulse' />
-                <div className='absolute bottom-1/4 left-1/4 w-96 h-96 bg-[#8c52ff]/10 rounded-full blur-3xl animate-pulse delay-1000' />
+                <div className='absolute top-1/4 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse' />
+                <div className='absolute bottom-1/4 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000' />
             </div>
 
             <div
@@ -110,7 +128,7 @@ const CookieSettingsDialog = ({ onClose }) => {
                 <div className='p-6 border-b border-gray-200/50 dark:border-white/10'>
                     <div className='flex justify-between items-center'>
                         <div className='flex items-center gap-4'>
-                            <div className='w-12 h-12 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center'>
+                            <div className='w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center'>
                                 <Cookie className='w-6 h-6 text-white' />
                             </div>
                             <div>
@@ -187,7 +205,7 @@ const CookieSettingsDialog = ({ onClose }) => {
                         </button>
                         <button
                             onClick={handleSave}
-                            className='px-6 py-3 bg-gradient-to-r from-[#4785FF] to-[#8c52ff] 
+                            className='px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 
                                    text-white rounded-xl font-medium shadow-lg 
                                    hover:shadow-xl hover:shadow-blue-500/25 dark:hover:shadow-blue-500/10
                                    transition-all duration-200 hover:-translate-y-0.5'
@@ -197,7 +215,7 @@ const CookieSettingsDialog = ({ onClose }) => {
                     </div>
                 </div>
             </div>
-        </DialogContainer>
+        </DialogBackdrop>
     );
 };
 
