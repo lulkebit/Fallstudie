@@ -259,7 +259,6 @@ const Register = () => {
         password: '',
     });
     const [selectedPlan, setSelectedPlan] = useState('pro');
-    const [privacyConsent, setPrivacyConsent] = useState(false);
     const [errors, setErrors] = useState({});
     const [touched, setTouched] = useState({
         firstname: false,
@@ -267,7 +266,6 @@ const Register = () => {
         email: false,
         username: false,
         password: false,
-        privacyConsent: false,
     });
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -345,11 +343,6 @@ const Register = () => {
                     }
                 }
                 break;
-            case 'privacyConsent':
-                if (!value) {
-                    error = 'Bitte stimme den Datenschutzrichtlinien zu';
-                }
-                break;
             default:
                 break;
         }
@@ -382,8 +375,6 @@ const Register = () => {
             const error = validateField(key, data[key]);
             if (error) newErrors[key] = error;
         });
-        const privacyError = validateField('privacyConsent', privacyConsent);
-        if (privacyError) newErrors.privacyConsent = privacyError;
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -397,7 +388,6 @@ const Register = () => {
             email: true,
             username: true,
             password: true,
-            privacyConsent: true,
         });
 
         if (!validateForm()) {
@@ -600,49 +590,16 @@ const Register = () => {
                                     </div>
                                 )}
 
-                                <div className='flex items-start'>
-                                    <div className='flex items-center h-5'>
-                                        <input
-                                            id='privacyConsent'
-                                            name='privacyConsent'
-                                            type='checkbox'
-                                            checked={privacyConsent}
-                                            onChange={(e) => {
-                                                setPrivacyConsent(
-                                                    e.target.checked
-                                                );
-                                                setTouched((prev) => ({
-                                                    ...prev,
-                                                    privacyConsent: true,
-                                                }));
-                                                if (e.target.checked) {
-                                                    setErrors((prev) => ({
-                                                        ...prev,
-                                                        privacyConsent: '',
-                                                    }));
-                                                }
-                                            }}
-                                            className='w-4 h-4 text-[#4785FF] bg-gray-100 border-gray-300 rounded focus:ring-[#4785FF] dark:focus:ring-[#4785FF]/50 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
-                                        />
-                                    </div>
-                                    <div className='ml-3 text-sm'>
-                                        <label className='font-medium text-gray-700 dark:text-white/70'>
-                                            Ich stimme den{' '}
-                                            <Link
-                                                to='/datenschutz'
-                                                className='text-[#4785FF] hover:text-[#6769ff] dark:text-[#4785FF] dark:hover:text-[#6769ff]'
-                                            >
-                                                Datenschutzrichtlinien
-                                            </Link>{' '}
-                                            zu
-                                        </label>
-                                        {touched.privacyConsent &&
-                                            errors.privacyConsent && (
-                                                <p className='text-sm text-red-500 dark:text-red-400 mt-1'>
-                                                    {errors.privacyConsent}
-                                                </p>
-                                            )}
-                                    </div>
+                                {/* Datenschutz Information statt Checkbox */}
+                                <div className='text-sm text-gray-600 dark:text-white/70'>
+                                    Mit der Registrierung stimmst du unseren{' '}
+                                    <Link
+                                        to='/datenschutz'
+                                        className='text-[#4785FF] hover:text-[#6769ff]'
+                                    >
+                                        Datenschutzrichtlinien
+                                    </Link>{' '}
+                                    zu.
                                 </div>
 
                                 <button
