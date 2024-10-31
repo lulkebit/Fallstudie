@@ -2,13 +2,15 @@
 
 Eine Full-Stack-Webanwendung, die Benutzern hilft, ihre Ziele zu setzen, zu verfolgen und zu erreichen, während sie sich mit Freunden verbinden und an globalen Herausforderungen teilnehmen können.
 
+Besuchen Sie uns unter [trackmygoal.de](https://trackmygoal.de)
+
 ## Funktionen
 
 -   **Benutzerauthentifizierung**
 
     -   Registrierungs- und Anmeldefunktion
-    -   Passwortverwaltung
-    -   Profilanpassung mit Avatar
+    -   Passwortverwaltung mit Passwort-Zurücksetzen
+    -   Profilanpassung mit Avatar und Bildbearbeitung
 
 -   **Zielverwaltung**
 
@@ -16,42 +18,65 @@ Eine Full-Stack-Webanwendung, die Benutzern hilft, ihre Ziele zu setzen, zu verf
     -   Ziele mit Freunden teilen
     -   Teilnahme an globalen Zielen
     -   Fortschrittsverfolgung
+    -   Kanban-Board für Zielverwaltung
 
 -   **Soziale Funktionen**
 
     -   Freunde hinzufügen und verwalten
     -   Geteilte Ziele von Freunden ansehen
     -   Auf Ziele reagieren
-    -   Benachrichtigungssystem
+    -   Erweitertes Benachrichtigungssystem
 
 -   **Admin-Bereich**
+
     -   Benutzerverwaltung
     -   Verwaltung globaler Ziele
-    -   Systemstatistiken
+    -   Systemstatistiken und Nutzungsanalysen
+    -   Benutzer-Wachstumszeitlinie
+
+-   **Datenschutz & Sicherheit**
+    -   Cookie-Verwaltung mit Banner
+    -   Datenschutzeinstellungen
+    -   Sichere Passwortverwaltung
 
 ## Technologie-Stack
 
 ### Frontend
 
 -   React.js
--   Tailwind CSS
+-   Tailwind CSS (Utility-First CSS Framework)
 -   Context API für State Management
 
 ### Backend
 
 -   Node.js
 -   Express.js
--   MongoDB (basierend auf der Modellstruktur)
+-   MongoDB
 
 ## Installation & Einrichtung
 
 ### Voraussetzungen
 
--   Node.js
+-   Node.js (Version 14 oder höher)
 -   npm
--   MongoDB-Instanz
 
-### Backend-Einrichtung
+### Automatische Installation
+
+Für Windows-Benutzer steht ein automatisches Start-Skript zur Verfügung:
+
+1. Öffnen Sie den Projektordner
+2. Doppelklicken Sie auf `start-local.bat`
+3. Warten Sie, bis beide Server gestartet sind
+
+Das Skript übernimmt automatisch:
+
+-   Installation aller Abhängigkeiten
+-   Start des Backend-Servers
+-   Start des Frontend-Servers
+
+### Manuelle Installation
+
+#### Backend-Einrichtung
 
 1. In das Server-Verzeichnis wechseln:
 
@@ -71,9 +96,9 @@ npm install
 npm start
 ```
 
-Der Server läuft auf dem konfigurierten Port (Standard: 3001).
+Der Server läuft auf Port 8000.
 
-### Frontend-Einrichtung
+#### Frontend-Einrichtung
 
 1. In das App-Verzeichnis wechseln:
 
@@ -93,7 +118,7 @@ npm install
 npm start
 ```
 
-Die Anwendung öffnet sich automatisch im Standard-Browser unter `http://localhost:3000`.
+Die Anwendung öffnet sich automatisch unter `http://localhost:3000`.
 
 ## Projektstruktur
 
@@ -102,14 +127,20 @@ Die Anwendung öffnet sich automatisch im Standard-Browser unter `http://localho
 │   ├── public/            # Statische Dateien
 │   └── src/
 │       ├── components/    # React-Komponenten
+│       │   ├── containers/    # Container-Komponenten
+│       │   └── dialogs/      # Dialog-Komponenten
 │       ├── context/       # Context-Provider
+│       ├── images/        # Bildressourcen
 │       ├── pages/         # Seiten-Komponenten
+│       │   └── auth/         # Authentifizierungsseiten
 │       └── Routes.jsx     # Anwendungsrouting
 │
 └── server/                # Backend Node.js-Anwendung
     ├── controllers/       # Routen-Controller
     ├── helpers/          # Hilfsfunktionen
+    ├── middleware/       # Express Middleware
     ├── models/           # Datenbankmodelle
+    ├── ressources/       # Statische Ressourcen
     ├── routes/           # API-Routen
     └── utils/            # Dienstprogramme
 ```
@@ -119,9 +150,9 @@ Die Anwendung öffnet sich automatisch im Standard-Browser unter `http://localho
 ### Benutzerverwaltung
 
 -   Benutzerregistrierung und -authentifizierung
--   Profilanpassung
--   Passwortverwaltung
--   Freundesystem
+-   Erweiterte Profilanpassung mit Avatarbearbeitung
+-   Umfassende Passwortverwaltung inkl. Zurücksetzen
+-   Freundesystem mit Anfragen und Benachrichtigungen
 
 ### Zielsystem
 
@@ -129,19 +160,28 @@ Die Anwendung öffnet sich automatisch im Standard-Browser unter `http://localho
 -   Geteilte Ziele, sichtbar für Freunde
 -   Globale Ziele für die Community-Teilnahme
 -   Fortschrittsverfolgung und Aktualisierungen
+-   Kanban-Board für übersichtliche Zielverwaltung
 
 ### Soziale Funktionen
 
 -   Freundschaftsanfragen und -verwaltung
--   Aktivitätsbenachrichtigungen
+-   Echtzeit-Benachrichtigungssystem
 -   Zielreaktionen und Interaktionen
 -   Zeitleiste der persönlichen Entwicklung
 
 ### Administrative Funktionen
 
--   Benutzerkontoverwaltung
+-   Erweiterte Benutzerkontoverwaltung
 -   Erstellung und Verwaltung globaler Ziele
--   Systemüberwachung und Statistiken
+-   Detaillierte Systemüberwachung und Statistiken
+-   Nutzungsanalysen und Wachstumstrends
+
+### Datenschutz & Sicherheit
+
+-   Cookie-Verwaltung mit anpassbarem Banner
+-   Detaillierte Datenschutzeinstellungen
+-   Verschlüsselte Datenspeicherung
+-   Sichere Authentifizierung
 
 ## Mitwirkende
 

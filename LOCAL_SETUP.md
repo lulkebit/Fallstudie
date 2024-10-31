@@ -26,7 +26,6 @@ Stellen Sie sicher, dass folgende Software auf Ihrem System installiert ist:
 
 -   Node.js (Version 14 oder höher)
 -   npm (wird mit Node.js installiert)
--   MongoDB (lokal installiert oder Remote-Verbindung)
 
 ## Automatische Installation und Start
 
