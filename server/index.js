@@ -11,7 +11,7 @@ const texts = require('./ressources/texts');
 // Verbindung zur MongoDB-Datenbank herstellen
 mongoose
     .connect(
-        'mongodb+srv://server:nLhE8YEJgGeDjEXQ@cluster0.s0t2g.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0' // Sicherheitsrisiko: Verwende eine Umgebungsvariable für die Verbindung
+        'mongodb+srv://server:nLhE8YEJgGeDjEXQ@cluster0.s0t2g.mongodb.net/myFirstDatabase?retryWrites=true&w=majority&appName=Cluster0' // Sicherheitsrisiko: Verwende eine Umgebungsvariable für die Verbindung
     )
     .then(() => {
         logger.info(texts.SERVER.DATABASE_CONNECTED);
