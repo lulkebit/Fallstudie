@@ -9,6 +9,12 @@ import ConfirmationDialog from '../components/dialogs/ConfirmationDialog';
 import FriendGoalsDialog from '../components/dialogs/FriendGoalsDialog';
 import { FriendCard, FriendRequestCard } from '../components/FriendRequestCard';
 
+/**
+ * Wiederverwendbare Komponente zur Anzeige von Freunde-bezogenen Metriken
+ * @param {string} title - Anzeigename der Metrik
+ * @param {number} value - Numerischer Wert der Metrik
+ * @param {Component} icon - Lucide Icon-Komponente zur Darstellung
+ */
 const FriendsMetric = ({ title, value, icon: Icon }) => (
     <div className='bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-white/10 p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1'>
         <div className='flex items-center gap-4'>
@@ -27,7 +33,16 @@ const FriendsMetric = ({ title, value, icon: Icon }) => (
     </div>
 );
 
+/**
+ * Hauptkomponente zur Verwaltung von Freundschaften
+ * Funktionen:
+ * - Freundschaftsanfragen-System
+ * - Freundessuche und Filterung
+ * - Gemeinsame Ziele verfolgen
+ * - Freunde entfernen
+ */
 const Friends = () => {
+    // Context und State-Management
     const { user } = useContext(UserContext);
     const { addToast } = useToast();
     const { addDialog, removeDialog } = useDialog();
@@ -37,6 +52,7 @@ const Friends = () => {
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
 
+    // Initiales Laden der Daten
     useEffect(() => {
         if (user) {
             fetchFriends();
@@ -44,6 +60,10 @@ const Friends = () => {
         }
     }, [user]);
 
+    /**
+     * Lädt die Freundesliste und ergänzt diese mit gemeinsamen Zieldaten
+     * Behandelt Fehlerfälle beim Laden der Ziele pro Freund
+     */
     const fetchFriends = async () => {
         if (!user?._id) return;
 
@@ -85,6 +105,9 @@ const Friends = () => {
         }
     };
 
+    /**
+     * Lädt ausstehende Freundschaftsanfragen für den aktuellen Benutzer
+     */
     const fetchFriendRequests = async () => {
         if (!user?._id) return;
 
@@ -99,6 +122,10 @@ const Friends = () => {
         }
     };
 
+    /**
+     * Sendet eine Freundschaftsanfrage an den angegebenen Benutzernamen
+     * Validiert die Eingabe und behandelt Fehlerfälle
+     */
     const sendFriendRequest = async () => {
         if (!newFriendUsername.trim()) {
             addToast('Bitte gib einen Benutzernamen ein', 'error');
@@ -122,6 +149,11 @@ const Friends = () => {
         }
     };
 
+    /**
+     * Öffnet Dialog zur Anzeige gemeinsamer Ziele mit einem bestimmten Freund
+     * @param {string} friendId - ID des Freundes
+     * @param {Object} friend - Freund-Benutzerobjekt
+     */
     const handleShowGoalsClick = async (friendId, friend) => {
         addDialog({
             component: FriendGoalsDialog,
@@ -133,6 +165,10 @@ const Friends = () => {
         });
     };
 
+    /**
+     * Behandelt die Annahme von Freundschaftsanfragen
+     * Aktualisiert bei Erfolg sowohl die Freundesliste als auch die Anfragen
+     */
     const acceptFriendRequest = async (requestId) => {
         try {
             await axios.put(`/friends/accept/${requestId}`);
@@ -147,6 +183,10 @@ const Friends = () => {
         }
     };
 
+    /**
+     * Behandelt die Ablehnung von Freundschaftsanfragen
+     * Aktualisiert bei Erfolg die Anfragenliste
+     */
     const declineFriendRequest = async (requestId) => {
         try {
             await axios.put(`/friends/decline/${requestId}`);
@@ -160,6 +200,10 @@ const Friends = () => {
         }
     };
 
+    /**
+     * Öffnet Bestätigungsdialog zum Entfernen eines Freundes
+     * Behandelt den Löschvorgang und aktualisiert die UI
+     */
     const handleDeleteClick = (friendId) => {
         addDialog({
             component: ConfirmationDialog,
@@ -186,6 +230,7 @@ const Friends = () => {
         });
     };
 
+    // Filtert Freunde basierend auf der Suchanfrage
     const filteredFriends = friends.filter(
         (friend) =>
             friend.friendId?.username
@@ -201,16 +246,18 @@ const Friends = () => {
 
     return (
         <div className='min-h-screen bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800'>
+            {/* Navigation */}
             <Navbar />
 
-            {/* Decorative Elements */}
+            {/* Dekorative Hintergrundelemente */}
             <div className='absolute inset-0'>
                 <div className='absolute top-1/4 right-1/4 w-96 h-96 bg-[#4785FF]/10 rounded-full blur-3xl animate-pulse' />
                 <div className='absolute bottom-1/4 left-1/4 w-96 h-96 bg-[#8c52ff]/10 rounded-full blur-3xl animate-pulse delay-1000' />
             </div>
 
+            {/* Hauptinhalt-Container */}
             <div className='container mx-auto px-4 py-8 relative z-10 pt-24'>
-                {/* Hero Section */}
+                {/* Hero-Bereich */}
                 <div className='text-center mb-12'>
                     <div className='flex items-center justify-center gap-2 mb-6'>
                         <div className='h-12 w-12 rounded-xl bg-gradient-to-br from-[#4785FF] to-[#8c52ff] flex items-center justify-center'>
@@ -226,7 +273,7 @@ const Friends = () => {
                     </p>
                 </div>
 
-                {/* Metrics Grid */}
+                {/* Metriken-Übersicht */}
                 <div className='grid grid-cols-1 md:grid-cols-3 gap-6 mb-12'>
                     <FriendsMetric
                         title='Freunde'
@@ -249,8 +296,11 @@ const Friends = () => {
                     />
                 </div>
 
-                {/* Add Friend Section */}
+                {/* Freund hinzufügen Bereich */}
                 <div className='bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-white/10 p-8 mb-8'>
+                    {/* Freundschaftsanfragen Panel */}
+
+                    {/* Freundesliste mit Suchfunktion */}
                     <div className='flex flex-col md:flex-row items-center justify-between gap-6'>
                         <div>
                             <h2 className='text-2xl font-bold text-gray-900 dark:text-white mb-2'>
@@ -290,7 +340,7 @@ const Friends = () => {
                     </div>
                 </div>
 
-                {/* Main Content Grid */}
+                {/* Zwei-Spalten Layout für Anfragen und Freundesliste */}
                 <div className='grid lg:grid-cols-2 gap-8'>
                     {/* Friend Requests */}
                     <div className='bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-white/10'>
